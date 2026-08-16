@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# Allen API raw response cache (regenerable via build_plate_atlas.py)
+atlas/*/api_cache/
+
+# third-party repo clone, not part of this project
+brainglobe-atlasapi/
+
+# Claude Code local runtime state, not project content
+.claude/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp

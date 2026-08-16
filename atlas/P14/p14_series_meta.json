@@ -1,0 +1,314 @@
+[
+ {
+  "idx": 0,
+  "id": 100751299,
+  "section": 4,
+  "width": 4288,
+  "height": 3952,
+  "resolution": 1.047
+ },
+ {
+  "idx": 1,
+  "id": 100751408,
+  "section": 9,
+  "width": 4976,
+  "height": 4592,
+  "resolution": 1.047
+ },
+ {
+  "idx": 2,
+  "id": 100755424,
+  "section": 14,
+  "width": 5472,
+  "height": 5152,
+  "resolution": 1.047
+ },
+ {
+  "idx": 3,
+  "id": 100567225,
+  "section": 19,
+  "width": 5840,
+  "height": 5312,
+  "resolution": 1.047
+ },
+ {
+  "idx": 4,
+  "id": 100518997,
+  "section": 24,
+  "width": 6208,
+  "height": 5632,
+  "resolution": 1.047
+ },
+ {
+  "idx": 5,
+  "id": 100755430,
+  "section": 29,
+  "width": 6768,
+  "height": 5776,
+  "resolution": 1.047
+ },
+ {
+  "idx": 6,
+  "id": 100366848,
+  "section": 34,
+  "width": 7440,
+  "height": 6176,
+  "resolution": 1.047
+ },
+ {
+  "idx": 7,
+  "id": 100560008,
+  "section": 39,
+  "width": 7808,
+  "height": 6496,
+  "resolution": 1.047
+ },
+ {
+  "idx": 8,
+  "id": 100366821,
+  "section": 44,
+  "width": 8896,
+  "height": 9024,
+  "resolution": 1.047
+ },
+ {
+  "idx": 9,
+  "id": 100751517,
+  "section": 49,
+  "width": 9088,
+  "height": 6960,
+  "resolution": 1.047
+ },
+ {
+  "idx": 10,
+  "id": 100559802,
+  "section": 54,
+  "width": 9520,
+  "height": 6912,
+  "resolution": 1.047
+ },
+ {
+  "idx": 11,
+  "id": 100567474,
+  "section": 59,
+  "width": 9824,
+  "height": 6992,
+  "resolution": 1.047
+ },
+ {
+  "idx": 12,
+  "id": 100366767,
+  "section": 64,
+  "width": 10048,
+  "height": 7024,
+  "resolution": 1.047
+ },
+ {
+  "idx": 13,
+  "id": 100366424,
+  "section": 69,
+  "width": 10256,
+  "height": 7056,
+  "resolution": 1.047
+ },
+ {
+  "idx": 14,
+  "id": 100366481,
+  "section": 74,
+  "width": 10352,
+  "height": 7520,
+  "resolution": 1.047
+ },
+ {
+  "idx": 15,
+  "id": 100366389,
+  "section": 79,
+  "width": 10608,
+  "height": 7120,
+  "resolution": 1.047
+ },
+ {
+  "idx": 16,
+  "id": 100366446,
+  "section": 84,
+  "width": 11200,
+  "height": 6912,
+  "resolution": 1.047
+ },
+ {
+  "idx": 17,
+  "id": 100365951,
+  "section": 89,
+  "width": 10928,
+  "height": 7360,
+  "resolution": 1.047
+ },
+ {
+  "idx": 18,
+  "id": 100366407,
+  "section": 94,
+  "width": 10976,
+  "height": 7456,
+  "resolution": 1.047
+ },
+ {
+  "idx": 19,
+  "id": 100366324,
+  "section": 99,
+  "width": 11312,
+  "height": 7408,
+  "resolution": 1.047
+ },
+ {
+  "idx": 20,
+  "id": 100366312,
+  "section": 101,
+  "width": 11392,
+  "height": 7520,
+  "resolution": 1.047
+ },
+ {
+  "idx": 21,
+  "id": 100366252,
+  "section": 104,
+  "width": 12064,
+  "height": 7536,
+  "resolution": 1.047
+ },
+ {
+  "idx": 22,
+  "id": 100366313,
+  "section": 109,
+  "width": 12224,
+  "height": 7568,
+  "resolution": 1.047
+ },
+ {
+  "idx": 23,
+  "id": 100366342,
+  "section": 114,
+  "width": 12928,
+  "height": 8000,
+  "resolution": 1.047
+ },
+ {
+  "idx": 24,
+  "id": 100366274,
+  "section": 119,
+  "width": 12592,
+  "height": 7712,
+  "resolution": 1.047
+ },
+ {
+  "idx": 25,
+  "id": 100365787,
+  "section": 124,
+  "width": 12896,
+  "height": 7616,
+  "resolution": 1.047
+ },
+ {
+  "idx": 26,
+  "id": 100366232,
+  "section": 129,
+  "width": 13152,
+  "height": 7776,
+  "resolution": 1.047
+ },
+ {
+  "idx": 27,
+  "id": 100365876,
+  "section": 134,
+  "width": 13312,
+  "height": 7680,
+  "resolution": 1.047
+ },
+ {
+  "idx": 28,
+  "id": 100365929,
+  "section": 139,
+  "width": 13472,
+  "height": 8016,
+  "resolution": 1.047
+ },
+ {
+  "idx": 29,
+  "id": 100365849,
+  "section": 144,
+  "width": 13440,
+  "height": 7824,
+  "resolution": 1.047
+ },
+ {
+  "idx": 30,
+  "id": 100365894,
+  "section": 149,
+  "width": 13440,
+  "height": 8112,
+  "resolution": 1.047
+ },
+ {
+  "idx": 31,
+  "id": 100366215,
+  "section": 154,
+  "width": 13328,
+  "height": 8144,
+  "resolution": 1.047
+ },
+ {
+  "idx": 32,
+  "id": 100365863,
+  "section": 159,
+  "width": 13520,
+  "height": 7936,
+  "resolution": 1.047
+ },
+ {
+  "idx": 33,
+  "id": 100511055,
+  "section": 164,
+  "width": 13360,
+  "height": 8064,
+  "resolution": 1.047
+ },
+ {
+  "idx": 34,
+  "id": 100486227,
+  "section": 169,
+  "width": 14400,
+  "height": 8256,
+  "resolution": 1.047
+ },
+ {
+  "idx": 35,
+  "id": 100515892,
+  "section": 174,
+  "width": 13600,
+  "height": 7888,
+  "resolution": 1.047
+ },
+ {
+  "idx": 36,
+  "id": 100511057,
+  "section": 180,
+  "width": 13104,
+  "height": 7760,
+  "resolution": 1.047
+ },
+ {
+  "idx": 37,
+  "id": 100515893,
+  "section": 182,
+  "width": 13040,
+  "height": 7632,
+  "resolution": 1.047
+ },
+ {
+  "idx": 38,
+  "id": 100519041,
+  "section": 184,
+  "width": 12960,
+  "height": 7568,
+  "resolution": 1.047
+ }
+]

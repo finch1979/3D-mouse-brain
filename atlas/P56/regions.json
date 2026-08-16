@@ -1,0 +1,20 @@
+{
+  "MOp": {
+    "id": 985,
+    "name": "Primary motor area",
+    "acronym": "MOp",
+    "color": "1F9D5A"
+  },
+  "MOs": {
+    "id": 993,
+    "name": "Secondary motor area",
+    "acronym": "MOs",
+    "color": "1F9D5A"
+  },
+  "RSP": {
+    "id": 254,
+    "name": "Retrosplenial area",
+    "acronym": "RSP",
+    "color": "1AA698"
+  }
+}

@@ -507,10 +507,12 @@ const EXTENT = {extent};
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 1, EXTENT * 6);
+  // y = dorsal(-)/ventral(+) in this scene's data; three.js treats +Y as
+  // screen-up by default, which would render ventral facing up. Flip the
+  // camera's up vector so dorsal (where MOp/MOs/RSP sit) renders up top.
+  camera.up.set(0, -1, 0);
   const dist = EXTENT * 1.35;
-  // y = dorsal(-)/ventral(+) in this scene's data - MOp/MOs/RSP are dorsal
-  // structures, so the camera needs to sit on the dorsal (-y) side to face
-  // them, not the ventral (+y) side (default P56-camera formula sat on +y).
+  // camera sits on the dorsal (-y) side to face MOp/MOs/RSP directly.
   camera.position.set(dist * 0.55, -dist * 0.42, dist * 0.75);
 
   const renderer = new THREE.WebGLRenderer({{ antialias: true, alpha: false }});

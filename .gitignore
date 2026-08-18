@@ -11,6 +11,9 @@ brainglobe-atlasapi/
 # Claude Code local runtime state, not project content
 .claude/
 
+# Cloudflare Wrangler local cache/account state, not project content
+.wrangler/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

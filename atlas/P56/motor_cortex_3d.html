@@ -284,6 +284,7 @@
   <a class="nav-link" href="../P15/coronal_p15_demba_interactive.html">P15 &middot; Coronal (DeMBA)</a>
   <a class="nav-link active" href="motor_cortex_3d.html">3D (P56 adult)</a>
   <a class="nav-link" href="../P15/motor_cortex_3d_p15.html">3D (P15)</a>
+  <a class="nav-link" href="motor_cortex_only_3d.html">3D (Motor Cortex only)</a>
 </nav>
 
 <header class="ui">
@@ -1424,8 +1425,13 @@ const ORDER = ["MOp", "MOs", "RSP", "root"];
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 1, EXTENT * 6);
+  // y = dorsal(-)/ventral(+) in this scene's data; three.js treats +Y as
+  // screen-up by default, which would render ventral facing up. Flip the
+  // camera's up vector so dorsal (where MOp/MOs/RSP sit) renders up top.
+  camera.up.set(0, -1, 0);
   const dist = EXTENT * 1.35;
-  camera.position.set(dist * 0.55, dist * 0.42, dist * 0.75);
+  // camera sits on the dorsal (-y) side to face MOp/MOs/RSP directly.
+  camera.position.set(dist * 0.55, -dist * 0.42, dist * 0.75);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));

@@ -192,7 +192,24 @@
     text-align: right;
     line-height: 1.6;
     letter-spacing: 0.01em;
+    max-width: 320px;
   }
+
+  .hint-title--toggle {
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 10px;
+  }
+
+  .hint-title--toggle .chevron { font-size: 12px; transition: transform 0.15s ease; }
+
+  .hint-body { padding-top: 8px; }
+
+  .hint.collapsed .hint-body { display: none; }
+  .hint.collapsed .hint-title--toggle .chevron { transform: rotate(-90deg); }
 
   .hint b { color: var(--text-dim); font-weight: 500; }
 
@@ -230,7 +247,7 @@
   <div class="hover-label" id="hoverLabel"></div>
 </div>
 
-<div class="panel legend ui" id="legendPanel">
+<div class="panel legend ui collapsed" id="legendPanel">
   <div class="legend-title legend-title--toggle" id="legendToggle">
     <span id="txtStructuresTitle">Structures</span>
     <span class="chevron">&#9660;</span>
@@ -265,9 +282,15 @@
   </div>
 </div>
 
-<div class="panel hint ui">
-  <span id="txtHintControls"><b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane</span><br />
-  <span id="txtHintUnits">MNI152 space (mm, &times;1000 &rarr; &micro;m)</span>
+<div class="panel hint ui collapsed" id="hintPanel">
+  <div class="hint-title--toggle" id="hintToggle">
+    <span id="txtControlsTitle">Controls</span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="hint-body" id="hintBody">
+    <span id="txtHintControls"><b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane</span><br />
+    <span id="txtHintUnits">MNI152 space (mm, &times;1000 &rarr; &micro;m)</span>
+  </div>
 </div>
 
 <script>
@@ -1387,7 +1410,7 @@ const ORDER = ["skull", "root", "AUDp", "CBLX"];
   fill.position.set(-EXTENT * 0.7, -EXTENT * 0.2, -EXTENT * 0.5);
   scene.add(fill);
 
-  const STRINGS = {"eyebrow": {"en": "Human &middot; MNI152 space &middot; peripheral&rarr;central pathway", "zh": "人腦 &middot; MNI152 空間 &middot; 周邊&rarr;中樞路徑"}, "title_suffix": {"en": "<span class=\"accent\">Auditory</span> &amp; <span style=\"color:var(--accent-ves)\">Vestibular</span> Pathways", "zh": "<span class=\"accent\">聽覺</span>與<span style=\"color:var(--accent-ves)\">前庭</span>路徑"}, "subtitle": {"en": "Cranial nerve VIII's two ascending pathways, right ear to cortex/cerebellum. The auditory pathway <b>crosses the midline at the trapezoid body</b> &mdash; it starts on the right (cochlea, CN VIII, cochlear nuclei) but the majority of fibers decussate there and continue up the <b>left</b> side (superior olive &rarr; lemniscus &rarr; inferior colliculus &rarr; medial geniculate &rarr; auditory cortex); the vestibular pathway stays right (ipsilateral). Solid meshes are real MNI152-space anatomy; wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.", "zh": "第八對腦神經(前庭耳蝸神經)的兩條上行路徑,從右耳到皮質/小腦。聽覺路徑會<b>在斜方體跨越中線</b>&mdash;訊號從右側(耳蝸、第八對腦神經、耳蝸核)開始,但大部分纖維在此交叉,繼續沿<b>左側</b>上行(上橄欖複合體&rarr;外側蹄系&rarr;下丘&rarr;內側膝狀體&rarr;聽覺皮質);前庭路徑則維持同側(不交叉)。實心網格是真實的 MNI152 空間解剖構造;線框標記是示意性的,代表目前沒有任何免費 3D 圖譜可用的過小或過深結構的概略位置。將滑鼠移到節點上可顯示指示線與切面。"}, "hover_title": {"en": "Hovered structure", "zh": "目前指向的結構"}, "structures_title": {"en": "Structures", "zh": "結構"}, "legend_note": {"en": "Dashed swatch / wireframe sphere = schematic node, not a real segmented structure. Click &quot;Structures&quot; to collapse this panel.", "zh": "虛線色塊／線框球體＝示意節點,並非真實分割出的解剖構造。點擊「結構」可收合此面板。"}, "auditory_pathway_name": {"en": "Auditory pathway", "zh": "聽覺路徑"}, "auditory_pathway_desc": {"en": "cochlea &rarr; cochlear nuclei &rarr; ... &rarr; cortex", "zh": "耳蝸&rarr;耳蝸核&rarr;……&rarr;聽覺皮質"}, "vestibular_pathway_name": {"en": "Vestibular pathway", "zh": "前庭路徑"}, "vestibular_pathway_desc": {"en": "labyrinth &rarr; vestibular nuclei &rarr; MLF / cerebellum", "zh": "迷路&rarr;前庭神經核&rarr;內側縱束／小腦"}, "signal_name": {"en": "Neural signal", "zh": "神經訊號"}, "signal_desc": {"en": "animated pulse, cochlea &rarr; auditory cortex", "zh": "動畫訊號,耳蝸&rarr;聽覺皮質"}, "hint_controls": {"en": "<b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane", "zh": "<b>拖曳</b>旋轉 &nbsp; <b>滾輪</b>縮放 &nbsp; <b>右鍵拖曳</b>平移 &nbsp; <b>滑鼠移到節點</b>顯示切面"}, "hint_units": {"en": "MNI152 space (mm, &times;1000 &rarr; &micro;m)", "zh": "MNI152 空間(mm,&times;1000 &rarr; &micro;m)"}, "lang_button": {"en": "中文", "zh": "EN"}, "anterior": {"en": "Anterior", "zh": "前"}, "posterior": {"en": "Posterior", "zh": "後"}, "superior": {"en": "Superior", "zh": "上"}, "right_axis": {"en": "Right", "zh": "右"}};
+  const STRINGS = {"eyebrow": {"en": "Human &middot; MNI152 space &middot; peripheral&rarr;central pathway", "zh": "人腦 &middot; MNI152 空間 &middot; 周邊&rarr;中樞路徑"}, "title_suffix": {"en": "<span class=\"accent\">Auditory</span> &amp; <span style=\"color:var(--accent-ves)\">Vestibular</span> Pathways", "zh": "<span class=\"accent\">聽覺</span>與<span style=\"color:var(--accent-ves)\">前庭</span>路徑"}, "subtitle": {"en": "Cranial nerve VIII's two ascending pathways, right ear to cortex/cerebellum. The auditory pathway <b>crosses the midline at the trapezoid body</b> &mdash; it starts on the right (cochlea, CN VIII, cochlear nuclei) but the majority of fibers decussate there and continue up the <b>left</b> side (superior olive &rarr; lemniscus &rarr; inferior colliculus &rarr; medial geniculate &rarr; auditory cortex); the vestibular pathway stays right (ipsilateral). Solid meshes are real MNI152-space anatomy; wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.", "zh": "第八對腦神經(前庭耳蝸神經)的兩條上行路徑,從右耳到皮質/小腦。聽覺路徑會<b>在斜方體跨越中線</b>&mdash;訊號從右側(耳蝸、第八對腦神經、耳蝸核)開始,但大部分纖維在此交叉,繼續沿<b>左側</b>上行(上橄欖複合體&rarr;外側蹄系&rarr;下丘&rarr;內側膝狀體&rarr;聽覺皮質);前庭路徑則維持同側(不交叉)。實心網格是真實的 MNI152 空間解剖構造;線框標記是示意性的,代表目前沒有任何免費 3D 圖譜可用的過小或過深結構的概略位置。將滑鼠移到節點上可顯示指示線與切面。"}, "hover_title": {"en": "Hovered structure", "zh": "目前指向的結構"}, "structures_title": {"en": "Structures", "zh": "結構"}, "legend_note": {"en": "Dashed swatch / wireframe sphere = schematic node, not a real segmented structure. Click &quot;Structures&quot; to collapse this panel.", "zh": "虛線色塊／線框球體＝示意節點,並非真實分割出的解剖構造。點擊「結構」可收合此面板。"}, "auditory_pathway_name": {"en": "Auditory pathway", "zh": "聽覺路徑"}, "auditory_pathway_desc": {"en": "cochlea &rarr; cochlear nuclei &rarr; ... &rarr; cortex", "zh": "耳蝸&rarr;耳蝸核&rarr;……&rarr;聽覺皮質"}, "vestibular_pathway_name": {"en": "Vestibular pathway", "zh": "前庭路徑"}, "vestibular_pathway_desc": {"en": "labyrinth &rarr; vestibular nuclei &rarr; MLF / cerebellum", "zh": "迷路&rarr;前庭神經核&rarr;內側縱束／小腦"}, "signal_name": {"en": "Neural signal", "zh": "神經訊號"}, "signal_desc": {"en": "animated pulse, cochlea &rarr; auditory cortex", "zh": "動畫訊號,耳蝸&rarr;聽覺皮質"}, "controls_title": {"en": "Controls", "zh": "操作說明"}, "hint_controls": {"en": "<b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane", "zh": "<b>拖曳</b>旋轉 &nbsp; <b>滾輪</b>縮放 &nbsp; <b>右鍵拖曳</b>平移 &nbsp; <b>滑鼠移到節點</b>顯示切面"}, "hint_units": {"en": "MNI152 space (mm, &times;1000 &rarr; &micro;m)", "zh": "MNI152 空間(mm,&times;1000 &rarr; &micro;m)"}, "lang_button": {"en": "中文", "zh": "EN"}, "anterior": {"en": "Anterior", "zh": "前"}, "posterior": {"en": "Posterior", "zh": "後"}, "superior": {"en": "Superior", "zh": "上"}, "right_axis": {"en": "Right", "zh": "右"}};
   let LANG = "en";
 
   // ---- shared canvas-texture text sprite (axis labels + pathway node
@@ -1485,6 +1508,11 @@ const ORDER = ["skull", "root", "AUDp", "CBLX"];
   // ---- collapsible legend panel (it sits over part of the scene) ----
   document.getElementById("legendToggle").addEventListener("click", () => {
     document.getElementById("legendPanel").classList.toggle("collapsed");
+  });
+
+  // ---- collapsible controls hint panel (starts collapsed) ----
+  document.getElementById("hintToggle").addEventListener("click", () => {
+    document.getElementById("hintPanel").classList.toggle("collapsed");
   });
 
   const legendList = document.getElementById("legendList");
@@ -1732,6 +1760,7 @@ const ORDER = ["skull", "root", "AUDp", "CBLX"];
         txtVestibularName: "vestibular_pathway_name", txtVestibularDesc: "vestibular_pathway_desc",
         txtSignalName: "signal_name", txtSignalDesc: "signal_desc",
         txtLegendNote: "legend_note", txtHintControls: "hint_controls", txtHintUnits: "hint_units",
+        txtControlsTitle: "controls_title",
       }[el.id];
       if (key) el.innerHTML = STRINGS[key][LANG];
     });

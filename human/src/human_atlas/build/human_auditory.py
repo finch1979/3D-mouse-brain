@@ -138,6 +138,7 @@ STRINGS = {
     "vestibular_pathway_desc": {"en": "labyrinth &rarr; vestibular nuclei &rarr; MLF / cerebellum", "zh": "迷路&rarr;前庭神經核&rarr;內側縱束／小腦"},
     "signal_name": {"en": "Neural signal", "zh": "神經訊號"},
     "signal_desc": {"en": "animated pulse, cochlea &rarr; auditory cortex", "zh": "動畫訊號,耳蝸&rarr;聽覺皮質"},
+    "controls_title": {"en": "Controls", "zh": "操作說明"},
     "hint_controls": {"en": "<b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane",
                        "zh": "<b>拖曳</b>旋轉 &nbsp; <b>滾輪</b>縮放 &nbsp; <b>右鍵拖曳</b>平移 &nbsp; <b>滑鼠移到節點</b>顯示切面"},
     "hint_units": {"en": "MNI152 space (mm, &times;1000 &rarr; &micro;m)", "zh": "MNI152 空間(mm,&times;1000 &rarr; &micro;m)"},
@@ -497,7 +498,24 @@ TEMPLATE = """<title>聽覺系統</title>
     text-align: right;
     line-height: 1.6;
     letter-spacing: 0.01em;
+    max-width: 320px;
   }}
+
+  .hint-title--toggle {{
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 10px;
+  }}
+
+  .hint-title--toggle .chevron {{ font-size: 12px; transition: transform 0.15s ease; }}
+
+  .hint-body {{ padding-top: 8px; }}
+
+  .hint.collapsed .hint-body {{ display: none; }}
+  .hint.collapsed .hint-title--toggle .chevron {{ transform: rotate(-90deg); }}
 
   .hint b {{ color: var(--text-dim); font-weight: 500; }}
 
@@ -535,7 +553,7 @@ TEMPLATE = """<title>聽覺系統</title>
   <div class="hover-label" id="hoverLabel"></div>
 </div>
 
-<div class="panel legend ui" id="legendPanel">
+<div class="panel legend ui collapsed" id="legendPanel">
   <div class="legend-title legend-title--toggle" id="legendToggle">
     <span id="txtStructuresTitle">Structures</span>
     <span class="chevron">&#9660;</span>
@@ -570,9 +588,15 @@ TEMPLATE = """<title>聽覺系統</title>
   </div>
 </div>
 
-<div class="panel hint ui">
-  <span id="txtHintControls"><b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane</span><br />
-  <span id="txtHintUnits">MNI152 space (mm, &times;1000 &rarr; &micro;m)</span>
+<div class="panel hint ui collapsed" id="hintPanel">
+  <div class="hint-title--toggle" id="hintToggle">
+    <span id="txtControlsTitle">Controls</span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="hint-body" id="hintBody">
+    <span id="txtHintControls"><b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane</span><br />
+    <span id="txtHintUnits">MNI152 space (mm, &times;1000 &rarr; &micro;m)</span>
+  </div>
 </div>
 
 {three_js}
@@ -733,6 +757,11 @@ const ORDER = {order_js};
   // ---- collapsible legend panel (it sits over part of the scene) ----
   document.getElementById("legendToggle").addEventListener("click", () => {{
     document.getElementById("legendPanel").classList.toggle("collapsed");
+  }});
+
+  // ---- collapsible controls hint panel (starts collapsed) ----
+  document.getElementById("hintToggle").addEventListener("click", () => {{
+    document.getElementById("hintPanel").classList.toggle("collapsed");
   }});
 
   const legendList = document.getElementById("legendList");
@@ -980,6 +1009,7 @@ const ORDER = {order_js};
         txtVestibularName: "vestibular_pathway_name", txtVestibularDesc: "vestibular_pathway_desc",
         txtSignalName: "signal_name", txtSignalDesc: "signal_desc",
         txtLegendNote: "legend_note", txtHintControls: "hint_controls", txtHintUnits: "hint_units",
+        txtControlsTitle: "controls_title",
       }}[el.id];
       if (key) el.innerHTML = STRINGS[key][LANG];
     }});

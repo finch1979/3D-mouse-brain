@@ -1,0 +1,128 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661,
+    "anchor_um": {
+      "right": [
+        35165.79793622821,
+        -21954.227248364135,
+        4906.2527654526675
+      ],
+      "left": [
+        -35865.98755484189,
+        -21896.545290488804,
+        4986.966694217389
+      ]
+    }
+  },
+  "skull": {
+    "name": "Approx. head size (brain +9mm, not real skull anatomy)",
+    "color": "FFFFFF",
+    "mesh_path": "mesh/skull.obj",
+    "vertex_count": 18681,
+    "anchor_um": {
+      "right": [
+        39544.37576400097,
+        -21138.104814702812,
+        5095.074483948774
+      ],
+      "left": [
+        -40219.27871576174,
+        -21087.484798346057,
+        5198.163493172123
+      ]
+    }
+  },
+  "OLFC": {
+    "name": "Primary olfactory cortex (AAL3 olfactory region)",
+    "color": "8FBF7F",
+    "mesh_path": "mesh/OLFC.obj",
+    "vertex_count": 971,
+    "anchor_um": {
+      "right": [
+        10062.023053128049,
+        14821.576961401492,
+        -12568.846222921327
+      ],
+      "left": [
+        -8472.797981476273,
+        14360.32423098304,
+        -12222.094250911368
+      ]
+    }
+  },
+  "AMY": {
+    "name": "Amygdala (olfactory amygdala target)",
+    "color": "E0A458",
+    "mesh_path": "mesh/AMY.obj",
+    "vertex_count": 674,
+    "anchor_um": {
+      "right": [
+        27213.778277379693,
+        -485.29314663821845,
+        -19232.752567175237
+      ],
+      "left": [
+        -23310.32412048843,
+        -1984.7479601497228,
+        -18573.3154942116
+      ]
+    }
+  },
+  "ENT": {
+    "name": "Entorhinal cortex (parahippocampal proxy)",
+    "color": "C98FBF",
+    "mesh_path": "mesh/ENT.obj",
+    "vertex_count": 2637,
+    "anchor_um": {
+      "right": [
+        25457.570968943684,
+        -16447.08566597779,
+        -21102.337005107413
+      ],
+      "left": [
+        -21762.769744439203,
+        -17842.87885171827,
+        -21215.52233697683
+      ]
+    }
+  },
+  "MD": {
+    "name": "Mediodorsal thalamus (AAL3 Thal_MDm + Thal_MDl)",
+    "color": "D094D9",
+    "mesh_path": "mesh/MD.obj",
+    "vertex_count": 530,
+    "anchor_um": {
+      "right": [
+        5116.759487871006,
+        -14687.729422081056,
+        4820.866479131838
+      ],
+      "left": [
+        -5442.008645178176,
+        -15288.293586636899,
+        5486.224856539093
+      ]
+    }
+  },
+  "OFC": {
+    "name": "Orbitofrontal cortex (AAL3 OFCmed + OFCpost)",
+    "color": "6FB0E0",
+    "mesh_path": "mesh/OFC.obj",
+    "vertex_count": 2488,
+    "anchor_um": {
+      "right": [
+        24406.369765201645,
+        32345.435854957985,
+        -20017.499312072134
+      ],
+      "left": [
+        -21559.05217513816,
+        31022.15455147958,
+        -20022.569723727614
+      ]
+    }
+  }
+}

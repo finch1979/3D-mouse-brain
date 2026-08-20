@@ -1,0 +1,56 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661,
+    "anchor_um": {
+      "right": [
+        35165.79793622821,
+        -21954.227248364135,
+        4906.2527654526675
+      ],
+      "left": [
+        -35865.98755484189,
+        -21896.545290488804,
+        4986.966694217389
+      ]
+    }
+  },
+  "skull": {
+    "name": "Approx. head size (brain +9mm, not real skull anatomy)",
+    "color": "FFFFFF",
+    "mesh_path": "mesh/skull.obj",
+    "vertex_count": 18681,
+    "anchor_um": {
+      "right": [
+        39544.37576400097,
+        -21138.104814702812,
+        5095.074483948774
+      ],
+      "left": [
+        -40219.27871576174,
+        -21087.484798346057,
+        5198.163493172123
+      ]
+    }
+  },
+  "V1": {
+    "name": "Primary visual cortex (calcarine / Intracalcarine cortex)",
+    "color": "5A8FE0",
+    "mesh_path": "mesh/V1.obj",
+    "vertex_count": 5793,
+    "anchor_um": {
+      "right": [
+        11620.632977844149,
+        -73623.90159884936,
+        7902.048018366413
+      ],
+      "left": [
+        -10549.816135825573,
+        -75058.58743623331,
+        7695.292812344511
+      ]
+    }
+  }
+}

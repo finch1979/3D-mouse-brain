@@ -1,41 +1,52 @@
 """
-Build a self-contained 3D viewer for the human auditory + vestibular
-pathway (peripheral -> central), per
-https://neupsykey.com/the-auditory-and-vestibular-pathways-and-approach-to-hearing-loss-and-dizzinessvertigo-cranial-nerve-8/
+Build a self-contained 3D viewer for the human visual pathway (retina to
+cortex), plus its reflex branch to the superior colliculus / oculomotor
+nuclei. Sibling to human_auditory.py -- same architecture, same rigor about
+what's real anatomy vs. schematic, applied to vision instead of hearing.
 
-Combines REAL MNI152-space structure meshes for the structures that have a
-practical open-data source, with SCHEMATIC waypoints (same technique as the
-Papez circuit in outputs/human/limbic/human_limbic_3d.html) for everything
-else - most of the pathway (cochlea, CN8, cochlear nuclei, superior olivary
-complex, nucleus of the lateral lemniscus, inferior colliculus, medial
-geniculate nucleus, vestibular labyrinth/ganglion/nuclei, MLF) has no
-freely-downloadable segmentation at any usable resolution; see
-docs/architecture (or the project conversation history) for the source
-survey. Schematic waypoint coordinates below are approximate, illustrative
-placements (right hemisphere), not derived from a specific voxel atlas.
+Combines a REAL MNI152-space structure mesh (primary visual cortex) with
+SCHEMATIC waypoints for everything else - retina, optic nerve, optic
+chiasm, optic tract, lateral geniculate nucleus, superior colliculus, and
+the oculomotor/trochlear/abducens nuclear complex have no freely
+downloadable segmentation at any usable resolution. Schematic waypoint
+coordinates below are approximate, illustrative placements (right eye),
+not derived from a specific voxel atlas.
 
-Real data sources (both already in MNI152 space - the FSL/nilearn default):
-  - Whole-brain outline: nilearn's bundled MNI152 brain mask.
-  - Auditory cortex (Heschl's gyrus): Harvard-Oxford cortical atlas (FSL
-    data, via nilearn).
-  - Cerebellar Lobule X (flocculonodular lobe / vestibulocerebellum):
-    Diedrichsen (2009) probabilistic cerebellar atlas, discrete MNI-space
-    segmentation, from github.com/DiedrichsenLab/cerebellar_atlases
-    (labels 26/27/28 = Left_X/Vermis_X/Right_X).
+Real data source (already in MNI152 space - the FSL/nilearn default):
+  - Whole-brain outline: nilearn's bundled MNI152 brain mask (same as
+    human_auditory.py).
+  - Primary visual cortex (V1): Harvard-Oxford cortical atlas, label
+    "Intracalcarine Cortex" (index 24 in cort-maxprob-thr25-1mm as of this
+    build) - the cortex lining the calcarine sulcus, i.e. striate cortex /
+    V1. Reuses the SAME atlas + cache dir human_auditory.py already
+    downloads for Heschl's Gyrus, so no redundant fetch.
 
-All real meshes are scaled from mm to micrometers (x1000) to match this
-project's existing human-mesh convention (see human_limbic_3d.html's root
-mesh, bbox ~180000 x 150000 x 144000 um for a ~180x150x144mm adult brain).
+All real meshes are scaled from mm to micrometers (x1000), matching the
+rest of this project's human-mesh convention.
+
+IMPORTANT laterality note - the visual pathway PARTIALLY decussates at the
+optic chiasm, unlike audition's single full crossing:
+  - Temporal (lateral) retina fibers stay UNCROSSED (ipsilateral) -> same-
+    side optic tract -> same-side LGN -> same-side V1.
+  - Nasal (medial) retina fibers CROSS at the chiasm (contralateral) ->
+    opposite-side optic tract -> opposite-side LGN -> opposite-side V1.
+  - Net clinical fact: each hemisphere's visual cortex represents the
+    OPPOSITE half of the visual field (the lens inverts the image, so
+    "temporal retina" sees the nasal/medial visual field and vice versa).
+    Get this backwards and the diagram teaches the wrong thing - don't
+    "helpfully" straighten the two branches onto the same side.
+  - Only one eye (right) is modeled, matching human_auditory.py's "right
+    ear" convention - its retina is a single origin node that splits into
+    the two fiber populations at the chiasm waypoint.
 
 Usage:
-    python -m human_atlas.build.human_auditory
+    python -m human_atlas.build.human_visual
 """
 
 import json
 
 import nibabel as nib
 import numpy as np
-import requests
 import trimesh
 from nilearn import datasets
 from scipy.ndimage import binary_dilation, zoom
@@ -46,98 +57,76 @@ from human_atlas.common.paths import DATA_CACHE_DIR, OUTPUTS_DIR, WEB_LIB_DIR
 from human_atlas.render.bake_meshes import mesh_to_region_js
 
 MM_TO_UM = 1000.0
-CACHE_DIR = DATA_CACHE_DIR / "human_auditory"
-OUT_DIR = OUTPUTS_DIR / "auditory_system"
+# Reuse human_auditory.py's Harvard-Oxford cache dir - identical dataset,
+# no need to download it twice.
+HO_CACHE_DIR = DATA_CACHE_DIR / "human_auditory"
+OUT_DIR = OUTPUTS_DIR / "visual_system"
 MESH_DIR = OUT_DIR / "mesh"
-OUT_FILE = "human_auditory_system_3d.html"
+OUT_FILE = "human_visual_system_3d.html"
 
-CEREBELLAR_ATLAS_URL = (
-    "https://raw.githubusercontent.com/DiedrichsenLab/cerebellar_atlases/"
-    "master/Diedrichsen_2009/atl-Anatom_space-MNI_dseg.nii"
-)
-LOBULE_X_LABELS = [26, 27, 28]  # Left_X, Vermis_X, Right_X (flocculonodular lobe)
 ROOT_DOWNSAMPLE = 0.35  # whole-brain mask is ~2M voxels; downsample before marching cubes
 SKULL_MARGIN_MM = 9  # dilation margin (mm, ~1mm/voxel) for the approx. head-size context shell
 
-# Approximate, illustrative MNI coordinates (mm, RAS) + an approximate real
-# radius (mm, for the schematic marker sphere size only - these are rough
-# educational scale references, not measured from an atlas) for structures
-# with no practical open mesh source. Anatomically-informed placements, not
-# derived from a specific voxel atlas - schematic only.
-#
-# IMPORTANT laterality note: the ascending auditory pathway crosses the
-# midline. A right-ear signal travels ipsilateral (right) through the
-# cochlear nuclei, then the MAJORITY of fibers decussate at the trapezoid
-# body and continue up the CONTRALATERAL (left) side - superior olivary
-# complex, lateral lemniscus, inferior colliculus, medial geniculate
-# nucleus, auditory cortex are all drawn on the left for this reason (a
-# smaller uncrossed/ipsilateral projection also exists at every level from
-# the SOC upward but isn't drawn, to keep the diagram legible). Get this
-# backwards and the diagram teaches the wrong thing, so don't "helpfully"
-# straighten it back onto one side.
-AUDITORY_SCHEMATIC = {
-    "Cochlea": {"pos": (52, -24, -34), "r": 4.5},
-    "CN8c": {"pos": (48, -30, -34), "r": 1.5},
-    "CochNuc": {"pos": (16, -40, -46), "r": 3},
-    "Decussation": {"pos": (0, -38, -44), "r": 1.5},
-    "SOC": {"pos": (-12, -36, -42), "r": 2},
-    "NLL": {"pos": (-10, -34, -24), "r": 2},
-    "IC": {"pos": (-6, -34, -12), "r": 5},
-    "MG": {"pos": (-16, -25, -6), "r": 4},
+# Approximate, illustrative MNI coordinates (mm, RAS) + an approximate
+# marker radius (mm) for structures with no practical open mesh source.
+# Schematic only - see laterality note above for the crossed/uncrossed rule.
+VISUAL_SCHEMATIC = {
+    "Retina": {"pos": (30, 55, -22), "r": 4},
+    "OpticNerve": {"pos": (20, 32, -22), "r": 1.5},
+    "Chiasm": {"pos": (0, 4, -14), "r": 2.5},
+    "TractR": {"pos": (14, -6, -10), "r": 1.5},
+    "TractL": {"pos": (-14, -6, -10), "r": 1.5},
+    "LGN_R": {"pos": (24, -24, -2), "r": 2.5},
+    "LGN_L": {"pos": (-24, -24, -2), "r": 2.5},
+    "SC": {"pos": (4, -30, -6), "r": 2.5},
+    "CNIII": {"pos": (0, -22, -14), "r": 2},
 }
-AUDITORY_ORDER = ["Cochlea", "CN8c", "CochNuc", "Decussation", "SOC", "NLL", "IC", "MG", "AUDp"]
-AUDITORY_LABELS = {
-    "Cochlea": {"en": "① Cochlea (right ear)", "zh": "①耳蝸(右耳)"},
-    "CN8c": {"en": "② CN VIII (cochlear)", "zh": "②第八對腦神經(耳蝸支)"},
-    "CochNuc": {"en": "③ Cochlear nuclei", "zh": "③耳蝸核"},
-    "Decussation": {"en": "④ Trapezoid body — crosses midline", "zh": "④斜方體—跨越中線"},
-    "SOC": {"en": "⑤ Superior olivary complex (L)", "zh": "⑤上橄欖複合體(左)"},
-    "NLL": {"en": "⑥ Lateral lemniscus / NLL (L)", "zh": "⑥外側蹄系(左)"},
-    "IC": {"en": "⑦ Inferior colliculus (L)", "zh": "⑦下丘(左)"},
-    "MG": {"en": "⑧ Medial geniculate nucleus (L)", "zh": "⑧內側膝狀體(左)"},
-    "AUDp": {"en": "⑨ Auditory cortex (L)", "zh": "⑨聽覺皮質(左)"},
-}
-AUDITORY_ANCHOR_SIDE = "left"  # AUDp endpoint: anchor to the contralateral (left) mesh blob
+VISUAL_TRUNK = ["Retina", "OpticNerve", "Chiasm"]
+# Group 1: the conscious-vision (geniculostriate) system - two branches that
+# share the trunk above then diverge at the chiasm, one staying ipsilateral,
+# one crossing. Both terminate on a REAL mesh (V1_R / V1_L, appended in main()).
+VISUAL_UNCROSSED_ORDER = VISUAL_TRUNK + ["TractR", "LGN_R", "V1_R"]
+VISUAL_CROSSED_ORDER = VISUAL_TRUNK + ["TractL", "LGN_L", "V1_L"]
+# Group 2: the reflex (tectal) branch - pupillary light reflex / eye-movement
+# reflex circuit, entirely schematic. Arbitrarily continues via the same
+# uncrossed tract waypoint (both tracts genuinely contribute in reality).
+REFLEX_ORDER = VISUAL_TRUNK + ["TractR", "SC", "CNIII"]
 
-VESTIBULAR_SCHEMATIC = {
-    "Labyrinth": {"pos": (54, -22, -28), "r": 4.5},
-    "CN8v": {"pos": (48, -28, -32), "r": 1.5},
-    "VestGang": {"pos": (46, -30, -34), "r": 2},
-    "VestNuc": {"pos": (14, -42, -48), "r": 5},
-    "MLF": {"pos": (3, -30, -16), "r": 1.5},
+VISUAL_LABELS = {
+    "Retina": {"en": "① Retina (right eye)", "zh": "①視網膜(右眼)"},
+    "OpticNerve": {"en": "② Optic nerve (CN II, right)", "zh": "②視神經(第二對腦神經,右)"},
+    "Chiasm": {"en": "③ Optic chiasm — partial decussation", "zh": "③視交叉—部分交叉"},
+    "TractR": {"en": "④a Uncrossed fibers (temporal retina) → right optic tract", "zh": "④a非交叉纖維(顳側視網膜)→右視束"},
+    "TractL": {"en": "④b Crossed fibers (nasal retina) → left optic tract", "zh": "④b交叉纖維(鼻側視網膜)→左視束"},
+    "SC": {"en": "④c Superior colliculus — reflex branch", "zh": "④c上丘—反射分支"},
+    "LGN_R": {"en": "⑤a Right lateral geniculate nucleus", "zh": "⑤a右外側膝狀體"},
+    "LGN_L": {"en": "⑤b Left lateral geniculate nucleus", "zh": "⑤b左外側膝狀體"},
+    "CNIII": {"en": "⑤c Oculomotor nuclei (III/IV/VI, bilateral)", "zh": "⑤c動眼神經核群(第三、四、六對腦神經,雙側)"},
+    "V1_R": {"en": "⑥a Right primary visual cortex (V1)", "zh": "⑥a右初級視覺皮質"},
+    "V1_L": {"en": "⑥b Left primary visual cortex (V1)", "zh": "⑥b左初級視覺皮質"},
 }
-VESTIBULAR_TRUNK = ["Labyrinth", "CN8v", "VestGang", "VestNuc"]
-VESTIBULAR_LABELS = {
-    "Labyrinth": {"en": "① Vestibular labyrinth (right ear)", "zh": "①前庭迷路(右耳)"},
-    "CN8v": {"en": "② CN VIII (vestibular)", "zh": "②第八對腦神經(前庭支)"},
-    "VestGang": {"en": "③ Vestibular ganglion", "zh": "③前庭神經節"},
-    "VestNuc": {"en": "④ Vestibular nuclei", "zh": "④前庭神經核"},
-    "MLF": {"en": "⑤a MLF / oculomotor nuclei (bilateral)", "zh": "⑤a內側縱束/動眼神經核(雙側)"},
-    "CBLX": {"en": "⑤b Vestibulocerebellum (Lobule X)", "zh": "⑤b前庭小腦(第X小葉)"},
-}
-VESTIBULAR_ANCHOR_SIDE = "right"  # CBLX endpoint: vestibular projections are predominantly ipsilateral
 
-# All static UI copy, en/zh. Node-label sprites (AUDITORY_LABELS etc. above)
-# are translated separately since they're baked into canvas textures, not DOM text.
+# All static UI copy, en/zh. Node-label sprites (VISUAL_LABELS above) are
+# translated separately since they're baked into canvas textures, not DOM text.
 STRINGS = {
     "eyebrow": {"en": "Human &middot; MNI152 space &middot; peripheral&rarr;central pathway",
                 "zh": "人腦 &middot; MNI152 空間 &middot; 周邊&rarr;中樞路徑"},
-    "title_suffix": {"en": '<span class="accent">Auditory</span> &amp; <span style="color:var(--accent-ves)">Vestibular</span> Pathways',
-                      "zh": '<span class="accent">聽覺</span>與<span style="color:var(--accent-ves)">前庭</span>路徑'},
+    "title_suffix": {"en": '<span class="accent">Visual</span> &amp; <span style="color:var(--accent2)">Reflex</span> Pathways',
+                      "zh": '<span class="accent">視覺</span>與<span style="color:var(--accent2)">反射</span>路徑'},
     "subtitle": {
-        "en": "Cranial nerve VIII's two ascending pathways, right ear to cortex/cerebellum. The auditory pathway <b>crosses the midline at the trapezoid body</b> &mdash; it starts on the right (cochlea, CN VIII, cochlear nuclei) but the majority of fibers decussate there and continue up the <b>left</b> side (superior olive &rarr; lemniscus &rarr; inferior colliculus &rarr; medial geniculate &rarr; auditory cortex); the vestibular pathway stays right (ipsilateral). Solid meshes are real MNI152-space anatomy; wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.",
-        "zh": "第八對腦神經(前庭耳蝸神經)的兩條上行路徑,從右耳到皮質/小腦。聽覺路徑會<b>在斜方體跨越中線</b>&mdash;訊號從右側(耳蝸、第八對腦神經、耳蝸核)開始,但大部分纖維在此交叉,繼續沿<b>左側</b>上行(上橄欖複合體&rarr;外側蹄系&rarr;下丘&rarr;內側膝狀體&rarr;聽覺皮質);前庭路徑則維持同側(不交叉)。實心網格是真實的 MNI152 空間解剖構造;線框標記是示意性的,代表目前沒有任何免費 3D 圖譜可用的過小或過深結構的概略位置。將滑鼠移到節點上可顯示指示線與切面。",
+        "en": "The visual pathway from right eye to cortex, showing the optic chiasm's <b>partial decussation</b> &mdash; temporal (lateral) retina fibers stay <b>uncrossed</b> (ipsilateral), nasal (medial) retina fibers <b>cross</b> at the chiasm (contralateral); net result, each hemisphere's visual cortex represents the <b>opposite</b> half of the visual field. A reflex branch continues from the chiasm to the superior colliculus and oculomotor nuclei (pupillary / eye-movement reflexes). Solid meshes are real MNI152-space anatomy; wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.",
+        "zh": "從右眼到皮質的視覺路徑,呈現視交叉的<b>部分交叉</b>特性&mdash;顳側(外側)視網膜纖維維持<b>不交叉</b>(同側),鼻側(內側)視網膜纖維在視交叉<b>交叉</b>(對側);結果是每側大腦的視覺皮質代表的是<b>對側</b>視野。另有一條反射分支從視交叉延伸到上丘與動眼神經核群(瞳孔反射／眼球運動反射)。實心網格是真實的 MNI152 空間解剖構造;線框標記是示意性的,代表目前沒有任何免費 3D 圖譜可用的過小或過深結構的概略位置。將滑鼠移到節點上可顯示指示線與切面。",
     },
     "hover_title": {"en": "Hovered structure", "zh": "目前指向的結構"},
     "structures_title": {"en": "Structures", "zh": "結構"},
     "legend_note": {"en": "Dashed swatch / wireframe sphere = schematic node, not a real segmented structure. Click &quot;Structures&quot; to collapse this panel.",
                      "zh": "虛線色塊／線框球體＝示意節點,並非真實分割出的解剖構造。點擊「結構」可收合此面板。"},
-    "auditory_pathway_name": {"en": "Auditory pathway", "zh": "聽覺路徑"},
-    "auditory_pathway_desc": {"en": "cochlea &rarr; cochlear nuclei &rarr; ... &rarr; cortex", "zh": "耳蝸&rarr;耳蝸核&rarr;……&rarr;聽覺皮質"},
-    "vestibular_pathway_name": {"en": "Vestibular pathway", "zh": "前庭路徑"},
-    "vestibular_pathway_desc": {"en": "labyrinth &rarr; vestibular nuclei &rarr; MLF / cerebellum", "zh": "迷路&rarr;前庭神經核&rarr;內側縱束／小腦"},
+    "visual_pathway_name": {"en": "Visual pathway", "zh": "視覺路徑"},
+    "visual_pathway_desc": {"en": "retina &rarr; chiasm &rarr; LGN &rarr; ... &rarr; V1 (crossed + uncrossed)", "zh": "視網膜&rarr;視交叉&rarr;外側膝狀體&rarr;……&rarr;初級視覺皮質(交叉+不交叉)"},
+    "reflex_pathway_name": {"en": "Reflex pathway", "zh": "反射路徑"},
+    "reflex_pathway_desc": {"en": "chiasm &rarr; superior colliculus &rarr; oculomotor nuclei", "zh": "視交叉&rarr;上丘&rarr;動眼神經核群"},
     "signal_name": {"en": "Neural signal", "zh": "神經訊號"},
-    "signal_desc": {"en": "animated pulse, cochlea &rarr; auditory cortex", "zh": "動畫訊號,耳蝸&rarr;聽覺皮質"},
+    "signal_desc": {"en": "animated light pulse, retina &rarr; visual cortex", "zh": "動畫光訊號,視網膜&rarr;視覺皮質"},
     "controls_title": {"en": "Controls", "zh": "操作說明"},
     "hint_controls": {"en": "<b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane",
                        "zh": "<b>拖曳</b>旋轉 &nbsp; <b>滾輪</b>縮放 &nbsp; <b>右鍵拖曳</b>平移 &nbsp; <b>滑鼠移到節點</b>顯示切面"},
@@ -148,16 +137,6 @@ STRINGS = {
     "superior": {"en": "Superior", "zh": "上"},
     "right_axis": {"en": "Right", "zh": "右"},
 }
-
-
-def download(url, out_path):
-    if out_path.exists():
-        return out_path
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    r = requests.get(url, timeout=120)
-    r.raise_for_status()
-    out_path.write_bytes(r.content)
-    return out_path
 
 
 def mask_to_mesh(mask, affine, downsample=1.0, smooth_iterations=15):
@@ -175,23 +154,17 @@ def mask_to_mesh(mask, affine, downsample=1.0, smooth_iterations=15):
 
 def main():
     MESH_DIR.mkdir(parents=True, exist_ok=True)
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    HO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
     print("Loading MNI152 brain mask + Harvard-Oxford cortical atlas ...")
     mni_img = datasets.load_mni152_brain_mask()
-    ho = datasets.fetch_atlas_harvard_oxford("cort-maxprob-thr25-1mm", data_dir=str(CACHE_DIR))
+    ho = datasets.fetch_atlas_harvard_oxford("cort-maxprob-thr25-1mm", data_dir=str(HO_CACHE_DIR))
     ho_img = nib.load(ho.maps) if isinstance(ho.maps, str) else ho.maps
     ho_data = ho_img.get_fdata()
-    heschl_idx = [i for i, name in enumerate(ho.labels) if "Heschl" in name]
-    if not heschl_idx:
-        raise RuntimeError(f"Heschl's Gyrus label not found in {ho.labels}")
-    aud_mask = np.isin(ho_data, heschl_idx)
-
-    print("Downloading Diedrichsen (2009) cerebellar atlas (Lobule X) ...")
-    cereb_path = download(CEREBELLAR_ATLAS_URL, CACHE_DIR / "atl-Anatom_space-MNI_dseg.nii")
-    cereb_img = nib.load(str(cereb_path))
-    cereb_data = cereb_img.get_fdata()
-    lobule_x_mask = np.isin(cereb_data, LOBULE_X_LABELS)
+    v1_idx = [i for i, name in enumerate(ho.labels) if "Intracalcarine" in name]
+    if not v1_idx:
+        raise RuntimeError(f"Intracalcarine Cortex label not found in {ho.labels}")
+    v1_mask = np.isin(ho_data, v1_idx)
 
     print("Building an approximate head-size context shell (dilated brain mask) ...")
     mni_mask_bool = mni_img.get_fdata().astype(bool)
@@ -208,15 +181,10 @@ def main():
             "downsample": ROOT_DOWNSAMPLE, "smooth": 5,
             "color": "FFFFFF", "name": f"Approx. head size (brain +{SKULL_MARGIN_MM}mm, not real skull anatomy)",
         },
-        "AUDp": {
-            "mask": aud_mask, "affine": ho_img.affine,
+        "V1": {
+            "mask": v1_mask, "affine": ho_img.affine,
             "downsample": 1.0, "smooth": 15,
-            "color": "E0A458", "name": "Auditory cortex (Heschl's gyrus)",
-        },
-        "CBLX": {
-            "mask": lobule_x_mask, "affine": cereb_img.affine,
-            "downsample": 1.0, "smooth": 15,
-            "color": "6F8FE0", "name": "Vestibulocerebellum (cerebellar Lobule X)",
+            "color": "5A8FE0", "name": "Primary visual cortex (calcarine / Intracalcarine cortex)",
         },
     }
 
@@ -228,11 +196,13 @@ def main():
         tm = mask_to_mesh(s["mask"], s["affine"], downsample=s["downsample"], smooth_iterations=s["smooth"])
         obj_path = MESH_DIR / f"{acr}.obj"
         tm.export(obj_path)
-        # AUDp/CBLX are bilateral (left+right blobs, +/- a vermis for CBLX); a
-        # plain centroid collapses toward the midline, floating between the
-        # two blobs rather than inside either one. Compute both hemispheres'
-        # centroids so each pathway can anchor to whichever side it actually
-        # terminates on (auditory crosses to the left; vestibular stays right).
+        # V1 is bilateral (left+right blobs); a plain centroid collapses
+        # toward the midline, floating between the two blobs rather than
+        # inside either one. Compute both hemispheres' means so BOTH the
+        # crossed and uncrossed branches can anchor to the side they
+        # actually terminate on - unlike audition, vision genuinely
+        # terminates on both sides from one eye, so no single ANCHOR_SIDE
+        # constant is needed here.
         right_verts = tm.vertices[tm.vertices[:, 0] > 0]
         left_verts = tm.vertices[tm.vertices[:, 0] < 0]
         anchors[acr] = {
@@ -248,34 +218,29 @@ def main():
 
     (MESH_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
     regions_js = "{" + ",".join(regions_js_parts) + "}"
-    order_js = json.dumps(["skull", "root", "AUDp", "CBLX"])
+    order_js = json.dumps(["skull", "root", "V1"])
 
     # derive EXTENT from the actual root mesh bounding box, not a guess
     root_tm = trimesh.load(MESH_DIR / "root.obj")
     extent = float((root_tm.vertices.max(axis=0) - root_tm.vertices.min(axis=0)).max())
 
-    # schematic waypoints in um as [x, y, z, marker_radius_um]; real endpoints
-    # anchored to whichever hemisphere of the real mesh the pathway actually ends on
-    aud_waypoints = {
+    # schematic waypoints in um as [x, y, z, marker_radius_um]; real
+    # endpoints anchored to whichever hemisphere of the V1 mesh each branch
+    # actually ends on
+    vis_waypoints = {
         k: [v["pos"][0] * MM_TO_UM, v["pos"][1] * MM_TO_UM, v["pos"][2] * MM_TO_UM, v["r"] * MM_TO_UM]
-        for k, v in AUDITORY_SCHEMATIC.items()
+        for k, v in VISUAL_SCHEMATIC.items()
     }
-    aud_waypoints["AUDp"] = anchors["AUDp"][AUDITORY_ANCHOR_SIDE] + [0]
-    ves_waypoints = {
-        k: [v["pos"][0] * MM_TO_UM, v["pos"][1] * MM_TO_UM, v["pos"][2] * MM_TO_UM, v["r"] * MM_TO_UM]
-        for k, v in VESTIBULAR_SCHEMATIC.items()
-    }
-    ves_waypoints["CBLX"] = anchors["CBLX"][VESTIBULAR_ANCHOR_SIDE] + [0]
+    vis_waypoints["V1_R"] = anchors["V1"]["right"] + [0]
+    vis_waypoints["V1_L"] = anchors["V1"]["left"] + [0]
 
     legend_meta = [
         {"acr": "skull", "name_en": manifest["skull"]["name"], "name_zh": f"頭部大小示意(腦部外擴{SKULL_MARGIN_MM}mm,非真實顱骨解剖)",
          "color": "FFFFFF", "outline": True, "default_checked": True},
         {"acr": "root", "name_en": "Whole-brain outline (MNI152)", "name_zh": "全腦輪廓(MNI152)",
          "color": "CCCCCC", "outline": True, "default_checked": True},
-        {"acr": "AUDp", "name_en": manifest["AUDp"]["name"], "name_zh": "聽覺皮質(顳橫回)",
-         "color": manifest["AUDp"]["color"], "outline": False, "default_checked": True},
-        {"acr": "CBLX", "name_en": manifest["CBLX"]["name"], "name_zh": "前庭小腦(小腦第X葉)",
-         "color": manifest["CBLX"]["color"], "outline": False, "default_checked": False},
+        {"acr": "V1", "name_en": manifest["V1"]["name"], "name_zh": "初級視覺皮質(距狀溝皮質)",
+         "color": manifest["V1"]["color"], "outline": False, "default_checked": True},
     ]
 
     three_js = (WEB_LIB_DIR / "three.min.js").read_text(encoding="utf-8")
@@ -289,14 +254,12 @@ def main():
         order_js=order_js,
         strings_json=json.dumps(STRINGS, ensure_ascii=False),
         legend_meta_json=json.dumps(legend_meta, ensure_ascii=False),
-        aud_waypoints_json=json.dumps(aud_waypoints),
-        aud_order_json=json.dumps(AUDITORY_ORDER),
-        aud_labels_json=json.dumps(AUDITORY_LABELS, ensure_ascii=False),
-        aud_real_json=json.dumps(["AUDp"]),
-        ves_waypoints_json=json.dumps(ves_waypoints),
-        ves_trunk_json=json.dumps(VESTIBULAR_TRUNK),
-        ves_labels_json=json.dumps(VESTIBULAR_LABELS, ensure_ascii=False),
-        ves_real_json=json.dumps(["CBLX"]),
+        vis_waypoints_json=json.dumps(vis_waypoints),
+        vis_labels_json=json.dumps(VISUAL_LABELS, ensure_ascii=False),
+        vis_real_json=json.dumps(["V1_R", "V1_L"]),
+        uncrossed_order_json=json.dumps(VISUAL_UNCROSSED_ORDER),
+        crossed_order_json=json.dumps(VISUAL_CROSSED_ORDER),
+        reflex_order_json=json.dumps(REFLEX_ORDER),
     )
 
     out_path = OUT_DIR / OUT_FILE
@@ -310,7 +273,7 @@ def main():
     print(f"Wrote {out_path} ({out_path.stat().st_size / 1024 / 1024:.2f} MB)")
 
 
-TEMPLATE = """<title>聽覺系統</title>
+TEMPLATE = """<title>視覺系統</title>
 <style>
   :root {{
     --bg: #12151a;
@@ -319,8 +282,8 @@ TEMPLATE = """<title>聽覺系統</title>
     --text: #e9edf1;
     --text-dim: #8b96a3;
     --text-faint: #5c6672;
-    --accent: #e0a458;
-    --accent-ves: #6fb0e0;
+    --accent: #5a8fe0;
+    --accent2: #8fe0a0;
     --mono: ui-monospace, "Cascadia Code", "SF Mono", "JetBrains Mono", Consolas, "Liberation Mono", monospace;
     --sans: -apple-system, "Segoe UI", system-ui, Roboto, sans-serif;
   }}
@@ -550,8 +513,8 @@ TEMPLATE = """<title>聽覺系統</title>
 
 <header class="ui">
   <span class="eyebrow" id="txtEyebrow">Human &middot; MNI152 space &middot; peripheral&rarr;central pathway</span>
-  <h1>聽覺系統 <span id="txtTitleSuffix"><span class="accent">Auditory</span> &amp; <span style="color:var(--accent-ves)">Vestibular</span> Pathways</span></h1>
-  <span class="subtitle" id="txtSubtitle">Cranial nerve VIII's two ascending pathways, right ear to cortex/cerebellum. The auditory pathway <b>crosses the midline at the trapezoid body</b> &mdash; it starts on the right (cochlea, CN VIII, cochlear nuclei) but the majority of fibers decussate there and continue up the <b>left</b> side (superior olive &rarr; lemniscus &rarr; inferior colliculus &rarr; medial geniculate &rarr; auditory cortex); the vestibular pathway stays right (ipsilateral). Solid meshes are real MNI152-space anatomy; wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.</span>
+  <h1>視覺系統 <span id="txtTitleSuffix"><span class="accent">Visual</span> &amp; <span style="color:var(--accent2)">Reflex</span> Pathways</span></h1>
+  <span class="subtitle" id="txtSubtitle">The visual pathway from right eye to cortex, showing the optic chiasm's <b>partial decussation</b> &mdash; temporal (lateral) retina fibers stay <b>uncrossed</b> (ipsilateral), nasal (medial) retina fibers <b>cross</b> at the chiasm (contralateral); net result, each hemisphere's visual cortex represents the <b>opposite</b> half of the visual field. A reflex branch continues from the chiasm to the superior colliculus and oculomotor nuclei (pupillary / eye-movement reflexes). Solid meshes are real MNI152-space anatomy; wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.</span>
 </header>
 
 <div class="panel hover-info ui" id="hoverPanel">
@@ -566,28 +529,28 @@ TEMPLATE = """<title>聽覺系統</title>
   </div>
   <div class="legend-body" id="legendBody">
     <div id="legendList"></div>
-    <label class="legend-row legend-row--outline" data-acr="auditory">
-      <input type="checkbox" id="auditoryToggle" checked />
-      <span class="swatch" style="--swatch:#e0a458"></span>
+    <label class="legend-row legend-row--outline" data-acr="visual">
+      <input type="checkbox" id="visualToggle" checked />
+      <span class="swatch" style="--swatch:#5a8fe0"></span>
       <span class="legend-text">
-        <span class="legend-acr" id="txtAuditoryName">Auditory pathway</span>
-        <span class="legend-name" id="txtAuditoryDesc">cochlea &rarr; cochlear nuclei &rarr; ... &rarr; cortex</span>
+        <span class="legend-acr" id="txtVisualName">Visual pathway</span>
+        <span class="legend-name" id="txtVisualDesc">retina &rarr; chiasm &rarr; LGN &rarr; ... &rarr; V1 (crossed + uncrossed)</span>
       </span>
     </label>
-    <label class="legend-row" data-acr="vestibular">
-      <input type="checkbox" id="vestibularToggle" />
-      <span class="swatch" style="--swatch:#6fb0e0"></span>
+    <label class="legend-row" data-acr="reflex">
+      <input type="checkbox" id="reflexToggle" />
+      <span class="swatch" style="--swatch:#8fe0a0"></span>
       <span class="legend-text">
-        <span class="legend-acr" id="txtVestibularName">Vestibular pathway</span>
-        <span class="legend-name" id="txtVestibularDesc">labyrinth &rarr; vestibular nuclei &rarr; MLF / cerebellum</span>
+        <span class="legend-acr" id="txtReflexName">Reflex pathway</span>
+        <span class="legend-name" id="txtReflexDesc">chiasm &rarr; superior colliculus &rarr; oculomotor nuclei</span>
       </span>
     </label>
     <label class="legend-row" data-acr="signal">
       <input type="checkbox" id="signalToggle" checked />
-      <span class="swatch" style="--swatch:#4fc3ff"></span>
+      <span class="swatch" style="--swatch:#ffe9a8"></span>
       <span class="legend-text">
         <span class="legend-acr" id="txtSignalName">Neural signal</span>
-        <span class="legend-name" id="txtSignalDesc">animated pulse, cochlea &rarr; auditory cortex</span>
+        <span class="legend-name" id="txtSignalDesc">animated light pulse, retina &rarr; visual cortex</span>
       </span>
     </label>
     <div class="legend-note" id="txtLegendNote">Dashed swatch / wireframe sphere = schematic node, not a real segmented structure. Click "Structures" to collapse this panel.</div>
@@ -714,7 +677,7 @@ const ORDER = {order_js};
     sprite.scale.set(scaleH * (canvas.width / canvas.height), scaleH, 1);
   }}
 
-  // ---- generated legend rows (root/skull/AUDp/CBLX), not hand-written ----
+  // ---- generated legend rows (root/skull/V1), not hand-written ----
   const LEGEND_META = {legend_meta_json};
   const legendDefaults = {{}};
   LEGEND_META.forEach((m) => {{ legendDefaults[m.acr] = m.default_checked; }});
@@ -811,9 +774,9 @@ const ORDER = {order_js};
   }})();
 
   // ---- shared pathway-drawing helper (schematic tube + nodes + labels) ----
-  // HOVER_NODES collects every node (real-mesh endpoints too) across both
-  // pathways so a single raycaster can drive the hover leader-line + slice
-  // plane below.
+  // HOVER_NODES collects every node (real-mesh endpoints too) across all
+  // three branches so a single raycaster can drive the hover leader-line +
+  // slice plane below.
   const HOVER_NODES = [];
   let hoveredNode = null;
 
@@ -832,11 +795,10 @@ const ORDER = {order_js};
 
     const colorHex = "#" + color.toString(16).padStart(6, "0");
 
-    // waypoints crowd together near the ear/brainstem entry point; stagger
+    // waypoints crowd together near the eye/brainstem entry point; stagger
     // each label along Y (anterior/posterior depth) only - never Z, so each
     // label stays at its node's true superior/inferior height and the
-    // on-screen vertical order always matches real anatomy (e.g. inferior
-    // colliculus reads below medial geniculate, not above it)
+    // on-screen vertical order always matches real anatomy
     orderedKeys.forEach((key, i) => {{
       const p = waypoints[key]; // [x, y, z, radius_um]
       const pos = new THREE.Vector3(p[0], p[1], p[2]);
@@ -869,39 +831,53 @@ const ORDER = {order_js};
     return group;
   }}
 
-  const AUD_WAYPOINTS = {aud_waypoints_json};
-  const AUD_ORDER = {aud_order_json};
-  const AUD_LABELS = {aud_labels_json};
-  const AUD_REAL = {aud_real_json};
-  const auditoryGroup = buildPathway(AUD_ORDER, AUD_WAYPOINTS, AUD_LABELS, AUD_REAL, 0xe0a458);
+  const VIS_WAYPOINTS = {vis_waypoints_json};
+  const VIS_LABELS = {vis_labels_json};
+  const VIS_REAL = {vis_real_json};
+  const UNCROSSED_ORDER = {uncrossed_order_json};
+  const CROSSED_ORDER = {crossed_order_json};
+  const REFLEX_ORDER = {reflex_order_json};
 
-  const VES_WAYPOINTS = {ves_waypoints_json};
-  const VES_TRUNK = {ves_trunk_json};
-  const VES_LABELS = {ves_labels_json};
-  const VES_REAL = {ves_real_json};
-  const vestibularGroup = new THREE.Group();
-  vestibularGroup.add(buildPathway(VES_TRUNK.concat(["MLF"]), VES_WAYPOINTS, VES_LABELS, VES_REAL, 0x6fb0e0));
-  vestibularGroup.add(buildPathway(VES_TRUNK.concat(["CBLX"]), VES_WAYPOINTS, VES_LABELS, VES_REAL, 0x6fb0e0));
-  vestibularGroup.visible = document.getElementById("vestibularToggle").checked;
-  scene.add(vestibularGroup);
+  // Group 1: the conscious-vision (geniculostriate) pathway - two branches
+  // sharing a trunk (retina -> optic nerve -> chiasm) that diverge at the
+  // chiasm: uncrossed (temporal retina, stays same side) and crossed
+  // (nasal retina, flips side). Both colors echo the reference diagram's
+  // red=uncrossed / blue=crossed convention.
+  const visualGroup = new THREE.Group();
+  const uncrossedPath = buildPathway(UNCROSSED_ORDER, VIS_WAYPOINTS, VIS_LABELS, VIS_REAL, 0xe0725a);
+  const crossedPath = buildPathway(CROSSED_ORDER, VIS_WAYPOINTS, VIS_LABELS, VIS_REAL, 0x5a8fe0);
+  visualGroup.add(uncrossedPath);
+  visualGroup.add(crossedPath);
+  visualGroup.userData.curves = [uncrossedPath.userData.curve, crossedPath.userData.curve];
+  visualGroup.visible = document.getElementById("visualToggle").checked;
+  scene.add(visualGroup);
 
-  document.getElementById("auditoryToggle").addEventListener("change", (e) => {{
-    auditoryGroup.visible = e.target.checked;
+  // Group 2: the reflex (tectal) branch - pupillary light reflex / eye-
+  // movement reflex circuit, entirely schematic, default off (mirrors the
+  // secondary-pathway-off precedent from the auditory page's vestibular toggle).
+  const reflexGroup = buildPathway(REFLEX_ORDER, VIS_WAYPOINTS, VIS_LABELS, VIS_REAL, 0x8fe0a0);
+  reflexGroup.visible = document.getElementById("reflexToggle").checked;
+
+  document.getElementById("visualToggle").addEventListener("change", (e) => {{
+    visualGroup.visible = e.target.checked;
   }});
-  document.getElementById("vestibularToggle").addEventListener("change", (e) => {{
-    vestibularGroup.visible = e.target.checked;
+  document.getElementById("reflexToggle").addEventListener("change", (e) => {{
+    reflexGroup.visible = e.target.checked;
   }});
 
-  // ---- animated "hearing a sound" signal: a scattered blue spark swarm
-  // traveling along the auditory pathway, cochlea -> cortex, looping ----
-  const SIGNAL_COLOR = 0x4fc3ff;
-  const SIGNAL_COUNT = 26;
-  const SIGNAL_DURATION = 2.4; // seconds per cochlea->cortex sweep
+  // ---- animated "seeing light" signal: two scattered particle streams
+  // (one per curve) traveling retina -> cortex, departing together and
+  // diverging at the chiasm, looping. Reflex branch gets no animation,
+  // matching the auditory page's precedent (only the primary pathway animates). ----
+  const SIGNAL_COLOR = 0xffe9a8;
+  const SIGNAL_COUNT = 26; // per curve
+  const SIGNAL_DURATION = 2.4; // seconds per retina->cortex sweep
   const SIGNAL_TRAIL = 0.16; // fraction of the sweep the trailing spread covers
   const SIGNAL_JITTER = EXTENT * 0.01;
 
+  const visualCurves = visualGroup.userData.curves;
   const signalGeom = new THREE.BufferGeometry();
-  signalGeom.setAttribute("position", new THREE.BufferAttribute(new Float32Array(SIGNAL_COUNT * 3), 3));
+  signalGeom.setAttribute("position", new THREE.BufferAttribute(new Float32Array(SIGNAL_COUNT * visualCurves.length * 3), 3));
   const signalMat = new THREE.PointsMaterial({{
     color: SIGNAL_COLOR, size: EXTENT * 0.009, sizeAttenuation: true,
     transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending,
@@ -915,24 +891,27 @@ const ORDER = {order_js};
   signalToggle.addEventListener("change", (e) => {{ signalEnabled = e.target.checked; }});
 
   const clock = new THREE.Clock();
-  const auditoryCurve = auditoryGroup.userData.curve;
   const posArr = signalGeom.attributes.position.array;
 
   function updateSignal() {{
-    const show = signalEnabled && auditoryGroup.visible;
+    const show = signalEnabled && visualGroup.visible;
     signalPoints.visible = show;
     if (!show) return;
     const cycle = (clock.getElapsedTime() % SIGNAL_DURATION) / SIGNAL_DURATION; // 0..1, repeats
-    for (let i = 0; i < SIGNAL_COUNT; i++) {{
-      // each particle trails a little behind the lead, spread over SIGNAL_TRAIL
-      // of the sweep, so the swarm reads as a scattered pulse with a tail
-      // rather than a single dot
-      const t = Math.min(0.999, Math.max(0, cycle - (i / SIGNAL_COUNT) * SIGNAL_TRAIL));
-      const p = auditoryCurve.getPointAt(t);
-      posArr[i * 3 + 0] = p.x + (Math.random() - 0.5) * SIGNAL_JITTER;
-      posArr[i * 3 + 1] = p.y + (Math.random() - 0.5) * SIGNAL_JITTER;
-      posArr[i * 3 + 2] = p.z + (Math.random() - 0.5) * SIGNAL_JITTER;
-    }}
+    let idx = 0;
+    visualCurves.forEach((curve) => {{
+      for (let i = 0; i < SIGNAL_COUNT; i++) {{
+        // each particle trails a little behind the lead, spread over
+        // SIGNAL_TRAIL of the sweep, so the swarm reads as a scattered
+        // pulse with a tail rather than a single dot
+        const t = Math.min(0.999, Math.max(0, cycle - (i / SIGNAL_COUNT) * SIGNAL_TRAIL));
+        const p = curve.getPointAt(t);
+        posArr[idx * 3 + 0] = p.x + (Math.random() - 0.5) * SIGNAL_JITTER;
+        posArr[idx * 3 + 1] = p.y + (Math.random() - 0.5) * SIGNAL_JITTER;
+        posArr[idx * 3 + 2] = p.z + (Math.random() - 0.5) * SIGNAL_JITTER;
+        idx++;
+      }}
+    }});
     signalGeom.attributes.position.needsUpdate = true;
   }}
 
@@ -980,7 +959,7 @@ const ORDER = {order_js};
         leaderLine.geometry.setFromPoints([node.pos, node.labelPos]);
         leaderLine.geometry.attributes.position.needsUpdate = true;
         slicePlane.position.set(0, node.pos.y, 0);
-        sliceLabel.textContent = node.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨]+[ab]?\\s*/, "");
+        sliceLabel.textContent = node.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨]+[abc]?\\s*/, "");
         sliceLabel.parentElement.classList.add("show");
       }} else {{
         sliceLabel.parentElement.classList.remove("show");
@@ -1011,8 +990,8 @@ const ORDER = {order_js};
       const key = {{
         txtEyebrow: "eyebrow", txtTitleSuffix: "title_suffix", txtSubtitle: "subtitle",
         txtHoverTitle: "hover_title", txtStructuresTitle: "structures_title",
-        txtAuditoryName: "auditory_pathway_name", txtAuditoryDesc: "auditory_pathway_desc",
-        txtVestibularName: "vestibular_pathway_name", txtVestibularDesc: "vestibular_pathway_desc",
+        txtVisualName: "visual_pathway_name", txtVisualDesc: "visual_pathway_desc",
+        txtReflexName: "reflex_pathway_name", txtReflexDesc: "reflex_pathway_desc",
         txtSignalName: "signal_name", txtSignalDesc: "signal_desc",
         txtLegendNote: "legend_note", txtHintControls: "hint_controls", txtHintUnits: "hint_units",
         txtControlsTitle: "controls_title",
@@ -1028,7 +1007,7 @@ const ORDER = {order_js};
     HOVER_NODES.forEach((n) => updateTextSprite(n.labelSprite, n.text[LANG]));
     if (hoveredNode) {{
       document.getElementById("hoverLabel").textContent =
-        hoveredNode.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨]+[ab]?\\s*/, "");
+        hoveredNode.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨]+[abc]?\\s*/, "");
     }}
   }}
 

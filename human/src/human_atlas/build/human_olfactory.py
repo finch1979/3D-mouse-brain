@@ -1,41 +1,76 @@
 """
-Build a self-contained 3D viewer for the human auditory + vestibular
-pathway (peripheral -> central), per
-https://neupsykey.com/the-auditory-and-vestibular-pathways-and-approach-to-hearing-loss-and-dizzinessvertigo-cranial-nerve-8/
+Build a self-contained 3D viewer for the human olfactory pathway
+(peripheral -> central). Third sibling to human_auditory.py and
+human_visual.py - same architecture, same rigor about real anatomy vs.
+schematic placeholders.
 
-Combines REAL MNI152-space structure meshes for the structures that have a
-practical open-data source, with SCHEMATIC waypoints (same technique as the
-Papez circuit in outputs/human/limbic/human_limbic_3d.html) for everything
-else - most of the pathway (cochlea, CN8, cochlear nuclei, superior olivary
-complex, nucleus of the lateral lemniscus, inferior colliculus, medial
-geniculate nucleus, vestibular labyrinth/ganglion/nuclei, MLF) has no
-freely-downloadable segmentation at any usable resolution; see
-docs/architecture (or the project conversation history) for the source
-survey. Schematic waypoint coordinates below are approximate, illustrative
-placements (right hemisphere), not derived from a specific voxel atlas.
+HEADLINE FACT this page exists to teach: olfaction is the one sensory
+system that BYPASSES THE THALAMUS. Primary olfactory cortex receives
+direct input from the olfactory bulb with no obligatory thalamic relay,
+unlike vision/audition/touch (Wilson & Sullivan, Neuron 2005, "Perception
+without a Thalamus"; Gottfried & Zald 2005 meta-analysis; Courtiol &
+Wilson 2015). The mediodorsal thalamus DOES participate, but as a
+parallel, secondary route (primary olfactory cortex -> MD -> orbitofrontal
+cortex) implicated in odor ATTENTION rather than baseline detection - it's
+drawn here as a separately toggleable pathway so the detour olfaction gets
+to skip is visible by comparison.
 
-Real data sources (both already in MNI152 space - the FSL/nilearn default):
+IMPORTANT laterality note - the olfactory pathway is STRICTLY IPSILATERAL,
+with NO decussation anywhere. Each nostril projects to the same-side
+olfactory bulb; the tract and both the lateral and medial olfactory striae
+stay ipsilateral all the way to primary olfactory cortex (PLOS Biology
+2020; StatPearls NBK556051; this is exactly why clinical smell testing is
+done one nostril at a time). The anterior commissure carries a MODULATORY
+interhemispheric link between the two anterior olfactory nuclei/bulbs -
+that is not a decussation of the main sensory pathway and is deliberately
+not drawn. Unlike the auditory page (full crossing at the trapezoid body)
+and the visual page (partial crossing at the optic chiasm), the notable
+fact here is the ABSENCE of a crossing - so don't "helpfully" add one, and
+don't mirror any branch to the left side.
+
+Real data sources (all MNI152 space):
   - Whole-brain outline: nilearn's bundled MNI152 brain mask.
-  - Auditory cortex (Heschl's gyrus): Harvard-Oxford cortical atlas (FSL
-    data, via nilearn).
-  - Cerebellar Lobule X (flocculonodular lobe / vestibulocerebellum):
-    Diedrichsen (2009) probabilistic cerebellar atlas, discrete MNI-space
-    segmentation, from github.com/DiedrichsenLab/cerebellar_atlases
-    (labels 26/27/28 = Left_X/Vermis_X/Right_X).
+  - Everything else: AAL3 (Rolls et al., NeuroImage 2020) via
+    nilearn.datasets.fetch_atlas_aal(version="3v2"). Unusually for these
+    pages, MOST central olfactory targets have real atlas data - contrast
+    with the auditory page (2 real structures) and visual page (1).
+    Verified label indices:
+      Olfactory_L/R           17, 18       -> primary olfactory cortex
+      Amygdala_L/R            45, 46       -> olfactory amygdala target
+      ParaHippocampal_L/R     43, 44       -> entorhinal cortex proxy
+      Thal_MDm/MDl_L/R        135-138      -> mediodorsal thalamus
+      OFCmed_L/R, OFCpost_L/R 25,26,29,30  -> olfactory orbitofrontal cortex
 
-All real meshes are scaled from mm to micrometers (x1000) to match this
-project's existing human-mesh convention (see human_limbic_3d.html's root
-mesh, bbox ~180000 x 150000 x 144000 um for a ~180x150x144mm adult brain).
+Caveats on those real parcels, so nothing is misrepresented:
+  - AAL3 "Olfactory" is one combined parcel covering the olfactory-cortex
+    region (including the olfactory tubercle); it is NOT a piriform-only or
+    tubercle-only label.
+  - "ParaHippocampal" is a COARSE PROXY for entorhinal cortex. True
+    entorhinal parcellation needs FreeSurfer's Desikan-Killiany atlas -
+    same full-suite impracticality on this Windows box that ruled out
+    FreeSurfer's thalamic-nuclei atlas for MGN (auditory page) and LGN
+    (visual page).
+  - OFC uses OFCmed + OFCpost only (the posterior-medial "olfactory OFC"
+    territory), not all four AAL3 OFC subparcels.
+
+Necessarily SCHEMATIC (no freely downloadable MNI mask exists - checked):
+olfactory epithelium, olfactory nerve / fila olfactoria, olfactory bulb,
+olfactory tract, olfactory trigone, anterior olfactory nucleus. The
+olfactory bulb in particular is notoriously unsegmentable on standard MRI
+(~77 mm^3, plus sinus susceptibility artifact); the only open tool is
+Deep-MI's per-subject segmentation model, not a static atlas.
+
+All real meshes are scaled from mm to micrometers (x1000), matching the
+rest of this project's human-mesh convention.
 
 Usage:
-    python -m human_atlas.build.human_auditory
+    python -m human_atlas.build.human_olfactory
 """
 
 import json
 
 import nibabel as nib
 import numpy as np
-import requests
 import trimesh
 from nilearn import datasets
 from scipy.ndimage import binary_dilation, zoom
@@ -46,98 +81,76 @@ from human_atlas.common.paths import DATA_CACHE_DIR, OUTPUTS_DIR, WEB_LIB_DIR
 from human_atlas.render.bake_meshes import mesh_to_region_js
 
 MM_TO_UM = 1000.0
-CACHE_DIR = DATA_CACHE_DIR / "human_auditory"
-OUT_DIR = OUTPUTS_DIR / "auditory_system"
+CACHE_DIR = DATA_CACHE_DIR / "human_olfactory"
+OUT_DIR = OUTPUTS_DIR / "olfactory_system"
 MESH_DIR = OUT_DIR / "mesh"
-OUT_FILE = "human_auditory_system_3d.html"
+OUT_FILE = "human_olfactory_system_3d.html"
 
-CEREBELLAR_ATLAS_URL = (
-    "https://raw.githubusercontent.com/DiedrichsenLab/cerebellar_atlases/"
-    "master/Diedrichsen_2009/atl-Anatom_space-MNI_dseg.nii"
-)
-LOBULE_X_LABELS = [26, 27, 28]  # Left_X, Vermis_X, Right_X (flocculonodular lobe)
 ROOT_DOWNSAMPLE = 0.35  # whole-brain mask is ~2M voxels; downsample before marching cubes
 SKULL_MARGIN_MM = 9  # dilation margin (mm, ~1mm/voxel) for the approx. head-size context shell
 
-# Approximate, illustrative MNI coordinates (mm, RAS) + an approximate real
-# radius (mm, for the schematic marker sphere size only - these are rough
-# educational scale references, not measured from an atlas) for structures
-# with no practical open mesh source. Anatomically-informed placements, not
-# derived from a specific voxel atlas - schematic only.
-#
-# IMPORTANT laterality note: the ascending auditory pathway crosses the
-# midline. A right-ear signal travels ipsilateral (right) through the
-# cochlear nuclei, then the MAJORITY of fibers decussate at the trapezoid
-# body and continue up the CONTRALATERAL (left) side - superior olivary
-# complex, lateral lemniscus, inferior colliculus, medial geniculate
-# nucleus, auditory cortex are all drawn on the left for this reason (a
-# smaller uncrossed/ipsilateral projection also exists at every level from
-# the SOC upward but isn't drawn, to keep the diagram legible). Get this
-# backwards and the diagram teaches the wrong thing, so don't "helpfully"
-# straighten it back onto one side.
-AUDITORY_SCHEMATIC = {
-    "Cochlea": {"pos": (52, -24, -34), "r": 4.5},
-    "CN8c": {"pos": (48, -30, -34), "r": 1.5},
-    "CochNuc": {"pos": (16, -40, -46), "r": 3},
-    "Decussation": {"pos": (0, -38, -44), "r": 1.5},
-    "SOC": {"pos": (-12, -36, -42), "r": 2},
-    "NLL": {"pos": (-10, -34, -24), "r": 2},
-    "IC": {"pos": (-6, -34, -12), "r": 5},
-    "MG": {"pos": (-16, -25, -6), "r": 4},
-}
-AUDITORY_ORDER = ["Cochlea", "CN8c", "CochNuc", "Decussation", "SOC", "NLL", "IC", "MG", "AUDp"]
-AUDITORY_LABELS = {
-    "Cochlea": {"en": "① Cochlea (right ear)", "zh": "①耳蝸(右耳)"},
-    "CN8c": {"en": "② CN VIII (cochlear)", "zh": "②第八對腦神經(耳蝸支)"},
-    "CochNuc": {"en": "③ Cochlear nuclei", "zh": "③耳蝸核"},
-    "Decussation": {"en": "④ Trapezoid body — crosses midline", "zh": "④斜方體—跨越中線"},
-    "SOC": {"en": "⑤ Superior olivary complex (L)", "zh": "⑤上橄欖複合體(左)"},
-    "NLL": {"en": "⑥ Lateral lemniscus / NLL (L)", "zh": "⑥外側蹄系(左)"},
-    "IC": {"en": "⑦ Inferior colliculus (L)", "zh": "⑦下丘(左)"},
-    "MG": {"en": "⑧ Medial geniculate nucleus (L)", "zh": "⑧內側膝狀體(左)"},
-    "AUDp": {"en": "⑨ Auditory cortex (L)", "zh": "⑨聽覺皮質(左)"},
-}
-AUDITORY_ANCHOR_SIDE = "left"  # AUDp endpoint: anchor to the contralateral (left) mesh blob
+# AAL3 label indices, verified by direct inspection of the fetched atlas.
+AAL_OLFACTORY = [17, 18]
+AAL_AMYGDALA = [45, 46]
+AAL_PARAHIPPOCAMPAL = [43, 44]
+AAL_THAL_MD = [135, 136, 137, 138]
+AAL_OFC = [25, 26, 29, 30]  # OFCmed_L/R, OFCpost_L/R
 
-VESTIBULAR_SCHEMATIC = {
-    "Labyrinth": {"pos": (54, -22, -28), "r": 4.5},
-    "CN8v": {"pos": (48, -28, -32), "r": 1.5},
-    "VestGang": {"pos": (46, -30, -34), "r": 2},
-    "VestNuc": {"pos": (14, -42, -48), "r": 5},
-    "MLF": {"pos": (3, -30, -16), "r": 1.5},
+# Approximate, illustrative MNI coordinates (mm, RAS) + an approximate
+# marker radius (mm) for structures with no practical open mesh source.
+# Right side only - the pathway never crosses (see laterality note above).
+OLF_SCHEMATIC = {
+    "Epithelium": {"pos": (7, 34, -48), "r": 4},
+    "CN1": {"pos": (6, 28, -40), "r": 1.5},
+    "Bulb": {"pos": (6, 24, -32), "r": 3.5},
+    "AON": {"pos": (6, 16, -28), "r": 2},
+    "Tract": {"pos": (8, 8, -26), "r": 1.5},
+    "Trigone": {"pos": (10, 2, -22), "r": 2},
 }
-VESTIBULAR_TRUNK = ["Labyrinth", "CN8v", "VestGang", "VestNuc"]
-VESTIBULAR_LABELS = {
-    "Labyrinth": {"en": "① Vestibular labyrinth (right ear)", "zh": "①前庭迷路(右耳)"},
-    "CN8v": {"en": "② CN VIII (vestibular)", "zh": "②第八對腦神經(前庭支)"},
-    "VestGang": {"en": "③ Vestibular ganglion", "zh": "③前庭神經節"},
-    "VestNuc": {"en": "④ Vestibular nuclei", "zh": "④前庭神經核"},
-    "MLF": {"en": "⑤a MLF / oculomotor nuclei (bilateral)", "zh": "⑤a內側縱束/動眼神經核(雙側)"},
-    "CBLX": {"en": "⑤b Vestibulocerebellum (Lobule X)", "zh": "⑤b前庭小腦(第X小葉)"},
-}
-VESTIBULAR_ANCHOR_SIDE = "right"  # CBLX endpoint: vestibular projections are predominantly ipsilateral
+OLF_TRUNK = ["Epithelium", "CN1", "Bulb", "AON", "Tract", "Trigone"]
+# Group 1 - the direct, thalamus-bypassing olfactory pathway. Three
+# branches sharing the trunk, each terminating on a REAL mesh.
+OLF_AMY_ORDER = OLF_TRUNK + ["OLFC", "AMY"]
+OLF_ENT_ORDER = OLF_TRUNK + ["OLFC", "ENT"]
+OLF_OFC_ORDER = OLF_TRUNK + ["OLFC", "OFC"]
+# Group 2 - the parallel, secondary route through mediodorsal thalamus.
+THALAMIC_ORDER = OLF_TRUNK + ["OLFC", "MD", "OFC"]
 
-# All static UI copy, en/zh. Node-label sprites (AUDITORY_LABELS etc. above)
+OLFACTORY_LABELS = {
+    "Epithelium": {"en": "① Olfactory epithelium (right nasal cavity)", "zh": "①嗅覺上皮(右鼻腔)"},
+    "CN1": {"en": "② Olfactory nerve (CN I) — through cribriform plate", "zh": "②嗅神經(第一對腦神經)—穿過篩板"},
+    "Bulb": {"en": "③ Olfactory bulb", "zh": "③嗅球"},
+    "AON": {"en": "④ Anterior olfactory nucleus", "zh": "④前嗅核"},
+    "Tract": {"en": "⑤ Olfactory tract", "zh": "⑤嗅束"},
+    "Trigone": {"en": "⑥ Olfactory trigone — striae diverge", "zh": "⑥嗅三角—嗅紋分岔"},
+    "OLFC": {"en": "⑦ Primary olfactory cortex (no thalamic relay)", "zh": "⑦初級嗅覺皮質(不經視丘轉接)"},
+    "AMY": {"en": "⑧a Olfactory amygdala", "zh": "⑧a嗅覺杏仁核"},
+    "ENT": {"en": "⑧b Entorhinal cortex → hippocampus", "zh": "⑧b內嗅皮質→海馬迴"},
+    "OFC": {"en": "⑧c Orbitofrontal cortex — direct", "zh": "⑧c眶額皮質—直接路徑"},
+    "MD": {"en": "⑧d Mediodorsal thalamus — attention route", "zh": "⑧d背內側視丘—注意力路徑"},
+}
+
+# All static UI copy, en/zh. Node-label sprites (OLFACTORY_LABELS above)
 # are translated separately since they're baked into canvas textures, not DOM text.
 STRINGS = {
     "eyebrow": {"en": "Human &middot; MNI152 space &middot; peripheral&rarr;central pathway",
                 "zh": "人腦 &middot; MNI152 空間 &middot; 周邊&rarr;中樞路徑"},
-    "title_suffix": {"en": '<span class="accent">Auditory</span> &amp; <span style="color:var(--accent-ves)">Vestibular</span> Pathways',
-                      "zh": '<span class="accent">聽覺</span>與<span style="color:var(--accent-ves)">前庭</span>路徑'},
+    "title_suffix": {"en": '<span class="accent">Olfactory</span> &amp; <span style="color:var(--accent2)">Thalamic</span> Pathways',
+                      "zh": '<span class="accent">嗅覺</span>與<span style="color:var(--accent2)">視丘</span>路徑'},
     "subtitle": {
-        "en": "Cranial nerve VIII's two ascending pathways, right ear to cortex/cerebellum. The auditory pathway <b>crosses the midline at the trapezoid body</b> &mdash; it starts on the right (cochlea, CN VIII, cochlear nuclei) but the majority of fibers decussate there and continue up the <b>left</b> side (superior olive &rarr; lemniscus &rarr; inferior colliculus &rarr; medial geniculate &rarr; auditory cortex); the vestibular pathway stays right (ipsilateral). Solid meshes are real MNI152-space anatomy; wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.",
-        "zh": "第八對腦神經(前庭耳蝸神經)的兩條上行路徑,從右耳到皮質/小腦。聽覺路徑會<b>在斜方體跨越中線</b>&mdash;訊號從右側(耳蝸、第八對腦神經、耳蝸核)開始,但大部分纖維在此交叉,繼續沿<b>左側</b>上行(上橄欖複合體&rarr;外側蹄系&rarr;下丘&rarr;內側膝狀體&rarr;聽覺皮質);前庭路徑則維持同側(不交叉)。實心網格是真實的 MNI152 空間解剖構造;線框標記是示意性的,代表目前沒有任何免費 3D 圖譜可用的過小或過深結構的概略位置。將滑鼠移到節點上可顯示指示線與切面。",
+        "en": "The olfactory pathway from right nasal cavity to cortex. Olfaction is the one sensory system that <b>bypasses the thalamus</b> &mdash; primary olfactory cortex receives bulb input <b>directly</b>, with no obligatory thalamic relay, and projects straight on to the amygdala, entorhinal cortex and orbitofrontal cortex. Toggle the <b>thalamic route</b> to see the parallel, secondary detour through the mediodorsal thalamus (linked to odor attention rather than detection). Note also that this pathway <b>never crosses the midline</b> &mdash; unlike hearing and vision, each nostril's signal stays strictly on its own side, which is why smell is tested one nostril at a time. Solid meshes are real MNI152-space anatomy (AAL3 atlas); wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.",
+        "zh": "從右鼻腔到皮質的嗅覺路徑。嗅覺是唯一<b>不經過視丘</b>的感覺系統&mdash;初級嗅覺皮質<b>直接</b>接收來自嗅球的訊號,不需要視丘轉接,並直接投射到杏仁核、內嗅皮質與眶額皮質。開啟<b>視丘路徑</b>可以看到經過背內側視丘的平行次要繞道(與氣味的注意力有關,而非偵測本身)。另外要注意,這條路徑<b>從不跨越中線</b>&mdash;不像聽覺與視覺,每個鼻孔的訊號都嚴格留在同側,這也是臨床上嗅覺要一次測一邊鼻孔的原因。實心網格是真實的 MNI152 空間解剖構造(AAL3 圖譜);線框標記是示意性的,代表目前沒有任何免費 3D 圖譜可用的過小或過深結構的概略位置。將滑鼠移到節點上可顯示指示線與切面。",
     },
     "hover_title": {"en": "Hovered structure", "zh": "目前指向的結構"},
     "structures_title": {"en": "Structures", "zh": "結構"},
     "legend_note": {"en": "Dashed swatch / wireframe sphere = schematic node, not a real segmented structure. Click &quot;Structures&quot; to collapse this panel.",
                      "zh": "虛線色塊／線框球體＝示意節點,並非真實分割出的解剖構造。點擊「結構」可收合此面板。"},
-    "auditory_pathway_name": {"en": "Auditory pathway", "zh": "聽覺路徑"},
-    "auditory_pathway_desc": {"en": "cochlea &rarr; cochlear nuclei &rarr; ... &rarr; cortex", "zh": "耳蝸&rarr;耳蝸核&rarr;……&rarr;聽覺皮質"},
-    "vestibular_pathway_name": {"en": "Vestibular pathway", "zh": "前庭路徑"},
-    "vestibular_pathway_desc": {"en": "labyrinth &rarr; vestibular nuclei &rarr; MLF / cerebellum", "zh": "迷路&rarr;前庭神經核&rarr;內側縱束／小腦"},
+    "olfactory_pathway_name": {"en": "Olfactory pathway", "zh": "嗅覺路徑"},
+    "olfactory_pathway_desc": {"en": "bulb &rarr; olfactory cortex &rarr; amygdala / entorhinal / OFC", "zh": "嗅球&rarr;嗅覺皮質&rarr;杏仁核／內嗅／眶額"},
+    "thalamic_pathway_name": {"en": "Thalamic route", "zh": "視丘路徑"},
+    "thalamic_pathway_desc": {"en": "the secondary detour: olfactory cortex &rarr; MD thalamus &rarr; OFC", "zh": "次要繞道:嗅覺皮質&rarr;背內側視丘&rarr;眶額皮質"},
     "signal_name": {"en": "Neural signal", "zh": "神經訊號"},
-    "signal_desc": {"en": "animated pulse, cochlea &rarr; auditory cortex", "zh": "動畫訊號,耳蝸&rarr;聽覺皮質"},
+    "signal_desc": {"en": "animated odor pulse, epithelium &rarr; cortex", "zh": "動畫氣味訊號,嗅覺上皮&rarr;皮質"},
     "controls_title": {"en": "Controls", "zh": "操作說明"},
     "hint_controls": {"en": "<b>drag</b> orbit &nbsp; <b>scroll</b> zoom &nbsp; <b>right-drag</b> pan &nbsp; <b>hover</b> a node for a slice plane",
                        "zh": "<b>拖曳</b>旋轉 &nbsp; <b>滾輪</b>縮放 &nbsp; <b>右鍵拖曳</b>平移 &nbsp; <b>滑鼠移到節點</b>顯示切面"},
@@ -148,16 +161,6 @@ STRINGS = {
     "superior": {"en": "Superior", "zh": "上"},
     "right_axis": {"en": "Right", "zh": "右"},
 }
-
-
-def download(url, out_path):
-    if out_path.exists():
-        return out_path
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    r = requests.get(url, timeout=120)
-    r.raise_for_status()
-    out_path.write_bytes(r.content)
-    return out_path
 
 
 def mask_to_mesh(mask, affine, downsample=1.0, smooth_iterations=15):
@@ -177,21 +180,11 @@ def main():
     MESH_DIR.mkdir(parents=True, exist_ok=True)
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-    print("Loading MNI152 brain mask + Harvard-Oxford cortical atlas ...")
+    print("Loading MNI152 brain mask + AAL3 atlas ...")
     mni_img = datasets.load_mni152_brain_mask()
-    ho = datasets.fetch_atlas_harvard_oxford("cort-maxprob-thr25-1mm", data_dir=str(CACHE_DIR))
-    ho_img = nib.load(ho.maps) if isinstance(ho.maps, str) else ho.maps
-    ho_data = ho_img.get_fdata()
-    heschl_idx = [i for i, name in enumerate(ho.labels) if "Heschl" in name]
-    if not heschl_idx:
-        raise RuntimeError(f"Heschl's Gyrus label not found in {ho.labels}")
-    aud_mask = np.isin(ho_data, heschl_idx)
-
-    print("Downloading Diedrichsen (2009) cerebellar atlas (Lobule X) ...")
-    cereb_path = download(CEREBELLAR_ATLAS_URL, CACHE_DIR / "atl-Anatom_space-MNI_dseg.nii")
-    cereb_img = nib.load(str(cereb_path))
-    cereb_data = cereb_img.get_fdata()
-    lobule_x_mask = np.isin(cereb_data, LOBULE_X_LABELS)
+    aal = datasets.fetch_atlas_aal(version="3v2", data_dir=str(CACHE_DIR))
+    aal_img = nib.load(aal.maps) if isinstance(aal.maps, str) else aal.maps
+    aal_data = aal_img.get_fdata()
 
     print("Building an approximate head-size context shell (dilated brain mask) ...")
     mni_mask_bool = mni_img.get_fdata().astype(bool)
@@ -208,15 +201,30 @@ def main():
             "downsample": ROOT_DOWNSAMPLE, "smooth": 5,
             "color": "FFFFFF", "name": f"Approx. head size (brain +{SKULL_MARGIN_MM}mm, not real skull anatomy)",
         },
-        "AUDp": {
-            "mask": aud_mask, "affine": ho_img.affine,
+        "OLFC": {
+            "mask": np.isin(aal_data, AAL_OLFACTORY), "affine": aal_img.affine,
             "downsample": 1.0, "smooth": 15,
-            "color": "E0A458", "name": "Auditory cortex (Heschl's gyrus)",
+            "color": "8FBF7F", "name": "Primary olfactory cortex (AAL3 olfactory region)",
         },
-        "CBLX": {
-            "mask": lobule_x_mask, "affine": cereb_img.affine,
+        "AMY": {
+            "mask": np.isin(aal_data, AAL_AMYGDALA), "affine": aal_img.affine,
             "downsample": 1.0, "smooth": 15,
-            "color": "6F8FE0", "name": "Vestibulocerebellum (cerebellar Lobule X)",
+            "color": "E0A458", "name": "Amygdala (olfactory amygdala target)",
+        },
+        "ENT": {
+            "mask": np.isin(aal_data, AAL_PARAHIPPOCAMPAL), "affine": aal_img.affine,
+            "downsample": 1.0, "smooth": 15,
+            "color": "C98FBF", "name": "Entorhinal cortex (parahippocampal proxy)",
+        },
+        "MD": {
+            "mask": np.isin(aal_data, AAL_THAL_MD), "affine": aal_img.affine,
+            "downsample": 1.0, "smooth": 15,
+            "color": "D094D9", "name": "Mediodorsal thalamus (AAL3 Thal_MDm + Thal_MDl)",
+        },
+        "OFC": {
+            "mask": np.isin(aal_data, AAL_OFC), "affine": aal_img.affine,
+            "downsample": 1.0, "smooth": 15,
+            "color": "6FB0E0", "name": "Orbitofrontal cortex (AAL3 OFCmed + OFCpost)",
         },
     }
 
@@ -224,15 +232,18 @@ def main():
     manifest = {}
     anchors = {}  # acr -> {"left": [x,y,z], "right": [x,y,z]}
     for acr, s in structures.items():
-        print(f"  meshing {acr} ({int(s['mask'].sum())} voxels) ...")
+        voxels = int(s["mask"].sum())
+        if voxels == 0:
+            raise RuntimeError(f"{acr} mask is empty - label indices or affine are wrong")
+        print(f"  meshing {acr} ({voxels} voxels) ...")
         tm = mask_to_mesh(s["mask"], s["affine"], downsample=s["downsample"], smooth_iterations=s["smooth"])
         obj_path = MESH_DIR / f"{acr}.obj"
         tm.export(obj_path)
-        # AUDp/CBLX are bilateral (left+right blobs, +/- a vermis for CBLX); a
-        # plain centroid collapses toward the midline, floating between the
-        # two blobs rather than inside either one. Compute both hemispheres'
-        # centroids so each pathway can anchor to whichever side it actually
-        # terminates on (auditory crosses to the left; vestibular stays right).
+        # The AAL3 structures are all bilateral (left+right blobs); a plain
+        # centroid collapses toward the midline, floating between the two
+        # blobs rather than inside either one. Compute per-hemisphere means
+        # so the pathway can anchor inside the blob it actually terminates
+        # in - always the RIGHT one here, since olfaction never crosses.
         right_verts = tm.vertices[tm.vertices[:, 0] > 0]
         left_verts = tm.vertices[tm.vertices[:, 0] < 0]
         anchors[acr] = {
@@ -248,34 +259,36 @@ def main():
 
     (MESH_DIR / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
     regions_js = "{" + ",".join(regions_js_parts) + "}"
-    order_js = json.dumps(["skull", "root", "AUDp", "CBLX"])
+    order_js = json.dumps(["skull", "root", "OLFC", "AMY", "ENT", "MD", "OFC"])
 
     # derive EXTENT from the actual root mesh bounding box, not a guess
     root_tm = trimesh.load(MESH_DIR / "root.obj")
     extent = float((root_tm.vertices.max(axis=0) - root_tm.vertices.min(axis=0)).max())
 
-    # schematic waypoints in um as [x, y, z, marker_radius_um]; real endpoints
-    # anchored to whichever hemisphere of the real mesh the pathway actually ends on
-    aud_waypoints = {
+    # schematic waypoints in um as [x, y, z, marker_radius_um]; every real
+    # endpoint anchors to the RIGHT hemisphere blob (ipsilateral, no crossing)
+    olf_waypoints = {
         k: [v["pos"][0] * MM_TO_UM, v["pos"][1] * MM_TO_UM, v["pos"][2] * MM_TO_UM, v["r"] * MM_TO_UM]
-        for k, v in AUDITORY_SCHEMATIC.items()
+        for k, v in OLF_SCHEMATIC.items()
     }
-    aud_waypoints["AUDp"] = anchors["AUDp"][AUDITORY_ANCHOR_SIDE] + [0]
-    ves_waypoints = {
-        k: [v["pos"][0] * MM_TO_UM, v["pos"][1] * MM_TO_UM, v["pos"][2] * MM_TO_UM, v["r"] * MM_TO_UM]
-        for k, v in VESTIBULAR_SCHEMATIC.items()
-    }
-    ves_waypoints["CBLX"] = anchors["CBLX"][VESTIBULAR_ANCHOR_SIDE] + [0]
+    for acr in ("OLFC", "AMY", "ENT", "MD", "OFC"):
+        olf_waypoints[acr] = anchors[acr]["right"] + [0]
 
     legend_meta = [
         {"acr": "skull", "name_en": manifest["skull"]["name"], "name_zh": f"頭部大小示意(腦部外擴{SKULL_MARGIN_MM}mm,非真實顱骨解剖)",
          "color": "FFFFFF", "outline": True, "default_checked": True},
         {"acr": "root", "name_en": "Whole-brain outline (MNI152)", "name_zh": "全腦輪廓(MNI152)",
          "color": "CCCCCC", "outline": True, "default_checked": True},
-        {"acr": "AUDp", "name_en": manifest["AUDp"]["name"], "name_zh": "聽覺皮質(顳橫回)",
-         "color": manifest["AUDp"]["color"], "outline": False, "default_checked": True},
-        {"acr": "CBLX", "name_en": manifest["CBLX"]["name"], "name_zh": "前庭小腦(小腦第X葉)",
-         "color": manifest["CBLX"]["color"], "outline": False, "default_checked": False},
+        {"acr": "OLFC", "name_en": manifest["OLFC"]["name"], "name_zh": "初級嗅覺皮質(AAL3 嗅覺區)",
+         "color": manifest["OLFC"]["color"], "outline": False, "default_checked": True},
+        {"acr": "AMY", "name_en": manifest["AMY"]["name"], "name_zh": "杏仁核(嗅覺杏仁核目標)",
+         "color": manifest["AMY"]["color"], "outline": False, "default_checked": True},
+        {"acr": "OFC", "name_en": manifest["OFC"]["name"], "name_zh": "眶額皮質(AAL3 OFCmed + OFCpost)",
+         "color": manifest["OFC"]["color"], "outline": False, "default_checked": True},
+        {"acr": "ENT", "name_en": manifest["ENT"]["name"], "name_zh": "內嗅皮質(以海馬旁迴代替)",
+         "color": manifest["ENT"]["color"], "outline": False, "default_checked": True},
+        {"acr": "MD", "name_en": manifest["MD"]["name"], "name_zh": "背內側視丘(AAL3 Thal_MDm + Thal_MDl)",
+         "color": manifest["MD"]["color"], "outline": False, "default_checked": False},
     ]
 
     three_js = (WEB_LIB_DIR / "three.min.js").read_text(encoding="utf-8")
@@ -289,14 +302,13 @@ def main():
         order_js=order_js,
         strings_json=json.dumps(STRINGS, ensure_ascii=False),
         legend_meta_json=json.dumps(legend_meta, ensure_ascii=False),
-        aud_waypoints_json=json.dumps(aud_waypoints),
-        aud_order_json=json.dumps(AUDITORY_ORDER),
-        aud_labels_json=json.dumps(AUDITORY_LABELS, ensure_ascii=False),
-        aud_real_json=json.dumps(["AUDp"]),
-        ves_waypoints_json=json.dumps(ves_waypoints),
-        ves_trunk_json=json.dumps(VESTIBULAR_TRUNK),
-        ves_labels_json=json.dumps(VESTIBULAR_LABELS, ensure_ascii=False),
-        ves_real_json=json.dumps(["CBLX"]),
+        olf_waypoints_json=json.dumps(olf_waypoints),
+        olf_labels_json=json.dumps(OLFACTORY_LABELS, ensure_ascii=False),
+        olf_real_json=json.dumps(["OLFC", "AMY", "ENT", "MD", "OFC"]),
+        amy_order_json=json.dumps(OLF_AMY_ORDER),
+        ent_order_json=json.dumps(OLF_ENT_ORDER),
+        ofc_order_json=json.dumps(OLF_OFC_ORDER),
+        thalamic_order_json=json.dumps(THALAMIC_ORDER),
     )
 
     out_path = OUT_DIR / OUT_FILE
@@ -310,7 +322,7 @@ def main():
     print(f"Wrote {out_path} ({out_path.stat().st_size / 1024 / 1024:.2f} MB)")
 
 
-TEMPLATE = """<title>聽覺系統</title>
+TEMPLATE = """<title>嗅覺系統</title>
 <style>
   :root {{
     --bg: #12151a;
@@ -319,8 +331,8 @@ TEMPLATE = """<title>聽覺系統</title>
     --text: #e9edf1;
     --text-dim: #8b96a3;
     --text-faint: #5c6672;
-    --accent: #e0a458;
-    --accent-ves: #6fb0e0;
+    --accent: #8fbf7f;
+    --accent2: #d094d9;
     --mono: ui-monospace, "Cascadia Code", "SF Mono", "JetBrains Mono", Consolas, "Liberation Mono", monospace;
     --sans: -apple-system, "Segoe UI", system-ui, Roboto, sans-serif;
   }}
@@ -550,8 +562,8 @@ TEMPLATE = """<title>聽覺系統</title>
 
 <header class="ui">
   <span class="eyebrow" id="txtEyebrow">Human &middot; MNI152 space &middot; peripheral&rarr;central pathway</span>
-  <h1>聽覺系統 <span id="txtTitleSuffix"><span class="accent">Auditory</span> &amp; <span style="color:var(--accent-ves)">Vestibular</span> Pathways</span></h1>
-  <span class="subtitle" id="txtSubtitle">Cranial nerve VIII's two ascending pathways, right ear to cortex/cerebellum. The auditory pathway <b>crosses the midline at the trapezoid body</b> &mdash; it starts on the right (cochlea, CN VIII, cochlear nuclei) but the majority of fibers decussate there and continue up the <b>left</b> side (superior olive &rarr; lemniscus &rarr; inferior colliculus &rarr; medial geniculate &rarr; auditory cortex); the vestibular pathway stays right (ipsilateral). Solid meshes are real MNI152-space anatomy; wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.</span>
+  <h1>嗅覺系統 <span id="txtTitleSuffix"><span class="accent">Olfactory</span> &amp; <span style="color:var(--accent2)">Thalamic</span> Pathways</span></h1>
+  <span class="subtitle" id="txtSubtitle">The olfactory pathway from right nasal cavity to cortex. Olfaction is the one sensory system that <b>bypasses the thalamus</b> &mdash; primary olfactory cortex receives bulb input <b>directly</b>, with no obligatory thalamic relay, and projects straight on to the amygdala, entorhinal cortex and orbitofrontal cortex. Toggle the <b>thalamic route</b> to see the parallel, secondary detour through the mediodorsal thalamus (linked to odor attention rather than detection). Note also that this pathway <b>never crosses the midline</b> &mdash; unlike hearing and vision, each nostril's signal stays strictly on its own side, which is why smell is tested one nostril at a time. Solid meshes are real MNI152-space anatomy (AAL3 atlas); wireframe markers are schematic, illustrative placements for structures too small or too deep for any freely available 3D atlas. Hover a node for a locator line + slice plane.</span>
 </header>
 
 <div class="panel hover-info ui" id="hoverPanel">
@@ -566,28 +578,28 @@ TEMPLATE = """<title>聽覺系統</title>
   </div>
   <div class="legend-body" id="legendBody">
     <div id="legendList"></div>
-    <label class="legend-row legend-row--outline" data-acr="auditory">
-      <input type="checkbox" id="auditoryToggle" checked />
-      <span class="swatch" style="--swatch:#e0a458"></span>
+    <label class="legend-row legend-row--outline" data-acr="olfactory">
+      <input type="checkbox" id="olfactoryToggle" checked />
+      <span class="swatch" style="--swatch:#8fbf7f"></span>
       <span class="legend-text">
-        <span class="legend-acr" id="txtAuditoryName">Auditory pathway</span>
-        <span class="legend-name" id="txtAuditoryDesc">cochlea &rarr; cochlear nuclei &rarr; ... &rarr; cortex</span>
+        <span class="legend-acr" id="txtOlfactoryName">Olfactory pathway</span>
+        <span class="legend-name" id="txtOlfactoryDesc">bulb &rarr; olfactory cortex &rarr; amygdala / entorhinal / OFC</span>
       </span>
     </label>
-    <label class="legend-row" data-acr="vestibular">
-      <input type="checkbox" id="vestibularToggle" />
-      <span class="swatch" style="--swatch:#6fb0e0"></span>
+    <label class="legend-row" data-acr="thalamic">
+      <input type="checkbox" id="thalamicToggle" />
+      <span class="swatch" style="--swatch:#d094d9"></span>
       <span class="legend-text">
-        <span class="legend-acr" id="txtVestibularName">Vestibular pathway</span>
-        <span class="legend-name" id="txtVestibularDesc">labyrinth &rarr; vestibular nuclei &rarr; MLF / cerebellum</span>
+        <span class="legend-acr" id="txtThalamicName">Thalamic route</span>
+        <span class="legend-name" id="txtThalamicDesc">the secondary detour: olfactory cortex &rarr; MD thalamus &rarr; OFC</span>
       </span>
     </label>
     <label class="legend-row" data-acr="signal">
       <input type="checkbox" id="signalToggle" checked />
-      <span class="swatch" style="--swatch:#4fc3ff"></span>
+      <span class="swatch" style="--swatch:#e8f5a8"></span>
       <span class="legend-text">
         <span class="legend-acr" id="txtSignalName">Neural signal</span>
-        <span class="legend-name" id="txtSignalDesc">animated pulse, cochlea &rarr; auditory cortex</span>
+        <span class="legend-name" id="txtSignalDesc">animated odor pulse, epithelium &rarr; cortex</span>
       </span>
     </label>
     <div class="legend-note" id="txtLegendNote">Dashed swatch / wireframe sphere = schematic node, not a real segmented structure. Click "Structures" to collapse this panel.</div>
@@ -634,10 +646,13 @@ const ORDER = {order_js};
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 1, EXTENT * 6);
-  // MNI152 RAS: x=Right+, y=Anterior+, z=Superior+. No axis flip needed -
-  // +Y is already "up" in the sense that matters for a 3/4 anterolateral view.
-  const dist = EXTENT * 1.3;
-  camera.position.set(dist * 0.55, -dist * 0.55, dist * 0.5);
+  // MNI152 RAS: x=Right+, y=Anterior+, z=Superior+. The whole olfactory
+  // pathway sits on the ventral surface of the frontal/temporal lobes, so
+  // the sibling pages' view-from-above would bury it behind the brain -
+  // this one looks up from anterior-right-BELOW instead, and sits closer
+  // since the structures are small and clustered.
+  const dist = EXTENT * 1.35;
+  camera.position.set(dist * 0.5, dist * 0.6, -dist * 0.45);
   camera.up.set(0, 0, 1);
 
   const renderer = new THREE.WebGLRenderer({{ antialias: true, alpha: false }});
@@ -655,7 +670,8 @@ const ORDER = {order_js};
   controls.autoRotate = !reduceMotion;
   controls.autoRotateSpeed = 0.6;
   controls.addEventListener("start", () => {{ controls.autoRotate = false; }});
-  controls.target.set(0, 0, 0);
+  // centred on the ventral-frontal olfactory region, not the brain's centroid
+  controls.target.set(0, EXTENT * 0.05, -EXTENT * 0.1);
 
   scene.add(new THREE.HemisphereLight(0xaebfd4, 0x14171c, 0.55));
   const key = new THREE.DirectionalLight(0xffffff, 0.85);
@@ -714,7 +730,7 @@ const ORDER = {order_js};
     sprite.scale.set(scaleH * (canvas.width / canvas.height), scaleH, 1);
   }}
 
-  // ---- generated legend rows (root/skull/AUDp/CBLX), not hand-written ----
+  // ---- generated legend rows (root/skull + the AAL3 structures) ----
   const LEGEND_META = {legend_meta_json};
   const legendDefaults = {{}};
   LEGEND_META.forEach((m) => {{ legendDefaults[m.acr] = m.default_checked; }});
@@ -811,15 +827,22 @@ const ORDER = {order_js};
   }})();
 
   // ---- shared pathway-drawing helper (schematic tube + nodes + labels) ----
-  // HOVER_NODES collects every node (real-mesh endpoints too) across both
-  // pathways so a single raycaster can drive the hover leader-line + slice
-  // plane below.
+  // HOVER_NODES collects every node (real-mesh endpoints too) across all
+  // branches so a single raycaster can drive the hover leader-line + slice
+  // plane below. Nodes on the shared trunk repeat across branches; the
+  // raycaster just picks whichever hit sphere is nearest, which is fine.
   const HOVER_NODES = [];
   let hoveredNode = null;
 
-  function buildPathway(orderedKeys, waypoints, labels, realKeys, color) {{
+  // labelKeys: which of orderedKeys get a label + marker + hit sphere. The
+  // branches all share a long trunk, so each curve is drawn full-length
+  // (the signal needs to travel the whole way) but only ONE of them labels
+  // the trunk - otherwise every trunk node gets 3-4 sprites stacked on top
+  // of itself.
+  function buildPathway(orderedKeys, waypoints, labels, realKeys, color, labelKeys) {{
     const group = new THREE.Group();
     const realSet = new Set(realKeys);
+    const labelSet = new Set(labelKeys || orderedKeys);
 
     const pts = orderedKeys.map((k) => new THREE.Vector3(...waypoints[k]));
     const curve = new THREE.CatmullRomCurve3(pts, false, "catmullrom", 0.4);
@@ -832,12 +855,12 @@ const ORDER = {order_js};
 
     const colorHex = "#" + color.toString(16).padStart(6, "0");
 
-    // waypoints crowd together near the ear/brainstem entry point; stagger
-    // each label along Y (anterior/posterior depth) only - never Z, so each
+    // waypoints crowd together along the olfactory tract; stagger each
+    // label along Y (anterior/posterior depth) only - never Z, so each
     // label stays at its node's true superior/inferior height and the
-    // on-screen vertical order always matches real anatomy (e.g. inferior
-    // colliculus reads below medial geniculate, not above it)
+    // on-screen vertical order always matches real anatomy
     orderedKeys.forEach((key, i) => {{
+      if (!labelSet.has(key)) return;
       const p = waypoints[key]; // [x, y, z, radius_um]
       const pos = new THREE.Vector3(p[0], p[1], p[2]);
       const isReal = realSet.has(key);
@@ -849,9 +872,11 @@ const ORDER = {order_js};
         marker.position.copy(pos);
         group.add(marker);
       }}
-      const label = makeTextSprite(labels[key][LANG], colorHex, 52, EXTENT * 0.032, 998);
-      const step = EXTENT * 0.03;
-      const yOff = (i % 2 === 0 ? -1 : 1) * step * (1 + Math.floor(i / 2) * 0.4);
+      const label = makeTextSprite(labels[key][LANG], colorHex, 52, EXTENT * 0.026, 998);
+      // this pathway is compact (the whole trunk spans ~35mm), so labels
+      // need a wider stagger than the auditory/visual pages to stay legible
+      const step = EXTENT * 0.045;
+      const yOff = (i % 2 === 0 ? -1 : 1) * step * (1 + Math.floor(i / 2) * 0.5);
       const labelPos = new THREE.Vector3(p[0], p[1] + yOff, p[2]);
       label.position.copy(labelPos);
       group.add(label);
@@ -869,39 +894,61 @@ const ORDER = {order_js};
     return group;
   }}
 
-  const AUD_WAYPOINTS = {aud_waypoints_json};
-  const AUD_ORDER = {aud_order_json};
-  const AUD_LABELS = {aud_labels_json};
-  const AUD_REAL = {aud_real_json};
-  const auditoryGroup = buildPathway(AUD_ORDER, AUD_WAYPOINTS, AUD_LABELS, AUD_REAL, 0xe0a458);
+  const OLF_WAYPOINTS = {olf_waypoints_json};
+  const OLF_LABELS = {olf_labels_json};
+  const OLF_REAL = {olf_real_json};
+  const AMY_ORDER = {amy_order_json};
+  const ENT_ORDER = {ent_order_json};
+  const OFC_ORDER = {ofc_order_json};
+  const THALAMIC_ORDER = {thalamic_order_json};
 
-  const VES_WAYPOINTS = {ves_waypoints_json};
-  const VES_TRUNK = {ves_trunk_json};
-  const VES_LABELS = {ves_labels_json};
-  const VES_REAL = {ves_real_json};
-  const vestibularGroup = new THREE.Group();
-  vestibularGroup.add(buildPathway(VES_TRUNK.concat(["MLF"]), VES_WAYPOINTS, VES_LABELS, VES_REAL, 0x6fb0e0));
-  vestibularGroup.add(buildPathway(VES_TRUNK.concat(["CBLX"]), VES_WAYPOINTS, VES_LABELS, VES_REAL, 0x6fb0e0));
-  vestibularGroup.visible = document.getElementById("vestibularToggle").checked;
-  scene.add(vestibularGroup);
+  // Group 1: the direct, thalamus-bypassing olfactory pathway - three
+  // branches sharing the trunk (epithelium -> CN I -> bulb -> AON -> tract
+  // -> trigone), then primary olfactory cortex, then out to amygdala,
+  // entorhinal cortex and orbitofrontal cortex with NO thalamic relay.
+  // Each branch curve runs the full length (so the signal sweeps the whole
+  // pathway), but only the amygdala branch labels the shared trunk - the
+  // other two label just their own endpoint.
+  const olfactoryGroup = new THREE.Group();
+  const amyPath = buildPathway(AMY_ORDER, OLF_WAYPOINTS, OLF_LABELS, OLF_REAL, 0x8fbf7f, AMY_ORDER);
+  const entPath = buildPathway(ENT_ORDER, OLF_WAYPOINTS, OLF_LABELS, OLF_REAL, 0x8fbf7f, ["ENT"]);
+  const ofcPath = buildPathway(OFC_ORDER, OLF_WAYPOINTS, OLF_LABELS, OLF_REAL, 0x8fbf7f, ["OFC"]);
+  olfactoryGroup.add(amyPath);
+  olfactoryGroup.add(entPath);
+  olfactoryGroup.add(ofcPath);
+  olfactoryGroup.userData.curves = [
+    amyPath.userData.curve, entPath.userData.curve, ofcPath.userData.curve,
+  ];
+  olfactoryGroup.visible = document.getElementById("olfactoryToggle").checked;
+  scene.add(olfactoryGroup);
 
-  document.getElementById("auditoryToggle").addEventListener("change", (e) => {{
-    auditoryGroup.visible = e.target.checked;
+  // Group 2: the parallel secondary route via mediodorsal thalamus, default
+  // off - toggling it against group 1's direct olfactory-cortex-to-OFC line
+  // is the whole point of the page.
+  const thalamicGroup = buildPathway(THALAMIC_ORDER, OLF_WAYPOINTS, OLF_LABELS, OLF_REAL, 0xd094d9, ["MD"]);
+  thalamicGroup.visible = document.getElementById("thalamicToggle").checked;
+
+  document.getElementById("olfactoryToggle").addEventListener("change", (e) => {{
+    olfactoryGroup.visible = e.target.checked;
   }});
-  document.getElementById("vestibularToggle").addEventListener("change", (e) => {{
-    vestibularGroup.visible = e.target.checked;
+  document.getElementById("thalamicToggle").addEventListener("change", (e) => {{
+    thalamicGroup.visible = e.target.checked;
   }});
 
-  // ---- animated "hearing a sound" signal: a scattered blue spark swarm
-  // traveling along the auditory pathway, cochlea -> cortex, looping ----
-  const SIGNAL_COLOR = 0x4fc3ff;
-  const SIGNAL_COUNT = 26;
-  const SIGNAL_DURATION = 2.4; // seconds per cochlea->cortex sweep
+  // ---- animated "smelling something" signal: scattered particle streams
+  // (one per group-1 branch) traveling epithelium -> cortex, departing
+  // together and diverging after primary olfactory cortex, looping. The
+  // thalamic route gets no animation, matching the sibling pages'
+  // precedent that only the primary pathway animates. ----
+  const SIGNAL_COLOR = 0xe8f5a8;
+  const SIGNAL_COUNT = 22; // per curve
+  const SIGNAL_DURATION = 2.6; // seconds per epithelium->cortex sweep
   const SIGNAL_TRAIL = 0.16; // fraction of the sweep the trailing spread covers
   const SIGNAL_JITTER = EXTENT * 0.01;
 
+  const olfactoryCurves = olfactoryGroup.userData.curves;
   const signalGeom = new THREE.BufferGeometry();
-  signalGeom.setAttribute("position", new THREE.BufferAttribute(new Float32Array(SIGNAL_COUNT * 3), 3));
+  signalGeom.setAttribute("position", new THREE.BufferAttribute(new Float32Array(SIGNAL_COUNT * olfactoryCurves.length * 3), 3));
   const signalMat = new THREE.PointsMaterial({{
     color: SIGNAL_COLOR, size: EXTENT * 0.009, sizeAttenuation: true,
     transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending,
@@ -915,24 +962,27 @@ const ORDER = {order_js};
   signalToggle.addEventListener("change", (e) => {{ signalEnabled = e.target.checked; }});
 
   const clock = new THREE.Clock();
-  const auditoryCurve = auditoryGroup.userData.curve;
   const posArr = signalGeom.attributes.position.array;
 
   function updateSignal() {{
-    const show = signalEnabled && auditoryGroup.visible;
+    const show = signalEnabled && olfactoryGroup.visible;
     signalPoints.visible = show;
     if (!show) return;
     const cycle = (clock.getElapsedTime() % SIGNAL_DURATION) / SIGNAL_DURATION; // 0..1, repeats
-    for (let i = 0; i < SIGNAL_COUNT; i++) {{
-      // each particle trails a little behind the lead, spread over SIGNAL_TRAIL
-      // of the sweep, so the swarm reads as a scattered pulse with a tail
-      // rather than a single dot
-      const t = Math.min(0.999, Math.max(0, cycle - (i / SIGNAL_COUNT) * SIGNAL_TRAIL));
-      const p = auditoryCurve.getPointAt(t);
-      posArr[i * 3 + 0] = p.x + (Math.random() - 0.5) * SIGNAL_JITTER;
-      posArr[i * 3 + 1] = p.y + (Math.random() - 0.5) * SIGNAL_JITTER;
-      posArr[i * 3 + 2] = p.z + (Math.random() - 0.5) * SIGNAL_JITTER;
-    }}
+    let idx = 0;
+    olfactoryCurves.forEach((curve) => {{
+      for (let i = 0; i < SIGNAL_COUNT; i++) {{
+        // each particle trails a little behind the lead, spread over
+        // SIGNAL_TRAIL of the sweep, so the swarm reads as a scattered
+        // pulse with a tail rather than a single dot
+        const t = Math.min(0.999, Math.max(0, cycle - (i / SIGNAL_COUNT) * SIGNAL_TRAIL));
+        const p = curve.getPointAt(t);
+        posArr[idx * 3 + 0] = p.x + (Math.random() - 0.5) * SIGNAL_JITTER;
+        posArr[idx * 3 + 1] = p.y + (Math.random() - 0.5) * SIGNAL_JITTER;
+        posArr[idx * 3 + 2] = p.z + (Math.random() - 0.5) * SIGNAL_JITTER;
+        idx++;
+      }}
+    }});
     signalGeom.attributes.position.needsUpdate = true;
   }}
 
@@ -980,7 +1030,7 @@ const ORDER = {order_js};
         leaderLine.geometry.setFromPoints([node.pos, node.labelPos]);
         leaderLine.geometry.attributes.position.needsUpdate = true;
         slicePlane.position.set(0, node.pos.y, 0);
-        sliceLabel.textContent = node.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨]+[ab]?\\s*/, "");
+        sliceLabel.textContent = node.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨]+[abcd]?\\s*/, "");
         sliceLabel.parentElement.classList.add("show");
       }} else {{
         sliceLabel.parentElement.classList.remove("show");
@@ -1011,8 +1061,8 @@ const ORDER = {order_js};
       const key = {{
         txtEyebrow: "eyebrow", txtTitleSuffix: "title_suffix", txtSubtitle: "subtitle",
         txtHoverTitle: "hover_title", txtStructuresTitle: "structures_title",
-        txtAuditoryName: "auditory_pathway_name", txtAuditoryDesc: "auditory_pathway_desc",
-        txtVestibularName: "vestibular_pathway_name", txtVestibularDesc: "vestibular_pathway_desc",
+        txtOlfactoryName: "olfactory_pathway_name", txtOlfactoryDesc: "olfactory_pathway_desc",
+        txtThalamicName: "thalamic_pathway_name", txtThalamicDesc: "thalamic_pathway_desc",
         txtSignalName: "signal_name", txtSignalDesc: "signal_desc",
         txtLegendNote: "legend_note", txtHintControls: "hint_controls", txtHintUnits: "hint_units",
         txtControlsTitle: "controls_title",
@@ -1028,7 +1078,7 @@ const ORDER = {order_js};
     HOVER_NODES.forEach((n) => updateTextSprite(n.labelSprite, n.text[LANG]));
     if (hoveredNode) {{
       document.getElementById("hoverLabel").textContent =
-        hoveredNode.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨]+[ab]?\\s*/, "");
+        hoveredNode.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨]+[abcd]?\\s*/, "");
     }}
   }}
 

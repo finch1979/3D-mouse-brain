@@ -1,0 +1,7 @@
+# Mouse P56 (adult) - Allen Mouse Brain Atlas CCFv3, via the Allen Brain Map
+# RMA query API and the static CCFv3 2017 structure-mesh endpoint.
+atlas_id: 1 # Mouse, P56, Coronal reference atlas
+default_acronyms:
+  - MOp
+  - MOs
+  - RSP

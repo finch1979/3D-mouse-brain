@@ -8,8 +8,8 @@ volume, served as static files (not through the RMA query API):
         mouse_ccf/annotation/ccf_2017/structure_meshes/{structure_id}.obj
 
 Usage:
-    python fetch_atlas_3d.py --acronyms MOp MOs RSP
-    python fetch_atlas_3d.py --acronyms VISp --no-root
+    python -m mouse_atlas.fetch.atlas_3d --acronyms MOp MOs RSP
+    python -m mouse_atlas.fetch.atlas_3d --acronyms VISp --no-root
 
 By default also fetches structure_id=997 ("root", the whole-brain outline)
 for spatial context, unless --no-root is passed.
@@ -21,7 +21,7 @@ import os
 
 import requests
 
-from fetch_atlas_plate import lookup_structure, OUT_DIR
+from mouse_atlas.fetch.atlas_plate import DEFAULT_ACRONYMS, lookup_structure, OUT_DIR
 
 MESH_BASE = (
     "http://download.alleninstitute.org/informatics-archive/current-release/"
@@ -46,7 +46,7 @@ def download_mesh(structure_id):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--acronyms", nargs="+", default=["MOp", "MOs", "RSP"])
+    parser.add_argument("--acronyms", nargs="+", default=DEFAULT_ACRONYMS)
     parser.add_argument("--no-root", action="store_true", help="Skip the whole-brain context mesh")
     args = parser.parse_args()
 

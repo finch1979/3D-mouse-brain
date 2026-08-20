@@ -1,0 +1,6 @@
+# Mouse P15 - DeMBA (Kim Lab): the adult Allen CCFv3 ontology non-linearly
+# registered onto a P15-shaped brain, loaded via the BrainGlobe Atlas API.
+# Boundaries are computationally warped from the adult atlas, not
+# independently re-annotated at P15.
+brainglobe_atlas_name: demba_allen_seg_dev_mouse_p15_25um
+resolution_um: 25.0

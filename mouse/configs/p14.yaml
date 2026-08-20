@@ -1,0 +1,7 @@
+# Mouse P14 - plain Allen Developing Mouse Brain Atlas: a fixed 2D sagittal
+# plate series only (no BrainGlobe 3D volume exists for this age). Recorded
+# here for reference; build_plate_atlas.py's PLATES dict still owns the full
+# per-plate presentation config (titles, captions, cross-links).
+atlas_id: 181276164 # Developing Mouse, P14
+reference_image_id: 100365849
+section_number: 144

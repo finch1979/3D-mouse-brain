@@ -13,7 +13,7 @@ computationally warped from the adult atlas, not independently re-annotated
 at P15.
 
 Usage:
-    python build_demba_p15.py
+    python -m mouse_atlas.build.demba_p15
 """
 
 import base64
@@ -28,17 +28,19 @@ from skimage import measure
 
 from brainglobe_atlasapi import BrainGlobeAtlas
 
-import build_plate_atlas as bpa
+from mouse_atlas.build import plate_atlas as bpa
+from mouse_atlas.common.config import load_config
+from mouse_atlas.common.paths import OUTPUTS_DIR
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ATLAS_DIR = os.path.join(SCRIPT_DIR, "atlas")
-OUT_DIR = os.path.join(ATLAS_DIR, "P15")
+P15_CONFIG = load_config("p15")
+
+OUT_DIR = str(OUTPUTS_DIR / "P15")
 os.makedirs(OUT_DIR, exist_ok=True)
 
-ATLAS_NAME = "demba_allen_seg_dev_mouse_p15_25um"
+ATLAS_NAME = P15_CONFIG["brainglobe_atlas_name"]
 SLICE_IDX = 222  # AP voxel index; chosen so MOp/MOs/RSP are all well represented
 UPSAMPLE = 4
-RESOLUTION_UM = 25.0
+RESOLUTION_UM = P15_CONFIG["resolution_um"]
 
 OUT_FILE = "coronal_p15_demba_interactive.html"
 

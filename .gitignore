@@ -1,12 +1,14 @@
 # Python
 __pycache__/
 *.pyc
+*.egg-info/
 
-# Allen API raw response cache (regenerable via build_plate_atlas.py)
-atlas/*/api_cache/
+# Allen API / atlas download raw response cache (regenerable via the fetch/build scripts)
+mouse/data/cache/
+human/data/cache/
 
 # third-party repo clone, not part of this project
-brainglobe-atlasapi/
+external/brainglobe-atlasapi/
 
 # Claude Code local runtime state, not project content
 .claude/

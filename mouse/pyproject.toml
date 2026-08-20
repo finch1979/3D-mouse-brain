@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mouse_atlas"
+version = "0.1.0"
+description = "Fetch/build pipelines and 3D/2D structure viewers for the mouse brain atlas (Allen CCFv3 P56, DeMBA P15, Developing Mouse P14)."
+requires-python = ">=3.10"
+dependencies = [
+    "requests",
+    "numpy",
+    "scikit-image",
+    "trimesh",
+    "scipy",
+    "Pillow",
+    "PyYAML",
+    "brainglobe-atlasapi",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

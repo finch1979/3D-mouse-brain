@@ -11,8 +11,8 @@ Data sources (Allen Institute Brain Map API, all public, no key required):
   - Plate photo (Nissl) : /api/v2/atlas_image_download/{image_id}?annotation=false
 
 Usage:
-    python build_plate_atlas.py            # builds every plate in PLATES
-    python build_plate_atlas.py p56_coronal_289
+    python -m mouse_atlas.build.plate_atlas            # builds every plate in PLATES
+    python -m mouse_atlas.build.plate_atlas p56_coronal_289
 """
 
 import base64
@@ -26,8 +26,9 @@ import xml.etree.ElementTree as ET
 import requests
 from PIL import Image
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ATLAS_DIR = os.path.join(SCRIPT_DIR, "atlas")
+from mouse_atlas.common.paths import DATA_CACHE_DIR, OUTPUTS_DIR
+
+ATLAS_DIR = str(OUTPUTS_DIR)
 
 API_BASE = "http://api.brain-map.org/api/v2"
 SVG_NS = "http://www.w3.org/2000/svg"
@@ -235,7 +236,8 @@ def build(plate_key):
     cfg = PLATES[plate_key]
     image_id = cfg["image_id"]
     out_dir_path = os.path.join(ATLAS_DIR, cfg["out_dir"])
-    cache_dir = os.path.join(out_dir_path, "api_cache")
+    cache_dir = os.path.join(str(DATA_CACHE_DIR), cfg["out_dir"])
+    os.makedirs(out_dir_path, exist_ok=True)
     os.makedirs(cache_dir, exist_ok=True)
     print(f"--- building {plate_key} (image_id={image_id}) ---")
 

@@ -1,0 +1,74 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661,
+    "anchor_um": {
+      "right": [
+        35165.79793622821,
+        -21954.227248364135,
+        4906.2527654526675
+      ],
+      "left": [
+        -35865.98755484189,
+        -21896.545290488804,
+        4986.966694217389
+      ]
+    }
+  },
+  "skull": {
+    "name": "Approx. head size (brain +9mm, not real skull anatomy)",
+    "color": "FFFFFF",
+    "mesh_path": "mesh/skull.obj",
+    "vertex_count": 18681,
+    "anchor_um": {
+      "right": [
+        39544.37576400097,
+        -21138.104814702812,
+        5095.074483948774
+      ],
+      "left": [
+        -40219.27871576174,
+        -21087.484798346057,
+        5198.163493172123
+      ]
+    }
+  },
+  "AUDp": {
+    "name": "Auditory cortex (Heschl's gyrus)",
+    "color": "E0A458",
+    "mesh_path": "mesh/AUDp.obj",
+    "vertex_count": 3638,
+    "anchor_um": {
+      "right": [
+        46360.7428569864,
+        -17047.170197173018,
+        6573.853137034032
+      ],
+      "left": [
+        -45229.58309276459,
+        -20456.132767219795,
+        6999.74748827613
+      ]
+    }
+  },
+  "CBLX": {
+    "name": "Vestibulocerebellum (cerebellar Lobule X)",
+    "color": "6F8FE0",
+    "mesh_path": "mesh/CBLX.obj",
+    "vertex_count": 2188,
+    "anchor_um": {
+      "right": [
+        16490.90754870406,
+        -42046.636212428675,
+        -42727.719267714834
+      ],
+      "left": [
+        -15615.665504168013,
+        -41896.85568119122,
+        -42919.883559102775
+      ]
+    }
+  }
+}

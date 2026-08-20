@@ -4,13 +4,13 @@ using REAL P15-shaped meshes extracted from the DeMBA "Allen segmentation"
 P15 atlas (BrainGlobe Atlas API) - not the adult P56 shape.
 
 Reuses the exact three.js + OrbitControls build already embedded in
-atlas/P56/motor_cortex_3d.html (extracted to atlas/lib_three.min.js and
-atlas/lib_OrbitControls.js) so no external network fetch is needed, and
+outputs/mouse/P56/motor_cortex_3d.html (extracted to web/lib/three.min.js
+and web/lib/OrbitControls.js) so no external network fetch is needed, and
 mirrors that page's camera/legend/interaction design so the two 3D pages
 feel like the same app.
 
 Usage:
-    python build_demba_p15_3d.py
+    python -m mouse_atlas.build.demba_p15_3d
 """
 
 import base64
@@ -24,16 +24,19 @@ from skimage import measure
 from trimesh import smoothing
 from brainglobe_atlasapi import BrainGlobeAtlas
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-ATLAS_DIR = os.path.join(SCRIPT_DIR, "atlas")
-OUT_DIR = os.path.join(ATLAS_DIR, "P15")
+from mouse_atlas.common.config import load_config
+from mouse_atlas.common.paths import OUTPUTS_DIR, WEB_LIB_DIR
+
+P15_CONFIG = load_config("p15")
+
+OUT_DIR = str(OUTPUTS_DIR / "P15")
 os.makedirs(OUT_DIR, exist_ok=True)
 
-THREE_JS = open(os.path.join(ATLAS_DIR, "lib_three.min.js"), encoding="utf-8").read()
-ORBIT_JS = open(os.path.join(ATLAS_DIR, "lib_OrbitControls.js"), encoding="utf-8").read()
+THREE_JS = open(WEB_LIB_DIR / "three.min.js", encoding="utf-8").read()
+ORBIT_JS = open(WEB_LIB_DIR / "OrbitControls.js", encoding="utf-8").read()
 
-ATLAS_NAME = "demba_allen_seg_dev_mouse_p15_25um"
-RESOLUTION_UM = 25.0
+ATLAS_NAME = P15_CONFIG["brainglobe_atlas_name"]
+RESOLUTION_UM = P15_CONFIG["resolution_um"]
 # trimesh's simplify_quadric_decimation (fast-simplification backend) reliably
 # punches small holes in these meshes regardless of target face count or input
 # quality (verified: still non-watertight even decimating a clean, watertight

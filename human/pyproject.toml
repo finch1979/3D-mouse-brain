@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "human_atlas"
+version = "0.1.0"
+description = "Build pipeline and 3D structure viewers for human brain atlases (MNI152-space auditory/vestibular pathway, limbic system, whole brain)."
+requires-python = ">=3.10"
+dependencies = [
+    "requests",
+    "numpy",
+    "scikit-image",
+    "trimesh",
+    "scipy",
+    "nilearn",
+    "nibabel",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

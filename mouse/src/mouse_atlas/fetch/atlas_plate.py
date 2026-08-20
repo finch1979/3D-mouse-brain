@@ -5,9 +5,9 @@ that shows one or more target brain regions (by acronym).
 API docs: https://brain-map.org/support/documentation/api-for-mouse-brain-atlas
 
 Usage:
-    python fetch_atlas_plate.py
-    python fetch_atlas_plate.py --acronyms MOp MOs RSP
-    python fetch_atlas_plate.py --acronyms VISp --plate-frac 0.6
+    python -m mouse_atlas.fetch.atlas_plate
+    python -m mouse_atlas.fetch.atlas_plate --acronyms MOp MOs RSP
+    python -m mouse_atlas.fetch.atlas_plate --acronyms VISp --plate-frac 0.6
 
 Workflow:
     1. Look up each target structure's id / color via the Structure API.
@@ -29,10 +29,15 @@ import os
 
 import requests
 
+from mouse_atlas.common.config import load_config
+from mouse_atlas.common.paths import OUTPUTS_DIR
+
+P56_CONFIG = load_config("p56")
+
 BASE = "http://api.brain-map.org/api/v2"
-ATLAS_ID = 1  # Mouse, P56, Coronal reference atlas
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-OUT_DIR = os.path.join(SCRIPT_DIR, "atlas", "P56")
+ATLAS_ID = P56_CONFIG["atlas_id"]  # Mouse, P56, Coronal reference atlas
+DEFAULT_ACRONYMS = P56_CONFIG["default_acronyms"]
+OUT_DIR = str(OUTPUTS_DIR / "P56")
 PREVIEW_DIR = os.path.join(OUT_DIR, "preview")
 
 
@@ -88,7 +93,7 @@ def pick_preview_fractions(n=5, lo=0.30, hi=0.55):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--acronyms", nargs="+", default=["MOp", "MOs", "RSP"],
+        "--acronyms", nargs="+", default=DEFAULT_ACRONYMS,
         help="Structure acronyms to look up (Allen ontology naming, e.g. MOp MOs RSP)",
     )
     parser.add_argument(

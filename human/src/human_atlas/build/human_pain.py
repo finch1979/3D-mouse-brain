@@ -1070,13 +1070,27 @@ const ORDER = {order_js};
   // opening one collapses the other instead of letting them overlap.
   const walkPanel = document.getElementById("walkPanel");
   const legendPanel = document.getElementById("legendPanel");
+  // A CSS vh cap is not enough: the header above the walkthrough is a fixed
+  // number of pixels tall, so on a short window the panel still runs into the
+  // legend below it. Measure the gap that is actually left and cap to that.
+  function fitWalkPanel() {{
+    const body = document.getElementById("walkBody");
+    if (walkPanel.classList.contains("collapsed")) return;
+    const top = body.getBoundingClientRect().top;
+    const legendTop = legendPanel.getBoundingClientRect().top || window.innerHeight - 64;
+    const avail = legendTop - top - 18;
+    body.style.maxHeight = Math.max(120, Math.min(avail, 470)) + "px";
+  }}
+
   document.getElementById("legendToggle").addEventListener("click", () => {{
     legendPanel.classList.toggle("collapsed");
     if (!legendPanel.classList.contains("collapsed")) walkPanel.classList.add("collapsed");
+    fitWalkPanel();
   }});
   document.getElementById("walkToggle").addEventListener("click", () => {{
     walkPanel.classList.toggle("collapsed");
     if (!walkPanel.classList.contains("collapsed")) legendPanel.classList.add("collapsed");
+    fitWalkPanel();
   }});
   document.getElementById("hintToggle").addEventListener("click", () => {{
     document.getElementById("hintPanel").classList.toggle("collapsed");
@@ -1409,6 +1423,7 @@ const ORDER = {order_js};
       el.textContent = LANG === "zh" ? el.dataset.nameZh : el.dataset.nameEn;
     }});
     langToggleBtn.textContent = STRINGS.lang_button[LANG];
+    fitWalkPanel();  // the subtitle wraps to a different height per language
     AXIS_SPRITES.forEach(({{ sprite, key }}) => updateTextSprite(sprite, STRINGS[key][LANG]));
     HOVER_NODES.forEach((n) => updateTextSprite(n.labelSprite, n.text[LANG]));
     if (hoveredNode) {{
@@ -1428,6 +1443,7 @@ const ORDER = {order_js};
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    fitWalkPanel();
   }}
   window.addEventListener("resize", resize);
 

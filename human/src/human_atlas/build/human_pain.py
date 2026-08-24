@@ -201,7 +201,7 @@ LABELS = {
     "VH_L":      {"en": "⑪ b Left ventral horn", "zh": "⑪ b 左前角"},
     "Extensor":  {"en": "⑫ b Left extensor — supports weight", "zh": "⑫ b 左伸肌—支撐體重"},
     "M1":        {"en": "⑬ Left motor cortex (foot area)", "zh": "⑬ 左運動皮質(腳部區)"},
-    "IntCaps":   {"en": "⑭ Internal capsule", "zh": "⑭ 內囊"},
+    "IntCaps":   {"en": "⑭ Internal capsule (posterior limb)", "zh": "⑭ 內囊(後肢)"},
     "Pyramids":  {"en": "⑮ Pyramidal decussation — CROSSES (medulla, ~90%)", "zh": "⑮ 錐體交叉—交叉(延髓,約 90%)"},
     "CST_R":     {"en": "⑯ Right lateral corticospinal tract", "zh": "⑯ 右外側皮質脊髓束"},
     "DC_R":      {"en": "⑰ Right fasciculus gracilis — UNCROSSED", "zh": "⑰ 右薄束—不交叉"},
@@ -216,8 +216,70 @@ STRINGS = {
     "title_suffix": {"en": '<span class="accent">Pain</span>, <span style="color:var(--accent2)">Reflex</span> &amp; <span style="color:var(--accent3)">Motor</span> Pathways',
                       "zh": '<span class="accent">痛覺</span>、<span style="color:var(--accent2)">反射</span>與<span style="color:var(--accent3)">運動</span>路徑'},
     "subtitle": {
-        "en": "A <b>170 cm</b> adult's right foot steps on a tack. This page follows what happens, from skin to cortex and back down to muscle &mdash; and it is built around <b>four midline crossings that happen in four different places</b>. Pain crosses <b>in the spinal cord</b>, within 1&ndash;2 segments of entry. The crossed-extensor reflex also crosses <b>in the cord</b>. But touch and proprioception stay <b>uncrossed</b> the whole length of the cord and only cross <b>in the medulla</b>, as does the descending motor command at the pyramids. That split is why a cord hemisection (<b>Brown-S&eacute;quard</b>) causes loss of touch on <b>one</b> side and loss of pain on the <b>other</b>. The withdrawal reflex is completed by the cord alone, without waiting for the brain &mdash; a parallel circuit, not a step on the way. Solid meshes are real anatomy (AAL3 brain, PAM50 spinal cord); wireframe markers are schematic. The figure is <b>vertically compressed</b> by default so the crossings are visible &mdash; toggle <b>true scale</b> for the real <b>170 cm</b> body, where the signal travels roughly <b>1.5 metres</b> from sole to cortex.",
-        "zh": "一位<b>身高 170 公分</b>的成人,右腳踩到圖釘。這一頁追蹤接下來發生的事:從皮膚到皮質,再下行到肌肉&mdash;整頁圍繞著<b>四個發生在四個不同位置的中線交叉</b>。痛覺在<b>脊髓內</b>交叉,就在進入後 1&ndash;2 個節段內。交叉伸肌反射也在<b>脊髓內</b>交叉。但觸覺與本體感覺沿整條脊髓<b>都不交叉</b>,要到<b>延髓</b>才交叉;下行的運動指令也在延髓錐體交叉。這個差異正是脊髓半切(<b>Brown-S&eacute;quard 症候群</b>)會造成<b>一側</b>失去觸覺、<b>另一側</b>失去痛覺的原因。縮腳反射由脊髓獨立完成,不需要等大腦&mdash;它是一條平行的迴路,而不是路途中的一站。實心網格是真實解剖(AAL3 腦部、PAM50 脊髓);線框標記為示意。畫面預設<b>垂直壓縮</b>以便看清交叉點&mdash;可切換<b>真實比例</b>還原成 <b>170 公分</b>的身體,訊號從腳底到皮質實際要走約 <b>1.5 公尺</b>。",
+        "en": "A <b>170 cm</b> adult's right foot steps on a tack. The walkthrough below follows what happens <b>one pathway at a time</b> &mdash; the ascending pain route first, in full, naming every nucleus it passes through, and only then the reflex and the descending motor command. Solid meshes are real anatomy (AAL3 brain, PAM50 spinal cord); wireframe spheres are schematic. Only the pain pathway is switched on at first &mdash; reflex, motor, touch and affective layers are checkboxes under <b>Structures</b>. The figure is <b>vertically compressed</b> by default so the crossings are visible; toggle <b>true scale</b> for the real 170 cm body, where the signal covers roughly <b>1.5 metres</b> from sole to cortex.",
+        "zh": "一位<b>身高 170 公分</b>的成人,右腳踩到圖釘。下面的說明<b>一條路徑一條路徑地</b>追蹤接下來發生的事&mdash;先完整走完上行痛覺、逐一點出它經過的每一個神經核區,再談反射與下行運動指令。實心網格是真實解剖(AAL3 腦部、PAM50 脊髓);線框球體為示意。畫面一開始只開啟痛覺路徑,反射、運動、觸覺與情緒層都在<b>結構</b>面板裡自行勾選。垂直方向預設<b>壓縮</b>以便看清交叉點;切換<b>真實比例</b>可還原成真正 170 公分的身體,訊號從腳底到皮質實際要走約 <b>1.5 公尺</b>。",
+    },
+    # "1-4" is the only cue that the panel scrolls past step 1, so keep it.
+    "walk_title": {"en": "Pathway walkthrough &nbsp;1&ndash;4", "zh": "路徑逐段說明 &nbsp;1&ndash;4"},
+    "pain_walk": {
+        "en": (
+            '<span class="step-tag">1 &middot; Ascending pain &mdash; three neurons, one crossing, and the crossing is in the cord</span>'
+            "<b>First-order neuron.</b> ① A nociceptor in the right sole fires &rarr; ② the tibial and then the sciatic nerve carries it up the leg &rarr; its cell body sits in the ③ <b>S1 dorsal root ganglion</b>, inside the sacral canal &mdash; a ganglion, not a relay, so <b>nothing synapses here</b> &rarr; ④ the axon climbs ~200&nbsp;mm of <b>cauda equina</b> to reach the L4&ndash;S1 cord segments, then runs 1&ndash;2 segments within <b>Lissauer&rsquo;s tract</b>.<br />"
+            "<b>First synapse &rarr; second-order neuron.</b> ⑤ <b>Right dorsal horn</b> &mdash; specifically a <b>lamina I / lamina V projection neuron</b>. (Lamina II, the substantia gelatinosa, is mostly interneurons; it modulates, it does not project.)<br />"
+            '<span class="cross">Crossing.</span> That axon crosses the ⑥ <b>anterior white commissure</b> <span class="cross">within 1&ndash;2 segments of where it entered</span> and joins the ⑦ <b>left anterolateral system</b> &mdash; spinothalamic together with spinoreticular fibres, which is exactly what the PAM50 label contains.<br />'
+            "<b>The long climb.</b> It ascends the cord, medulla, pons and midbrain <b>without another synapse</b>. Collaterals peel off to the reticular formation and periaqueductal grey on the way (not drawn).<br />"
+            "<b>Second synapse &rarr; third-order neuron.</b> ⑧ <b>Left VPL nucleus</b> of the thalamus. VPL is body and limb; VPM is face and is never a stop on this route.<br />"
+            "<b>Destination.</b> ⑨a <b>Left paracentral lobule</b> &mdash; the foot&rsquo;s S1 territory, on the <b>medial</b> surface of the hemisphere. That is why the foot maps to the top of the brain tucked against the midline, not onto the lateral convexity.<br />"
+            "<b>Parallel branch (medial pain system, opt-in).</b> ⑨b <b>intralaminar nuclei</b> &rarr; ⑨c <b>anterior cingulate</b> + ⑨d <b>insula</b> &mdash; how unpleasant it is, running alongside the VPL&rarr;S1 route that carries where and how much."
+        ),
+        "zh": (
+            '<span class="step-tag">1 &middot; 上行痛覺 &mdash; 三個神經元、一個交叉,而交叉發生在脊髓內</span>'
+            "<b>第一級神經元。</b>① 右腳底的傷害受器放電 &rarr; ② 訊號沿脛神經、再經坐骨神經上行 &rarr; 細胞本體位於薦管內的 ③ <b>S1 背根神經節</b>&mdash;它是神經節而不是中繼站,<b>這裡不換神經元</b> &rarr; ④ 軸突再沿<b>馬尾</b>上行約 200 公釐,進入 L4&ndash;S1 脊髓節段,並在<b>背外側束(Lissauer 束)</b>內走 1&ndash;2 個節段。<br />"
+            "<b>第一個突觸 &rarr; 第二級神經元。</b>⑤ <b>右側背角</b>,確切地說是<b>第 I 層／第 V 層的投射神經元</b>。(第 II 層膠狀質主要是中間神經元,負責調節,並不上行。)<br />"
+            '<span class="cross">交叉。</span>此軸突穿過 ⑥ <b>前白連合</b>,<span class="cross">就在進入後 1&ndash;2 個節段內</span>越過中線,加入 ⑦ <b>左側前外側系統</b>&mdash;內含脊髓視丘束與脊髓網狀束,這也正是 PAM50 該標籤實際涵蓋的範圍。<br />'
+            "<b>漫長的上行。</b>接著<b>不再換神經元</b>,一路穿過脊髓、延髓、橋腦與中腦。沿途有側枝分出到網狀結構與中腦導水管周圍灰質(未繪出)。<br />"
+            "<b>第二個突觸 &rarr; 第三級神經元。</b>⑧ 視丘<b>左側腹後外側核(VPL)</b>。VPL 負責軀幹與四肢,VPM 負責顏面,不會出現在這條路徑上。<br />"
+            "<b>終點。</b>⑨a <b>左側中央旁小葉</b>&mdash;腳部的 S1 領域,位在大腦半球的<b>內側面</b>。這就是為什麼腳的感覺區在大腦頂端、貼著中線,而不在外側凸面。<br />"
+            "<b>平行分支(內側痛覺系統,需自行開啟)。</b>⑨b <b>板內核</b> &rarr; ⑨c <b>前扣帶迴</b> + ⑨d <b>腦島</b>&mdash;負責「有多不舒服」,與 VPL&rarr;S1 負責的「在哪裡、有多強」平行運作。"
+        ),
+    },
+    "reflex_walk": {
+        "en": (
+            '<span class="step-tag">2 &middot; Withdrawal reflex &mdash; the cord finishes this one without the brain</span>'
+            "Same first-order afferent, a different branch. ⑤ right dorsal horn &rarr; ⑩a <b>interneuron pool</b> &mdash; <b>polysynaptic</b>, at least one interneuron in the middle, unlike the monosynaptic stretch reflex &rarr; ⑪a <b>right ventral horn</b> &alpha;-motor neurons &rarr; ⑫a the right <b>flexors</b> contract and the foot lifts.<br />"
+            "At the same moment ⑩b <b>commissural interneurons cross the midline inside the cord</b> &rarr; ⑪b <b>left ventral horn</b> &rarr; ⑫b the left <b>extensors</b> contract to take the body weight, so lifting one foot does not become a fall.<br />"
+            "This is a <b>parallel circuit, not a step on the way up</b>: the pain signal is still climbing the cord while this has already finished. The brain is informed, not consulted."
+        ),
+        "zh": (
+            '<span class="step-tag">2 &middot; 縮腳反射 &mdash; 這一段由脊髓自己完成,不需要大腦</span>'
+            "同一條第一級傳入纖維,走的是另一條分支。⑤ 右背角 &rarr; ⑩a <b>中間神經元群</b>&mdash;屬於<b>多突觸</b>,中間至少隔一個中間神經元,與單突觸的牽張反射不同 &rarr; ⑪a <b>右前角</b>&alpha;運動神經元 &rarr; ⑫a 右側<b>屈肌</b>收縮,腳抬起。<br />"
+            "與此同時,⑩b <b>連合中間神經元在脊髓內越過中線</b> &rarr; ⑪b <b>左前角</b> &rarr; ⑫b 左側<b>伸肌</b>收縮撐住體重,才不會因為抬起一隻腳而跌倒。<br />"
+            "這是一條<b>平行迴路,而不是上行途中的一站</b>:反射完成時,痛覺訊號還在脊髓裡往上爬。大腦是被告知,不是被徵詢。"
+        ),
+    },
+    "motor_walk": {
+        "en": (
+            '<span class="step-tag">3 &middot; Descending motor &mdash; the deliberate move afterwards, crossing in the medulla</span>'
+            "⑬ <b>Left motor cortex</b>, foot area on the paracentral lobule &rarr; corona radiata &rarr; ⑭ <b>posterior limb of the internal capsule</b> &rarr; cerebral peduncle &rarr; basis pontis &rarr; the <b>medullary pyramid</b> &rarr; ⑮ <span class=\"cross\">pyramidal decussation, where ~90% of the fibres cross</span> &rarr; ⑯ <b>right lateral corticospinal tract</b> &rarr; ⑪a <b>right ventral horn</b> &alpha;-motor neuron &rarr; muscle.<br />"
+            "Note what is <b>missing</b> from that list: there is no relay between cortex and cord. A single corticospinal axon runs the whole way from the cortical cell body down to the ventral horn &mdash; among the longest axons in the body."
+        ),
+        "zh": (
+            '<span class="step-tag">3 &middot; 下行運動 &mdash; 反射之後的自主動作,在延髓交叉</span>'
+            "⑬ <b>左側運動皮質</b>(中央旁小葉的腳部區) &rarr; 放射冠 &rarr; ⑭ <b>內囊後肢</b> &rarr; 大腦腳 &rarr; 橋腦基底 &rarr; <b>延髓錐體</b> &rarr; ⑮ <span class=\"cross\">錐體交叉,約 90% 的纖維在此越過中線</span> &rarr; ⑯ <b>右外側皮質脊髓束</b> &rarr; ⑪a <b>右前角</b>&alpha;運動神經元 &rarr; 肌肉。<br />"
+            "值得注意的是這串名單裡<b>少了什麼</b>:皮質到脊髓之間沒有中繼站。一條皮質脊髓軸突從皮質細胞本體一路走到前角,是人體最長的軸突之一。"
+        ),
+    },
+    "touch_walk": {
+        "en": (
+            '<span class="step-tag">4 &middot; Contrast &mdash; touch reaches the same thalamus by a different route</span>'
+            "Touch and proprioception from that same sole enter the cord and turn straight upward in ⑰ the <b>right fasciculus gracilis</b>, staying <b>uncrossed for the entire length of the cord</b>. Their first synapse does not come until ⑱ <b>nucleus gracilis</b> in the <b>medulla</b>; only there do ⑲ <b>internal arcuate fibres</b> cross the midline to form the ⑳ <b>medial lemniscus</b>, which ends in the same ⑧ <b>left VPL</b> and then left S1.<br />"
+            "So this page&rsquo;s four midline crossings sit in <b>four different places</b>: pain (⑥) and the crossed extensor (⑩b) cross <b>in the cord</b>; touch (⑲) and the motor command (⑮) cross <b>in the medulla</b>. That is why hemisecting the cord (<b>Brown-S&eacute;quard</b>) takes touch and proprioception from <b>one</b> side and pain and temperature from the <b>other</b>, with the pain loss starting about two segments below the lesion &mdash; that offset is precisely the 1&ndash;2 segment delay at ⑥."
+        ),
+        "zh": (
+            '<span class="step-tag">4 &middot; 對照 &mdash; 觸覺以另一條路線抵達同一個視丘核</span>'
+            "來自同一隻腳底的觸覺與本體感覺進入脊髓後直接轉往上行,走 ⑰ <b>右側薄束</b>,<b>沿整條脊髓都不交叉</b>。它們的第一個突觸要到<b>延髓</b>的 ⑱ <b>薄束核</b>才發生;也只有在那裡,⑲ <b>內弓狀纖維</b>才越過中線,形成 ⑳ <b>內側蹄系</b>,最後同樣終止於 ⑧ <b>左側 VPL</b>,再到左側 S1。<br />"
+            "所以這一頁的四個中線交叉分別落在<b>四個不同位置</b>:痛覺(⑥)與交叉伸肌(⑩b)在<b>脊髓內</b>交叉;觸覺(⑲)與運動指令(⑮)在<b>延髓</b>交叉。這正是脊髓半切(<b>Brown-S&eacute;quard 症候群</b>)會拿走<b>一側</b>的觸覺與本體感覺、<b>另一側</b>的痛溫覺的原因,而痛覺喪失是從病灶下方約兩個節段才開始&mdash;這個落差,正好就是 ⑥ 那 1&ndash;2 個節段的延遲。"
+        ),
     },
     "height_note": {"en": "▎subject height 170 cm &middot; sole z = −1618 mm &middot; vertex z = +82 mm",
                      "zh": "▎模型身高 170 公分 &middot; 腳底 z = −1618 mm &middot; 頭頂 z = +82 mm"},
@@ -558,6 +620,54 @@ TEMPLATE = """<title>痛覺系統</title>
     letter-spacing: 0.06em; margin-top: 6px;
   }}
 
+  /* The pathway walkthrough is long-form reading, so it gets a panel of its
+     own rather than living in the subtitle: pointer-events on (it scrolls),
+     and it auto-collapses when the legend is opened - both live left. */
+  .walk {{
+    align-self: flex-start; margin-top: 12px; padding: 9px 14px 11px;
+    width: min(460px, 40vw); pointer-events: auto;
+    display: flex; flex-direction: column;
+  }}
+
+  .walk-title {{
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-faint);
+    cursor: pointer; user-select: none;
+  }}
+
+  .walk-title .chevron {{ font-size: 12px; transition: transform 0.15s ease; }}
+  .walk.collapsed .walk-body {{ display: none; }}
+  .walk.collapsed .walk-title .chevron {{ transform: rotate(-90deg); }}
+
+  .walk-body {{
+    display: flex; flex-direction: column; gap: 14px;
+    margin-top: 10px; padding-right: 4px;
+    max-height: min(54vh, 470px); overflow-y: auto;
+  }}
+
+  .step {{
+    border-left: 2px solid var(--panel-border); padding: 1px 0 1px 11px;
+    font-size: 11.5px; line-height: 1.65; color: var(--text-dim);
+  }}
+
+  .step b {{ color: var(--text); font-weight: 600; }}
+  .step .cross {{ color: var(--accent); font-weight: 600; }}
+
+  .step-tag {{
+    display: block; font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.03em; line-height: 1.4; margin-bottom: 5px;
+  }}
+
+  .step--pain {{ border-left-color: #e0705a; }}
+  .step--pain .step-tag {{ color: #e0705a; }}
+  .step--reflex {{ border-left-color: #7fc99a; }}
+  .step--reflex .step-tag {{ color: #7fc99a; }}
+  .step--motor {{ border-left-color: #6fb0e0; }}
+  .step--motor .step-tag {{ color: #6fb0e0; }}
+  .step--touch {{ border-left-color: #c9a8ff; }}
+  .step--touch .step-tag {{ color: #c9a8ff; }}
+
   .panel {{
     pointer-events: auto; background: var(--panel);
     border: 1px solid var(--panel-border);
@@ -685,6 +795,18 @@ TEMPLATE = """<title>痛覺系統</title>
   <h1>痛覺系統 <span id="txtTitleSuffix"><span class="accent">Pain</span>, <span style="color:var(--accent2)">Reflex</span> &amp; <span style="color:var(--accent3)">Motor</span> Pathways</span></h1>
   <span class="subtitle" id="txtSubtitle"></span>
   <span class="height-note" id="txtHeightNote"></span>
+  <div class="panel walk" id="walkPanel">
+    <div class="walk-title" id="walkToggle">
+      <span id="txtWalkTitle">Pathway walkthrough</span>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="walk-body" id="walkBody">
+      <div class="step step--pain" id="txtPainWalk"></div>
+      <div class="step step--reflex" id="txtReflexWalk"></div>
+      <div class="step step--motor" id="txtMotorWalk"></div>
+      <div class="step step--touch" id="txtTouchWalk"></div>
+    </div>
+  </div>
 </header>
 
 <div class="panel hover-info ui" id="hoverPanel">
@@ -944,8 +1066,17 @@ const ORDER = {order_js};
     meshes[acr] = mesh;
   }});
 
+  // Walkthrough and legend both occupy the left edge and are both tall, so
+  // opening one collapses the other instead of letting them overlap.
+  const walkPanel = document.getElementById("walkPanel");
+  const legendPanel = document.getElementById("legendPanel");
   document.getElementById("legendToggle").addEventListener("click", () => {{
-    document.getElementById("legendPanel").classList.toggle("collapsed");
+    legendPanel.classList.toggle("collapsed");
+    if (!legendPanel.classList.contains("collapsed")) walkPanel.classList.add("collapsed");
+  }});
+  document.getElementById("walkToggle").addEventListener("click", () => {{
+    walkPanel.classList.toggle("collapsed");
+    if (!walkPanel.classList.contains("collapsed")) legendPanel.classList.add("collapsed");
   }});
   document.getElementById("hintToggle").addEventListener("click", () => {{
     document.getElementById("hintPanel").classList.toggle("collapsed");
@@ -1259,7 +1390,9 @@ const ORDER = {order_js};
       const key = {{
         txtEyebrow: "eyebrow", txtTitleSuffix: "title_suffix", txtSubtitle: "subtitle",
         txtHoverTitle: "hover_title", txtStructuresTitle: "structures_title",
-        txtHeightNote: "height_note",
+        txtHeightNote: "height_note", txtWalkTitle: "walk_title",
+        txtPainWalk: "pain_walk", txtReflexWalk: "reflex_walk",
+        txtMotorWalk: "motor_walk", txtTouchWalk: "touch_walk",
         txtPainName: "pain_name", txtPainDesc: "pain_desc",
         txtReflexName: "reflex_name", txtReflexDesc: "reflex_desc",
         txtMotorName: "motor_name", txtMotorDesc: "motor_desc",

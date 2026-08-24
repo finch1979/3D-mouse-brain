@@ -1,0 +1,92 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661
+  },
+  "M1": {
+    "name": "Precentral gyrus / M1 (AAL3)",
+    "color": "6FB0E0",
+    "mesh_path": "mesh/M1.obj",
+    "vertex_count": 5371
+  },
+  "INS": {
+    "name": "Insula (AAL3)",
+    "color": "D094D9",
+    "mesh_path": "mesh/INS.obj",
+    "vertex_count": 3946
+  },
+  "S1": {
+    "name": "Postcentral gyrus / S1 (AAL3)",
+    "color": "D0A0A0",
+    "mesh_path": "mesh/S1.obj",
+    "vertex_count": 5958
+  },
+  "FOOT": {
+    "name": "Paracentral lobule — foot sensorimotor",
+    "color": "E0705A",
+    "mesh_path": "mesh/FOOT.obj",
+    "vertex_count": 1850
+  },
+  "VPL": {
+    "name": "VPL thalamus (AAL3)",
+    "color": "E0A458",
+    "mesh_path": "mesh/VPL.obj",
+    "vertex_count": 536
+  },
+  "ILN": {
+    "name": "Intralaminar thalamus (AAL3)",
+    "color": "D094D9",
+    "mesh_path": "mesh/ILN.obj",
+    "vertex_count": 278
+  },
+  "ACC": {
+    "name": "Anterior cingulate, supracallosal (AAL3)",
+    "color": "D094D9",
+    "mesh_path": "mesh/ACC.obj",
+    "vertex_count": 1066
+  },
+  "cord": {
+    "name": "Spinal cord outline (PAM50)",
+    "color": "BBBBBB",
+    "mesh_path": "mesh/cord.obj",
+    "vertex_count": 14414
+  },
+  "DH_R": {
+    "name": "Right dorsal horn (PAM50)",
+    "color": "E0705A",
+    "mesh_path": "mesh/DH_R.obj",
+    "vertex_count": 8744
+  },
+  "VH_R": {
+    "name": "Right ventral horn (PAM50)",
+    "color": "7FC99A",
+    "mesh_path": "mesh/VH_R.obj",
+    "vertex_count": 12798
+  },
+  "VH_L": {
+    "name": "Left ventral horn (PAM50)",
+    "color": "7FC99A",
+    "mesh_path": "mesh/VH_L.obj",
+    "vertex_count": 12798
+  },
+  "STT_L": {
+    "name": "Left anterolateral system (PAM50)",
+    "color": "E0705A",
+    "mesh_path": "mesh/STT_L.obj",
+    "vertex_count": 17128
+  },
+  "DC_R": {
+    "name": "Right fasciculus gracilis (PAM50)",
+    "color": "C9A8FF",
+    "mesh_path": "mesh/DC_R.obj",
+    "vertex_count": 19068
+  },
+  "CST_R": {
+    "name": "Right lateral corticospinal tract (PAM50)",
+    "color": "6FB0E0",
+    "mesh_path": "mesh/CST_R.obj",
+    "vertex_count": 17604
+  }
+}

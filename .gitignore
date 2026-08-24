@@ -16,6 +16,10 @@ external/brainglobe-atlasapi/
 # Cloudflare Wrangler local cache/account state, not project content
 .wrangler/
 
+# Assembled hub site: the hub page plus a copy of every viewer (~43MB of
+# duplicates). Regenerate with `py -3.13 site/build_hub.py`.
+site/dist/
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db

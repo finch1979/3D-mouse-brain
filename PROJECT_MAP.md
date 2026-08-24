@@ -42,6 +42,11 @@ mouse brain/
 │     ├─ limbic/
 │     └─ auditory_system/       聽覺系統 (auditory + vestibular pathway viewer)
 │
+├─ site/                   the Neuro Atlas hub (spans human/, so it lives here)
+│  ├─ build_hub.py           registry + hub page + assembler; a script, not a package
+│  ├─ README.md              build/deploy, and why nav is injected into copies
+│  └─ dist/                  assembled site (gitignored) — hub + a copy of each viewer
+│
 ├─ web/lib/                vendored three.js + OrbitControls (reference copy;
 │                           every viewer inlines its own, nothing loads this)
 │
@@ -57,3 +62,4 @@ mouse brain/
 
 `mouse/` and `human/` are intentionally independent — no shared Python
 package. Only `web/lib/` and `external/` are shared at the repo root.
+`site/` reads `human/outputs/` but imports neither package.

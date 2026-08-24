@@ -483,30 +483,30 @@ def main():
     wp_true["ILN"] = hemi_anchor(tms["ILN"], "left") + [0]
     wp_true["ACC"] = hemi_anchor(tms["ACC"], "left") + [0]
     wp_true["INS"] = hemi_anchor(tms["INS"], "left") + [0]
-    # intermediate points ALONG each long cord tract, so the tube follows it
+    # Intermediate points ALONG each long cord tract, so the tube follows it.
+    # The mid-tract sample keeps the tract's OWN key: buildPathway only labels
+    # keys that appear in orderedKeys, so a separate "STT_L" waypoint outside
+    # the chain would never be drawn and the numbering would skip ⑦⑯⑰.
     stt_levels, dc_levels, cst_levels = [], [], []
     for i, z in enumerate([-450, -370, -290, -210, -130, -75]):
-        k = f"STT_L{i}"
+        k = "STT_L" if i == 2 else f"STT_L{i}"
         wp_true[k] = tract_anchor(tms["STT_L"], z, "left") + [0]
         stt_levels.append(k)
-        k = f"DC_R{i}"
+        k = "DC_R" if i == 2 else f"DC_R{i}"
         wp_true[k] = tract_anchor(tms["DC_R"], z, "right") + [0]
         dc_levels.append(k)
     for i, z in enumerate([-80, -160, -250, -340, -430]):
-        k = f"CST_R{i}"
+        k = "CST_R" if i == 2 else f"CST_R{i}"
         wp_true[k] = tract_anchor(tms["CST_R"], z, "right") + [0]
         cst_levels.append(k)
-    # the labelled tract nodes sit mid-tract
-    wp_true["STT_L"] = tract_anchor(tms["STT_L"], -300, "left") + [0]
-    wp_true["DC_R"] = tract_anchor(tms["DC_R"], -300, "right") + [0]
-    wp_true["CST_R"] = tract_anchor(tms["CST_R"], -300, "right") + [0]
 
     wp_comp = {k: [v[0], v[1], zc(v[2] / MM_TO_UM) * MM_TO_UM, v[3]] for k, v in wp_true.items()}
 
     # ---- pathway definitions: (orderedKeys, labelKeys) --------------------
     pain_order = (["Nocicept", "Nerve", "DRG", "Cauda", "DH_R", "Commiss"]
                   + stt_levels + ["Brainstem", "VPL", "FOOT"])
-    pain_labels = ["Nocicept", "Nerve", "DRG", "Cauda", "DH_R", "Commiss", "VPL", "FOOT"]
+    pain_labels = ["Nocicept", "Nerve", "DRG", "Cauda", "DH_R", "Commiss",
+                   "STT_L", "VPL", "FOOT"]
     affect_order = ["VPL", "ILN", "ACC", "INS"]
     reflex_ipsi = ["DH_R", "Interneur", "VH_R", "Flexor"]
     reflex_cross = ["DH_R", "CommIN", "VH_L", "Extensor"]

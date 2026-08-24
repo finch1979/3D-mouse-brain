@@ -1,0 +1,3 @@
+display_name: Code Router
+short_description: Orchestrate multi-agent coding work with worker briefs, result files, and verification gates.
+default_prompt: Use code-router to coordinate this coding task across available agents and verify the result before accepting it.

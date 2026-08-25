@@ -1,0 +1,32 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661
+  },
+  "INS_R": {
+    "name": "Anterior insula, right - primary taste cortex (AAL3)",
+    "color": "E08FB0",
+    "mesh_path": "mesh/INS_R.obj",
+    "vertex_count": 1931
+  },
+  "FOP_R": {
+    "name": "Frontal operculum, right (AAL3)",
+    "color": "E0A0C0",
+    "mesh_path": "mesh/FOP_R.obj",
+    "vertex_count": 1440
+  },
+  "OLFR_R": {
+    "name": "Olfactory cortex, right (AAL3) - flavor layer",
+    "color": "8FBF7F",
+    "mesh_path": "mesh/OLFR_R.obj",
+    "vertex_count": 495
+  },
+  "OFC_R": {
+    "name": "Orbitofrontal cortex (OFClat), right (AAL3) - flavor layer",
+    "color": "8FBF7F",
+    "mesh_path": "mesh/OFC_R.obj",
+    "vertex_count": 272
+  }
+}

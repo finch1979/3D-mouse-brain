@@ -1,0 +1,38 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661
+  },
+  "cord": {
+    "name": "Spinal cord outline (PAM50)",
+    "color": "BBBBBB",
+    "mesh_path": "mesh/cord.obj",
+    "vertex_count": 14414
+  },
+  "S1_L": {
+    "name": "Postcentral gyrus / S1, left (AAL3)",
+    "color": "D0A0A0",
+    "mesh_path": "mesh/S1_L.obj",
+    "vertex_count": 2902
+  },
+  "VPL_L": {
+    "name": "VPL thalamus, left (AAL3)",
+    "color": "E0A458",
+    "mesh_path": "mesh/VPL_L.obj",
+    "vertex_count": 265
+  },
+  "FC_R": {
+    "name": "Right fasciculus cuneatus (PAM50)",
+    "color": "C9A8FF",
+    "mesh_path": "mesh/FC_R.obj",
+    "vertex_count": 19194
+  },
+  "FG_R": {
+    "name": "Right fasciculus gracilis (PAM50)",
+    "color": "8A6FC0",
+    "mesh_path": "mesh/FG_R.obj",
+    "vertex_count": 19068
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661
+  },
+  "CBLM": {
+    "name": "Cerebellar cortex, whole (Diedrichsen 2009)",
+    "color": "6F8FE0",
+    "mesh_path": "mesh/CBLM.obj",
+    "vertex_count": 41457
+  },
+  "M1_L": {
+    "name": "Motor cortex / M1, left (AAL3 precentral)",
+    "color": "9FB3C8",
+    "mesh_path": "mesh/M1_L.obj",
+    "vertex_count": 2628
+  },
+  "VL_L": {
+    "name": "VL thalamus, left (AAL3)",
+    "color": "E0A458",
+    "mesh_path": "mesh/VL_L.obj",
+    "vertex_count": 370
+  },
+  "Red_N_L": {
+    "name": "Red nucleus, left (AAL3)",
+    "color": "E0705A",
+    "mesh_path": "mesh/Red_N_L.obj",
+    "vertex_count": 106
+  },
+  "VSCT_L": {
+    "name": "Ventral spinocerebellar tract, left (PAM50)",
+    "color": "7FC99A",
+    "mesh_path": "mesh/VSCT_L.obj",
+    "vertex_count": 18609
+  }
+}

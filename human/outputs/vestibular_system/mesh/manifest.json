@@ -1,0 +1,32 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661
+  },
+  "CBLM": {
+    "name": "Whole cerebellum (Diedrichsen 2009)",
+    "color": "6F8FE0",
+    "mesh_path": "mesh/CBLM.obj",
+    "vertex_count": 41457
+  },
+  "CBLX": {
+    "name": "Vestibulocerebellum, lobule X (Diedrichsen 2009)",
+    "color": "5AC0C0",
+    "mesh_path": "mesh/CBLX.obj",
+    "vertex_count": 2188
+  },
+  "VST_R": {
+    "name": "Lateral vestibulospinal tract, right (PAM50)",
+    "color": "7FC99A",
+    "mesh_path": "mesh/VST_R.obj",
+    "vertex_count": 7798
+  },
+  "INS_R": {
+    "name": "Posterior insula, right (AAL3) — PIVC",
+    "color": "C9A8FF",
+    "mesh_path": "mesh/INS_R.obj",
+    "vertex_count": 1931
+  }
+}

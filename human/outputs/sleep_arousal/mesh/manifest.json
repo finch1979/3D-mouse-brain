@@ -1,0 +1,50 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661
+  },
+  "THAL": {
+    "name": "Thalamus — the gate (Harvard-Oxford)",
+    "color": "888888",
+    "mesh_path": "mesh/THAL.obj",
+    "vertex_count": 7282
+  },
+  "LC_R": {
+    "name": "Locus coeruleus, right (AAL3)",
+    "color": "e0a458",
+    "mesh_path": "mesh/LC_R.obj",
+    "vertex_count": 24
+  },
+  "LC_L": {
+    "name": "Locus coeruleus, left (AAL3)",
+    "color": "e0a458",
+    "mesh_path": "mesh/LC_L.obj",
+    "vertex_count": 24
+  },
+  "Raphe_D": {
+    "name": "Dorsal raphe, serotonin (AAL3)",
+    "color": "7fc99a",
+    "mesh_path": "mesh/Raphe_D.obj",
+    "vertex_count": 55
+  },
+  "Raphe_M": {
+    "name": "Median raphe, serotonin (AAL3)",
+    "color": "7fc99a",
+    "mesh_path": "mesh/Raphe_M.obj",
+    "vertex_count": 26
+  },
+  "VTA_L": {
+    "name": "Ventral tegmental area, left (AAL3)",
+    "color": "6fb0e0",
+    "mesh_path": "mesh/VTA_L.obj",
+    "vertex_count": 40
+  },
+  "VTA_R": {
+    "name": "Ventral tegmental area, right (AAL3)",
+    "color": "6fb0e0",
+    "mesh_path": "mesh/VTA_R.obj",
+    "vertex_count": 41
+  }
+}

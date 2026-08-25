@@ -1,0 +1,20 @@
+{
+  "root": {
+    "name": "Whole-brain outline (MNI152)",
+    "color": "CCCCCC",
+    "mesh_path": "mesh/root.obj",
+    "vertex_count": 15661
+  },
+  "cord": {
+    "name": "Spinal cord outline (PAM50)",
+    "color": "BBBBBB",
+    "mesh_path": "mesh/cord.obj",
+    "vertex_count": 14414
+  },
+  "IML_R": {
+    "name": "Right intermediate zone / IML (PAM50)",
+    "color": "7fc99a",
+    "mesh_path": "mesh/IML_R.obj",
+    "vertex_count": 17426
+  }
+}

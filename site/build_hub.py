@@ -108,39 +108,81 @@ SYSTEMS = [
                  "zh": "四個中線交叉發生在四個不同位置——痛覺在脊髓,觸覺與運動在延髓"},
         "source": "MNI152 · AAL3 · PAM50",
     },
+    {
+        "slug": "somatosensory",
+        "src": "human/outputs/somatosensory_system/human_somatosensory_system_3d.html",
+        "accent": "#c9a8ff", "group": "input", "hotspot": "hand",
+        "name": {"en": "Somatosensory system", "zh": "體感覺系統"},
+        "short": {"en": "Touch", "zh": "體感"},
+        "route": {"en": "fingertip → cuneate nucleus → VPL → S1",
+                  "zh": "指尖 → 楔狀核 → VPL → S1"},
+        "fact": {"en": "Uncrossed for the entire cord — crosses in the medulla, the opposite of pain",
+                 "zh": "整條脊髓不交叉,到延髓才交叉——與痛覺完全相反"},
+        "source": "MNI152 · AAL3 · PAM50",
+    },
+    {
+        "slug": "gustatory",
+        "src": "human/outputs/gustatory_system/human_gustatory_system_3d.html",
+        "accent": "#e08fb0", "group": "input", "hotspot": "tongue",
+        "name": {"en": "Gustatory system", "zh": "味覺系統"},
+        "short": {"en": "Taste", "zh": "味覺"},
+        "route": {"en": "tongue → solitary nucleus → VPMpc → insula",
+                  "zh": "舌 → 孤束核 → VPMpc → 島葉"},
+        "fact": {"en": "Three cranial nerves, one relay — and barely any midline crossing",
+                 "zh": "三條腦神經、一個中繼站,而且幾乎不越過中線"},
+        "source": "MNI152 · AAL3",
+    },
+    {
+        "slug": "vestibular",
+        "src": "human/outputs/vestibular_system/human_vestibular_system_3d.html",
+        "accent": "#5ac0c0", "group": "input", "hotspot": "vestibular",
+        "name": {"en": "Vestibular system", "zh": "前庭系統"},
+        "short": {"en": "Balance", "zh": "平衡"},
+        "route": {"en": "canals → vestibular nuclei → cerebellum · eyes · cortex · cord",
+                  "zh": "半規管 → 前庭核 → 小腦 · 眼睛 · 皮質 · 脊髓"},
+        "fact": {"en": "Four outputs at once — balance is felt, not seen",
+                 "zh": "一次分出四路——平衡是感覺出來的,不是看到的"},
+        "source": "MNI152 · Diedrichsen 2009 · AAL3 · PAM50",
+    },
+    {
+        "slug": "cerebellum",
+        "src": "human/outputs/cerebellum_system/human_cerebellum_system_3d.html",
+        "accent": "#6f8fe0", "group": "central", "hotspot": "cerebellum",
+        "name": {"en": "Cerebellum &amp; motor control", "zh": "小腦與運動控制"},
+        "short": {"en": "Cerebellum", "zh": "小腦"},
+        "route": {"en": "M1 → pons → cerebellum → red nucleus/VL → back to M1",
+                  "zh": "M1 → 橋腦 → 小腦 → 紅核/VL → 回到 M1"},
+        "fact": {"en": "A loop, not a one-way street — it crosses twice, so right cerebellum steers right body",
+                 "zh": "它是迴路不是單行道——交叉兩次,右小腦掌管右側身體"},
+        "source": "MNI152 · Diedrichsen 2009 · AAL3 · PAM50",
+    },
+    {
+        "slug": "sleep",
+        "src": "human/outputs/sleep_arousal/human_sleep_arousal_3d.html",
+        "accent": "#9a8fe8", "group": "central", "hotspot": "brainstem",
+        "name": {"en": "Sleep &amp; arousal", "zh": "睡眠與覺醒"},
+        "short": {"en": "Sleep", "zh": "睡眠"},
+        "route": {"en": "reticular formation → thalamus → cortex · LC · VLPO switch",
+                  "zh": "網狀結構 → 視丘 → 皮質 · 藍斑核 · VLPO 開關"},
+        "fact": {"en": "Sleep is a switch, not a dimmer — VLPO actively inhibits every arousal nucleus",
+                 "zh": "睡眠是開關不是調光器——VLPO 主動抑制所有覺醒核"},
+        "source": "MNI152 · AAL3 · Harvard-Oxford",
+    },
+    {
+        "slug": "autonomic",
+        "src": "human/outputs/autonomic_system/human_autonomic_system_3d.html",
+        "accent": "#7fc99a", "group": "output", "hotspot": "viscera",
+        "name": {"en": "Autonomic system", "zh": "自律神經系統"},
+        "short": {"en": "Autonomic", "zh": "自律"},
+        "route": {"en": "hypothalamus → sympathetic chain · vagus → organs",
+                  "zh": "下視丘 → 交感神經鏈 · 迷走神經 → 內臟"},
+        "fact": {"en": "The vagus is ~80% sensory fibres — the body reports upward more than the brain commands",
+                 "zh": "迷走神經約 80% 是感覺纖維——身體上報的比大腦下令的多"},
+        "source": "MNI152 · PAM50",
+    },
 ]
 
 PLANNED = [
-    {"hotspot": "hand",
-     "name": {"en": "Somatosensory system", "zh": "體感覺系統"},
-     "short": {"en": "Touch", "zh": "體感"},
-     "note": {"en": "the DCML already runs in the pain page as a contrast branch",
-              "zh": "背柱-內側蹄系已在痛覺頁作為對照分支"}},
-    {"hotspot": "tongue",
-     "name": {"en": "Gustatory system", "zh": "味覺系統"},
-     "short": {"en": "Taste", "zh": "味覺"},
-     "note": {"en": "tongue → solitary nucleus → VPM → insula",
-              "zh": "舌 → 孤束核 → 腹後內側核 → 島葉"}},
-    {"hotspot": None,
-     "name": {"en": "Vestibular system", "zh": "前庭系統"},
-     "short": {"en": "Vestibular", "zh": "前庭"},
-     "note": {"en": "drawn as a branch of the auditory page; could stand alone",
-              "zh": "目前是聽覺頁的一條分支,可獨立成頁"}},
-    {"hotspot": "viscera",
-     "name": {"en": "Autonomic system", "zh": "自律神經系統"},
-     "short": {"en": "Autonomic", "zh": "自律"},
-     "note": {"en": "sympathetic / parasympathetic, and the vagus",
-              "zh": "交感與副交感,以及迷走神經"}},
-    {"hotspot": "cerebellum",
-     "name": {"en": "Cerebellum &amp; motor control", "zh": "小腦與運動控制"},
-     "short": {"en": "Cerebellum", "zh": "小腦"},
-     "note": {"en": "coordination, timing, and the feedback loops",
-              "zh": "協調、時序,以及回饋迴路"}},
-    {"hotspot": "brainstem",
-     "name": {"en": "Sleep &amp; arousal", "zh": "睡眠與覺醒"},
-     "short": {"en": "Brainstem", "zh": "腦幹"},
-     "note": {"en": "the brainstem reticular formation",
-              "zh": "腦幹網狀結構"}},
 ]
 
 GROUPS = [
@@ -259,6 +301,10 @@ def build_svg() -> str:
         'C 268 224 280 236 278 252 C 276 268 262 276 250 272" />'
         '<path class="leader" d="M 252 242 L 234 214" />', (296, 260), "start")}
 
+  {hot("vestibular", '<circle class="hit-dot" cx="263" cy="288" r="9" />'
+        '<circle class="pupil" cx="263" cy="288" r="3.5" />'
+        '<path class="leader" d="M 272 292 L 292 298" />', (298, 302), "start")}
+
   {hot("hand", '<circle class="hit-dot" cx="94" cy="428" r="13" />', (94, 456), "middle")}
 
   {hot("viscera", '<ellipse class="hit-blob" cx="200" cy="392" rx="31" ry="24" />',
@@ -300,21 +346,22 @@ def build_list() -> str:
       <div class="cards">{''.join(rows)}</div>
     </section>""")
 
-    soon_rows = "".join(
-        f"""
+    if PLANNED:
+        soon_rows = "".join(
+            f"""
         <li class="soon-row"{f' data-soon-row="{p["hotspot"]}"' if p["hotspot"] else ''}>
           <span class="soon-name" {bi(p['name'])}></span>
           <span class="soon-note" {bi(p['note'])}></span>
         </li>"""
-        for p in PLANNED
-    )
-    out.append(f"""
-    <section class="group group--soon">
-      <h2 class="group-title" data-en="Planned" data-zh="規劃中"></h2>
-      <p class="group-sub" data-en="Being added one at a time. Dimmed marks on the map are these."
-         data-zh="逐一慢慢完成。導覽圖上的暗色標記就是這些。"></p>
-      <ul class="soon-list">{soon_rows}</ul>
-    </section>""")
+            for p in PLANNED
+        )
+        out.append(f"""
+        <section class="group group--soon">
+          <h2 class="group-title" data-en="Planned" data-zh="規劃中"></h2>
+          <p class="group-sub" data-en="Being added one at a time. Dimmed marks on the map are these."
+             data-zh="逐一慢慢完成。導覽圖上的暗色標記就是這些。"></p>
+          <ul class="soon-list">{soon_rows}</ul>
+        </section>""")
     return "".join(out)
 
 
@@ -511,6 +558,8 @@ HUB = """<!doctype html>
     <p class="subtitle"
        data-en="Every viewer here traces <b>one route through the nervous system</b> in 3D — where a signal enters, which nuclei it relays through, where it crosses the midline, and where it ends up. Solid meshes are real atlas anatomy; wireframe markers are schematic. Pick a system from the map or the list. The map is a <b>stylised diagram</b>, not atlas geometry."
        data-zh="這裡的每一頁都以 3D 追蹤<b>神經系統裡的一條路徑</b>——訊號從哪裡進入、經過哪些神經核、在哪裡越過中線、最後到哪裡。實心網格是真實的圖譜解剖;線框標記為示意。可以從導覽圖或右側清單進入各系統。導覽圖本身是<b>示意圖</b>,不是真實的圖譜幾何。"></p>
+    <a class="lang" style="right:76px" href="./mouse/" title="Mouse Atlas"
+       data-en="&#1280; Mouse" data-zh="&#1280; 小鼠"></a>
     <button class="lang" id="langToggle" type="button">EN</button>
   </header>
 
@@ -518,16 +567,16 @@ HUB = """<!doctype html>
     <div class="map-panel">
       __SVG__
       <p class="map-note"
-         data-en="Bright marks are live systems — click to open. Dimmed dashed marks are planned."
-         data-zh="亮色標記為已完成的系統,點擊即可開啟;暗色虛線標記為規劃中。"></p>
+         data-en="Every mark is a live system — click to open. The map is a stylised diagram."
+         data-zh="每個標記都是已上線的系統,點擊即可開啟。導覽圖為示意圖。"></p>
     </div>
 
     <div class="list">__LIST__</div>
   </main>
 
   <footer>
-    <p data-en="Atlas sources: MNI152 template with the Harvard-Oxford and AAL3 atlases, the PAM50 spinal cord template, and the Allen Human Brain Atlas. For free educational use with citation; Harvard-Oxford is non-commercial."
-       data-zh="圖譜來源:MNI152 模板與 Harvard-Oxford、AAL3 圖譜,PAM50 脊髓模板,以及 Allen Human Brain Atlas。供免費教育用途並註明出處;Harvard-Oxford 為非商業授權。"></p>
+    <p data-en="Atlas sources: MNI152 template with the Harvard-Oxford and AAL3 atlases, the PAM50 spinal cord template, the Diedrichsen (2009) cerebellar atlas, and the Allen Human Brain Atlas. For free educational use with citation; Harvard-Oxford is non-commercial."
+       data-zh="圖譜來源:MNI152 模板與 Harvard-Oxford、AAL3 圖譜,PAM50 脊髓模板,Diedrichsen (2009) 小腦圖譜,以及 Allen Human Brain Atlas。供免費教育用途並註明出處;Harvard-Oxford 為非商業授權。"></p>
     <p data-en="Each viewer is a single self-contained HTML file with its meshes baked in — no server, no CDN. The original per-system addresses still work."
        data-zh="每個檢視器都是把網格資料內嵌好的單一 HTML 檔案,不需要伺服器,也不依賴 CDN。原本各系統的獨立網址仍然可以使用。"></p>
   </footer>
@@ -689,6 +738,7 @@ def main() -> None:
     for slug, size, bilingual in report:
         print(f"  {slug:20s} {size / 1e6:6.2f} MB  nav=yes  lang-sync={'yes' if bilingual else 'n/a'}")
     print(f"\n{len(report)} viewers + hub + 404 -> {DIST}  ({total / 1e6:.1f} MB)")
+    print("next: py -3.13 site/build_mouse.py   (adds the /mouse/ section)")
     print("deploy: npx wrangler pages deploy site/dist --project-name=neuro-atlas")
 
 

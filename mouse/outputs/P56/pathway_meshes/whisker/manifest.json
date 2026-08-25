@@ -1,0 +1,27 @@
+{
+  "root": {
+    "name": "Whole-brain outline (CCFv3)",
+    "color": "CCCCCC",
+    "vertex_count": 49321
+  },
+  "BFD": {
+    "name": "Barrel field SSp-bfd (right)",
+    "color": "B08FD9",
+    "vertex_count": 3160
+  },
+  "VPM": {
+    "name": "VPM thalamus (right)",
+    "color": "E0A458",
+    "vertex_count": 1290
+  },
+  "PSV": {
+    "name": "Principal sensory trigeminal PSV (right)",
+    "color": "8FBF7F",
+    "vertex_count": 1021
+  },
+  "SPVC": {
+    "name": "Spinal trigeminal caudal SPVC (right)",
+    "color": "E0705A",
+    "vertex_count": 1276
+  }
+}

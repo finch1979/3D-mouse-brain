@@ -1,0 +1,22 @@
+{
+  "root": {
+    "name": "Whole-brain outline (CCFv3)",
+    "color": "CCCCCC",
+    "vertex_count": 49321
+  },
+  "MOB": {
+    "name": "Main olfactory bulb (right)",
+    "color": "8fbf7f",
+    "vertex_count": 5853
+  },
+  "AON": {
+    "name": "Anterior olfactory nucleus (right)",
+    "color": "a0c890",
+    "vertex_count": 3206
+  },
+  "PIR": {
+    "name": "Piriform cortex (right)",
+    "color": "6fa87f",
+    "vertex_count": 6900
+  }
+}

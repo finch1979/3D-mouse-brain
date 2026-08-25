@@ -1,0 +1,740 @@
+<title>__TITLE__</title>
+<style>
+  :root {
+    --bg: #12151a;
+    --panel: rgba(27, 32, 40, 0.86);
+    --panel-border: #2b323d;
+    --text: #e9edf1;
+    --text-dim: #8b96a3;
+    --text-faint: #5c6672;
+    --accent: #__ACCENT__;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", "JetBrains Mono", Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, "Segoe UI", system-ui, Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background: var(--bg); color: var(--text);
+    font-family: var(--sans); overflow: hidden;
+  }
+
+  #scene { position: fixed; inset: 0; display: block; }
+  #scene canvas { display: block; width: 100%; height: 100%; }
+
+  .ui { position: fixed; pointer-events: none; z-index: 10; }
+
+  header.ui {
+    top: 0; left: 0; right: 0;
+    padding: 28px 32px 0;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint);
+  }
+
+  h1 {
+    margin: 0; font-family: var(--mono); font-weight: 600;
+    font-size: clamp(20px, 2.6vw, 30px);
+    letter-spacing: 0.01em; text-wrap: balance; color: var(--text);
+  }
+
+  h1 .accent { color: var(--accent); }
+
+  .subtitle { font-size: 12.5px; color: var(--text-dim); max-width: 54ch; line-height: 1.55; }
+  .subtitle b { color: var(--text); font-weight: 600; }
+
+  .walk {
+    align-self: flex-start; margin-top: 12px; padding: 9px 14px 11px;
+    width: min(460px, 40vw); pointer-events: auto;
+    display: flex; flex-direction: column;
+  }
+
+  .walk-title {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-faint);
+    cursor: pointer; user-select: none;
+  }
+
+  .walk-title .chevron { font-size: 12px; transition: transform 0.15s ease; }
+  .walk.collapsed .walk-body { display: none; }
+  .walk.collapsed .walk-title .chevron { transform: rotate(-90deg); }
+
+  .walk-body {
+    display: flex; flex-direction: column; gap: 14px;
+    margin-top: 10px; padding-right: 4px;
+    max-height: min(54vh, 470px); overflow-y: auto;
+  }
+
+  .step {
+    border-left: 2px solid var(--panel-border); padding: 1px 0 1px 11px;
+    font-size: 11.5px; line-height: 1.65; color: var(--text-dim);
+  }
+
+  .step b { color: var(--text); font-weight: 600; }
+
+  .step-tag {
+    display: block; font-family: var(--mono); font-size: 11px;
+    letter-spacing: 0.03em; line-height: 1.4; margin-bottom: 5px;
+    color: inherit;
+  }
+
+  .panel {
+    pointer-events: auto; background: var(--panel);
+    border: 1px solid var(--panel-border);
+    backdrop-filter: blur(10px); border-radius: 10px;
+  }
+
+  .legend {
+    left: 24px; bottom: 24px; padding: 10px 14px;
+    display: flex; flex-direction: column; gap: 2px;
+    min-width: 230px; max-width: 290px; max-height: min(70vh, 620px);
+  }
+
+  .legend-title {
+    font-family: var(--mono); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-faint); padding: 4px 2px 8px;
+  }
+
+  .legend-title--toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; user-select: none;
+  }
+
+  .legend-title--toggle .chevron { font-size: 12px; transition: transform 0.15s ease; }
+
+  .legend-body { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+
+  .legend.collapsed .legend-body { display: none; }
+  .legend.collapsed .legend-title .chevron { transform: rotate(-90deg); }
+  .legend.collapsed { max-height: none; }
+
+  .legend-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 6px; border-radius: 6px; cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .legend-row:hover { background: rgba(255, 255, 255, 0.045); }
+
+  .legend-row input {
+    appearance: none; width: 13px; height: 13px;
+    border: 1.5px solid var(--text-faint); border-radius: 3px;
+    margin: 0; flex: none; position: relative; cursor: pointer;
+  }
+
+  .legend-row input:checked { border-color: var(--accent); background: var(--accent); }
+
+  .legend-row input:checked::after {
+    content: ""; position: absolute; left: 3px; top: 0px;
+    width: 3px; height: 7px; border: solid #12151a;
+    border-width: 0 1.6px 1.6px 0; transform: rotate(40deg);
+  }
+
+  .swatch {
+    width: 12px; height: 12px; border-radius: 3px;
+    background: var(--swatch); flex: none;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--swatch) 65%, transparent);
+  }
+
+  .swatch--outline { background: transparent; border: 1.5px solid var(--text-faint); box-shadow: none; }
+
+  .legend-text { display: flex; flex-direction: column; line-height: 1.25; }
+  .legend-acr { font-family: var(--mono); font-size: 12.5px; color: var(--text); }
+  .legend-name { font-size: 11px; color: var(--text-dim); }
+
+  .legend-row--outline { margin-top: 4px; border-top: 1px solid var(--panel-border); padding-top: 10px; }
+
+  .legend-note {
+    font-size: 10.5px; color: var(--text-faint);
+    padding: 8px 6px 0; line-height: 1.5;
+    border-top: 1px solid var(--panel-border); margin-top: 4px;
+  }
+
+  .lang-toggle {
+    right: 24px; top: 20px; padding: 8px 16px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
+    color: var(--text); cursor: pointer; z-index: 11;
+  }
+
+  .lang-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hover-info { right: 24px; top: 132px; padding: 12px 14px; max-width: 250px; display: none; }
+  .hover-info.show { display: block; }
+  .hover-label { font-size: 13px; color: var(--text); line-height: 1.4; }
+
+  .hint {
+    right: 24px; bottom: 24px; padding: 10px 14px;
+    font-family: var(--mono); font-size: 10.5px; color: var(--text-faint);
+    text-align: right; line-height: 1.6; letter-spacing: 0.01em; max-width: 330px;
+  }
+
+  .hint-title--toggle {
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px;
+    cursor: pointer; user-select: none; text-transform: uppercase;
+    letter-spacing: 0.12em; font-size: 10px;
+  }
+
+  .hint-title--toggle .chevron { font-size: 12px; transition: transform 0.15s ease; }
+  .hint-body { padding-top: 8px; }
+  .hint.collapsed .hint-body { display: none; }
+  .hint.collapsed .hint-title--toggle .chevron { transform: rotate(-90deg); }
+  .hint b { color: var(--text-dim); font-weight: 500; }
+
+  .loading {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-faint); z-index: 20; background: var(--bg);
+    transition: opacity 0.4s ease;
+  }
+
+  .loading.hidden { opacity: 0; pointer-events: none; }
+
+  @media (prefers-reduced-motion: reduce) { .loading { transition: none; } }
+</style>
+
+<div id="scene"></div>
+<div class="loading" id="loading">Loading meshes&hellip;</div>
+
+<button class="panel lang-toggle ui" id="langToggle" type="button">中文</button>
+
+<header class="ui">
+  <span class="eyebrow" id="txtEyebrow"></span>
+  <h1><span id="txtTitleMain"></span> <span id="txtTitleSuffix"></span></h1>
+  <span class="subtitle" id="txtSubtitle"></span>
+  <div class="panel walk collapsed" id="walkPanel">
+    <div class="walk-title" id="walkToggle">
+      <span id="txtWalkTitle"></span>
+      <span class="chevron">&#9660;</span>
+    </div>
+    <div class="walk-body" id="walkBody">
+__WALK_ROWS__
+    </div>
+  </div>
+</header>
+
+<div class="panel hover-info ui" id="hoverPanel">
+  <div class="legend-title" id="txtHoverTitle"></div>
+  <div class="hover-label" id="hoverLabel"></div>
+</div>
+
+<div class="panel legend ui collapsed" id="legendPanel">
+  <div class="legend-title legend-title--toggle" id="legendToggle">
+    <span id="txtStructuresTitle"></span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="legend-body" id="legendBody">
+    <div id="legendList"></div>
+    <div class="legend-title" id="txtPathwaysTitle" style="padding-top:10px"></div>
+    <div id="pathwayList">
+__PW_ROWS__
+    </div>
+    <label class="legend-row legend-row--outline" data-acr="signal" id="signalRow" style="display:none">
+      <input type="checkbox" id="signalToggle" />
+      <span class="swatch" id="signalSwatch" style="--swatch:#ffd48a"></span>
+      <span class="legend-text">
+        <span class="legend-acr" id="txtSignalName"></span>
+        <span class="legend-name" id="txtSignalDesc"></span>
+      </span>
+    </label>
+    <div class="legend-note" id="txtLegendNote"></div>
+  </div>
+</div>
+
+<div class="panel hint ui collapsed" id="hintPanel">
+  <div class="hint-title--toggle" id="hintToggle">
+    <span id="txtControlsTitle"></span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="hint-body" id="hintBody">
+    <span id="txtHintControls"></span><br />
+    <span id="txtHintUnits"></span>
+  </div>
+</div>
+
+__THREE__
+__ORBIT__
+<script>
+const REGIONS = __REGIONS__;
+const EXTENT = __EXTENT__;
+const ORDER = __ORDER__;
+</script>
+<script>
+(function () {
+  function b64ToFloat32(b64) {
+    const bin = atob(b64);
+    const buf = new ArrayBuffer(bin.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < bin.length; i++) view[i] = bin.charCodeAt(i);
+    return new Float32Array(buf);
+  }
+  function b64ToUint32(b64) {
+    const bin = atob(b64);
+    const buf = new ArrayBuffer(bin.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < bin.length; i++) view[i] = bin.charCodeAt(i);
+    return new Uint32Array(buf);
+  }
+
+  const STRINGS = __STRINGS__;
+  const LEGEND_META = __LEGEND__;
+  const PATHWAYS = __PATHWAYS__;
+  const LABELS = __LABELS__;
+  const WAYPOINTS = __WAYPOINTS__;
+  const REAL = new Set(__REAL__);
+  const SIGNAL_CFG = __SIGNAL__;
+  const WALK_IDS = __WALK_IDS__;
+
+  let LANG = "en";
+
+  const container = document.getElementById("scene");
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const scene = new THREE.Scene();
+  const FOV = 40;
+  const camera = new THREE.PerspectiveCamera(FOV, window.innerWidth / window.innerHeight, 1, EXTENT * 60);
+  // MNI152 RAS: x=Right+, y=Anterior+, z=Superior+. Frame from the front-
+  // left-top so the whole figure (brain + cord where present) fits.
+  const FRAME = __FRAME__;
+  camera.position.set(EXTENT * FRAME * 0.55, -EXTENT * FRAME * 0.55, EXTENT * FRAME * 0.5);
+  camera.up.set(0, 0, 1);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x12151a, 1);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  container.appendChild(renderer.domElement);
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = EXTENT * 0.15;
+  controls.maxDistance = EXTENT * 8;
+  controls.autoRotate = !reduceMotion;
+  controls.autoRotateSpeed = 0.6;
+  controls.addEventListener("start", () => { controls.autoRotate = false; });
+  controls.target.set(0, 0, 0);
+
+  scene.add(new THREE.HemisphereLight(0xaebfd4, 0x14171c, 0.6));
+  const key = new THREE.DirectionalLight(0xffffff, 0.85);
+  key.position.set(EXTENT * 0.6, EXTENT * 0.9, EXTENT * 0.7);
+  scene.add(key);
+  const fill = new THREE.DirectionalLight(0x8fb4ff, 0.3);
+  fill.position.set(-EXTENT * 0.7, -EXTENT * 0.4, -EXTENT * 0.3);
+  scene.add(fill);
+
+  // ---- canvas-texture label sprites (regenerated on language switch) ----
+  function drawTextCanvas(text, color, fontPx) {
+    const pad = Math.ceil(fontPx * 0.35);
+    const font = `600 ${fontPx}px ui-monospace, "Cascadia Code", Consolas, monospace`;
+    const c = document.createElement("canvas");
+    const ctx = c.getContext("2d");
+    ctx.font = font;
+    const lines = String(text).split("\n");
+    const w = Math.max(...lines.map((l) => ctx.measureText(l).width));
+    c.width = Math.ceil(w + pad * 2);
+    c.height = Math.ceil(fontPx * 1.25 * lines.length + pad * 2);
+    const ctx2 = c.getContext("2d");
+    ctx2.font = font;
+    ctx2.textBaseline = "middle";
+    ctx2.shadowColor = "rgba(0,0,0,0.9)";
+    ctx2.shadowBlur = fontPx * 0.18;
+    ctx2.fillStyle = color;
+    lines.forEach((l, i) => {
+      ctx2.fillText(l, pad, pad + fontPx * 0.62 + i * fontPx * 1.25);
+    });
+    return c;
+  }
+
+  function makeTextSprite(text, color, fontPx, scaleH, renderOrder) {
+    const canvas = drawTextCanvas(text, color, fontPx);
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.minFilter = THREE.LinearFilter;
+    const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+    const sprite = new THREE.Sprite(material);
+    sprite.scale.set(scaleH * (canvas.width / canvas.height), scaleH, 1);
+    sprite.renderOrder = renderOrder;
+    sprite.userData = { fontPx, color };
+    return sprite;
+  }
+
+  function updateTextSprite(sprite, text) {
+    const { fontPx, color } = sprite.userData;
+    const canvas = drawTextCanvas(text, color, fontPx);
+    const oldMap = sprite.material.map;
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+    sprite.material.map = tex;
+    sprite.material.needsUpdate = true;
+    if (oldMap) oldMap.dispose();
+    const scaleH = sprite.scale.y;
+    sprite.scale.set(scaleH * (canvas.width / canvas.height), scaleH, 1);
+  }
+
+  // ---- real meshes from REGIONS ----
+  const legendDefaults = {};
+  LEGEND_META.forEach((m) => { legendDefaults[m.acr] = m.default_checked; });
+
+  const meshes = {};
+  ORDER.forEach((acr) => {
+    const s = REGIONS[acr];
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute("position", new THREE.BufferAttribute(b64ToFloat32(s.pos_b64), 3));
+    if (s.norm_b64) {
+      geom.setAttribute("normal", new THREE.BufferAttribute(b64ToFloat32(s.norm_b64), 3));
+    } else {
+      geom.computeVertexNormals();
+    }
+    geom.setIndex(new THREE.BufferAttribute(b64ToUint32(s.idx_b64), 1));
+
+    let mat, mesh;
+    if (acr === "root") {
+      mat = new THREE.MeshStandardMaterial({
+        color: 0x7c8b99, transparent: true, opacity: 0.1,
+        side: THREE.BackSide, depthWrite: false, roughness: 1,
+      });
+      mesh = new THREE.Mesh(geom, mat);
+      mesh.renderOrder = 10;
+    } else if (acr === "skull" || acr === "shell") {
+      mat = new THREE.MeshStandardMaterial({
+        color: 0xffffff, transparent: true, opacity: 0.05,
+        side: THREE.BackSide, depthWrite: false, roughness: 1,
+      });
+      mesh = new THREE.Mesh(geom, mat);
+      mesh.renderOrder = 9;
+    } else {
+      mat = new THREE.MeshStandardMaterial({ color: parseInt(s.color, 16), roughness: 0.45, metalness: 0.05 });
+      mesh = new THREE.Mesh(geom, mat);
+    }
+    mesh.visible = !!legendDefaults[acr];
+    scene.add(mesh);
+    meshes[acr] = mesh;
+  });
+
+  // ---- generated legend rows (real structures) ----
+  const legendList = document.getElementById("legendList");
+  LEGEND_META.forEach((m) => {
+    const label = document.createElement("label");
+    label.className = "legend-row" + (m.outline ? " legend-row--outline" : "");
+    label.dataset.acr = m.acr;
+    const swatchClass = m.outline ? "swatch swatch--outline" : "swatch";
+    label.innerHTML = `
+      <input type="checkbox" ${m.default_checked ? "checked" : ""} data-target="${m.acr}" />
+      <span class="${swatchClass}" style="--swatch:#${m.color}"></span>
+      <span class="legend-text">
+        <span class="legend-acr">${m.acr}</span>
+        <span class="legend-name" data-name-en="${m.name_en}" data-name-zh="${m.name_zh}">${m.name_en}</span>
+      </span>`;
+    legendList.appendChild(label);
+  });
+  document.querySelectorAll("#legendList .legend-row input").forEach((el) => {
+    el.addEventListener("change", () => {
+      const target = meshes[el.dataset.target];
+      if (target) target.visible = el.checked;
+    });
+  });
+
+  // ---- collapsible panels ----
+  document.getElementById("legendToggle").addEventListener("click", () => {
+    document.getElementById("legendPanel").classList.toggle("collapsed");
+  });
+  document.getElementById("hintToggle").addEventListener("click", () => {
+    document.getElementById("hintPanel").classList.toggle("collapsed");
+  });
+  const walkPanel = document.getElementById("walkPanel");
+  if (walkPanel) {
+    document.getElementById("walkToggle").addEventListener("click", () => {
+      walkPanel.classList.toggle("collapsed");
+    });
+  }
+
+  // ---- axis labels ----
+  const AXIS_SPRITES = [];
+  (function addAxisLabels() {
+    const A = EXTENT * 0.62, S = EXTENT * 0.5, R = EXTENT * 0.55;
+    const specs = [
+      { key: "anterior", pos: [0, A, 0] },
+      { key: "posterior", pos: [0, -A, 0] },
+      { key: "superior", pos: [0, 0, S] },
+      { key: "right_axis", pos: [R, 0, 0] },
+    ];
+    specs.forEach(({ key, pos }) => {
+      const sprite = makeTextSprite(STRINGS[key][LANG], "#f2f4f7", 72, EXTENT * 0.075, 999);
+      sprite.position.set(...pos);
+      scene.add(sprite);
+      AXIS_SPRITES.push({ sprite, key });
+    });
+  })();
+
+  // ---- pathway chains: schematic tube + wireframe node balls + labels ----
+  const HOVER_NODES = [];
+  let hoveredNode = null;
+  const pathwayGroups = {};
+
+  function buildChain(orderedKeys, color) {
+    const group = new THREE.Group();
+    const pts = orderedKeys.map((k) => new THREE.Vector3(...WAYPOINTS[k]));
+    const curve = new THREE.CatmullRomCurve3(pts, false, "catmullrom", 0.4);
+    const tubeGeom = new THREE.TubeGeometry(curve, 200, EXTENT * 0.005, 10, false);
+    const tubeMat = new THREE.MeshStandardMaterial({
+      color, emissive: color, emissiveIntensity: 0.4, roughness: 0.4, metalness: 0.1,
+    });
+    group.add(new THREE.Mesh(tubeGeom, tubeMat));
+    group.userData.curve = curve;
+
+    const colorHex = "#" + color.toString(16).padStart(6, "0");
+
+    // labels stagger along Y only, so vertical on-screen order always
+    // matches real superior/inferior anatomy
+    orderedKeys.forEach((key, i) => {
+      const p = WAYPOINTS[key]; // [x, y, z, radius_um]
+      const pos = new THREE.Vector3(p[0], p[1], p[2]);
+      if (!REAL.has(key)) {
+        const r = p[3] || EXTENT * 0.01;
+        const markerGeom = new THREE.SphereGeometry(r, 14, 14);
+        const markerMat = new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.85 });
+        const marker = new THREE.Mesh(markerGeom, markerMat);
+        marker.position.copy(pos);
+        group.add(marker);
+      }
+      const label = makeTextSprite(LABELS[key][LANG], colorHex, 52, EXTENT * 0.032, 998);
+      const step = EXTENT * 0.03;
+      const yOff = (i % 2 === 0 ? -1 : 1) * step * (1 + Math.floor(i / 2) * 0.4);
+      const labelPos = new THREE.Vector3(p[0], p[1] + yOff, p[2]);
+      label.position.copy(labelPos);
+      group.add(label);
+
+      // invisible generous hit sphere so hover works on thin nodes too
+      const hitGeom = new THREE.SphereGeometry(Math.max(p[3] || 0, EXTENT * 0.018), 8, 8);
+      const hitMesh = new THREE.Mesh(hitGeom, new THREE.MeshBasicMaterial({ visible: false }));
+      hitMesh.position.copy(pos);
+      group.add(hitMesh);
+      HOVER_NODES.push({ mesh: hitMesh, pos, labelPos, labelSprite: label, text: LABELS[key], color });
+    });
+
+    return group;
+  }
+
+  PATHWAYS.forEach((pw) => {
+    const color = parseInt(pw.color, 16);
+    const group = new THREE.Group();
+    const curves = [];
+    pw.chains.forEach((keys) => {
+      const chain = buildChain(keys, color);
+      group.add(chain);
+      curves.push(chain.userData.curve);
+    });
+    group.userData.curves = curves;
+    group.visible = !!pw.default_checked;
+    scene.add(group);
+    pathwayGroups[pw.id] = group;
+  });
+
+  PATHWAYS.forEach((pw) => {
+    const el = document.getElementById("pw_" + pw.id);
+    if (el) el.addEventListener("change", (e) => {
+      pathwayGroups[pw.id].visible = e.target.checked;
+    });
+  });
+
+  // ---- page-specific scene extras (custom geometry hooks) ----
+__CUSTOM__
+
+  // ---- animated signal swarm along one pathway ----
+  let signalEnabled = false;
+  let signalPoints = null;
+  let signalGeom = null;
+  const clock = new THREE.Clock();
+
+  if (SIGNAL_CFG && SIGNAL_CFG.pathway) {
+    const SIGNAL_COUNT = 26;
+    const SIGNAL_DURATION = SIGNAL_CFG.duration || 2.4;
+    const SIGNAL_TRAIL = 0.16;
+    const SIGNAL_JITTER = EXTENT * 0.01;
+
+    signalGeom = new THREE.BufferGeometry();
+    signalGeom.setAttribute("position", new THREE.BufferAttribute(new Float32Array(SIGNAL_COUNT * 3), 3));
+    const signalMat = new THREE.PointsMaterial({
+      color: parseInt(SIGNAL_CFG.color, 16), size: EXTENT * 0.009, sizeAttenuation: true,
+      transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending,
+    });
+    signalPoints = new THREE.Points(signalGeom, signalMat);
+    signalPoints.renderOrder = 1001;
+    scene.add(signalPoints);
+    signalEnabled = true;
+
+    const sigRow = document.getElementById("signalRow");
+    const sigToggle = document.getElementById("signalToggle");
+    if (sigRow) {
+      sigRow.style.display = "flex";
+      document.getElementById("signalSwatch").style.setProperty("--swatch", "#" + SIGNAL_CFG.color.replace("0x", ""));
+    }
+    if (sigToggle) {
+      sigToggle.checked = true;
+      sigToggle.addEventListener("change", (e) => { signalEnabled = e.target.checked; });
+    }
+
+    const curves = pathwayGroups[SIGNAL_CFG.pathway].userData.curves;
+    const mainCurve = curves[0];
+    const posArr = signalGeom.attributes.position.array;
+
+    (function animateSignal() {
+      const show = signalEnabled && pathwayGroups[SIGNAL_CFG.pathway].visible;
+      signalPoints.visible = show;
+      if (show) {
+        const cycle = (clock.getElapsedTime() % SIGNAL_DURATION) / SIGNAL_DURATION;
+        for (let i = 0; i < SIGNAL_COUNT; i++) {
+          const t = Math.min(0.999, Math.max(0, cycle - (i / SIGNAL_COUNT) * SIGNAL_TRAIL));
+          const p = mainCurve.getPointAt(t);
+          posArr[i * 3 + 0] = p.x + (Math.random() - 0.5) * SIGNAL_JITTER;
+          posArr[i * 3 + 1] = p.y + (Math.random() - 0.5) * SIGNAL_JITTER;
+          posArr[i * 3 + 2] = p.z + (Math.random() - 0.5) * SIGNAL_JITTER;
+        }
+        signalGeom.attributes.position.needsUpdate = true;
+      }
+      requestAnimationFrame(animateSignal);
+    })();
+  }
+
+  // ---- hover: leader line + coronal slice plane through the node ----
+  (function setupHover() {
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const hitMeshes = HOVER_NODES.map((n) => n.mesh);
+
+    const lineGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+    const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.95, depthTest: false });
+    const leaderLine = new THREE.Line(lineGeom, lineMat);
+    leaderLine.visible = false;
+    leaderLine.renderOrder = 1000;
+    scene.add(leaderLine);
+
+    const SPAN = EXTENT * 1.3;
+    const planeGeom = new THREE.PlaneGeometry(SPAN, SPAN);
+    const planeMat = new THREE.MeshBasicMaterial({
+      color: 0xffffff, transparent: true, opacity: 0.15,
+      side: THREE.DoubleSide, depthWrite: false,
+    });
+    const slicePlane = new THREE.Mesh(planeGeom, planeMat);
+    slicePlane.add(new THREE.LineSegments(
+      new THREE.EdgesGeometry(planeGeom),
+      new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 })
+    ));
+    slicePlane.rotation.x = Math.PI / 2; // normal along Y -> coronal-style slice
+    slicePlane.visible = false;
+    slicePlane.renderOrder = 5;
+    scene.add(slicePlane);
+
+    const sliceLabel = document.getElementById("hoverLabel");
+
+    function updateHover(node) {
+      hoveredNode = node;
+      const on = !!node;
+      leaderLine.visible = on;
+      slicePlane.visible = on;
+      renderer.domElement.style.cursor = on ? "pointer" : "default";
+      if (on) {
+        leaderLine.geometry.setFromPoints([node.pos, node.labelPos]);
+        leaderLine.geometry.attributes.position.needsUpdate = true;
+        slicePlane.position.set(0, node.pos.y, 0);
+        sliceLabel.textContent = node.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳]+[ab]?\s*/, "");
+        sliceLabel.parentElement.classList.add("show");
+      } else {
+        sliceLabel.parentElement.classList.remove("show");
+      }
+    }
+
+    function onMove(ev) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((ev.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((ev.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(hitMeshes, false);
+      if (hits.length) {
+        const node = HOVER_NODES.find((n) => n.mesh === hits[0].object);
+        if (node !== hoveredNode) updateHover(node);
+      } else if (hoveredNode) {
+        updateHover(null);
+      }
+    }
+    renderer.domElement.addEventListener("mousemove", onMove);
+    renderer.domElement.addEventListener("mouseleave", () => updateHover(null));
+  })();
+
+  // ---- EN / 中文 toggle: DOM copy + every canvas-texture sprite ----
+  function applyLang() {
+    document.querySelectorAll("[id^='txt']").forEach((el) => {
+      const m = el.id.match(/^txtPw_(\w+)(Name|Desc)$/);
+      if (m) {
+        const pw = PATHWAYS.find((p) => p.id === m[1]);
+        if (pw) {
+          const skey = m[2] === "Name" ? pw.name_key : pw.desc_key;
+          el.innerHTML = STRINGS[skey][LANG];
+        }
+        return;
+      }
+      const key = {
+        txtEyebrow: "eyebrow", txtTitleMain: "title_main", txtTitleSuffix: "title_suffix",
+        txtSubtitle: "subtitle", txtWalkTitle: "walk_title",
+        txtHoverTitle: "hover_title", txtStructuresTitle: "structures_title",
+        txtPathwaysTitle: "pathways_title", txtLegendNote: "legend_note",
+        txtHintControls: "hint_controls", txtHintUnits: "hint_units",
+        txtControlsTitle: "controls_title",
+      }[el.id];
+      if (key && STRINGS[key]) el.innerHTML = STRINGS[key][LANG];
+    });
+    WALK_IDS.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = STRINGS["walk_" + i][LANG];
+    });
+    document.querySelectorAll("#legendList .legend-name").forEach((el) => {
+      el.textContent = LANG === "zh" ? el.dataset.nameZh : el.dataset.nameEn;
+    });
+    const sigName = document.getElementById("txtSignalName");
+    if (sigName) sigName.innerHTML = STRINGS.signal_name[LANG];
+    const sigDesc = document.getElementById("txtSignalDesc");
+    if (sigDesc) sigDesc.innerHTML = STRINGS.signal_desc[LANG];
+    document.getElementById("langToggle").textContent = STRINGS.lang_button[LANG];
+
+    AXIS_SPRITES.forEach(({ sprite, key }) => updateTextSprite(sprite, STRINGS[key][LANG]));
+    HOVER_NODES.forEach((n) => updateTextSprite(n.labelSprite, n.text[LANG]));
+    if (hoveredNode) {
+      document.getElementById("hoverLabel").textContent =
+        hoveredNode.text[LANG].replace(/^[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳]+[ab]?\s*/, "");
+    }
+  }
+
+  const langToggleBtn = document.getElementById("langToggle");
+  langToggleBtn.addEventListener("click", () => {
+    LANG = LANG === "en" ? "zh" : "en";
+    try { localStorage.setItem("neuroLang", LANG); } catch (e) {}
+    applyLang();
+  });
+
+  function resize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  window.addEventListener("resize", resize);
+
+  applyLang();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  document.getElementById("loading").classList.add("hidden");
+})();
+</script>

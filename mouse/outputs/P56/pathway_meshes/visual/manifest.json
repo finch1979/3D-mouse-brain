@@ -1,0 +1,22 @@
+{
+  "root": {
+    "name": "Whole-brain outline (CCFv3)",
+    "color": "CCCCCC",
+    "vertex_count": 49321
+  },
+  "VISp": {
+    "name": "Primary visual area VISp (right)",
+    "color": "5A8FE0",
+    "vertex_count": 3532
+  },
+  "LGd": {
+    "name": "Dorsal lateral geniculate LGd (right)",
+    "color": "E0A458",
+    "vertex_count": 770
+  },
+  "SCs": {
+    "name": "Superior colliculus, superficial (right)",
+    "color": "5AC0C0",
+    "vertex_count": 1928
+  }
+}

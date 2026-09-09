@@ -1,79 +1,77 @@
-# site/ — the Neuro Atlas hub
+# Neuro Atlas site
 
-**Live: https://neuro-atlas.pages.dev/**
+The redesigned human and mouse hubs introduce a brain-surface illustration from
+existing atlas geometry, a clear starting point, searchable topic cards, category
+filters, bilingual navigation, and a linked anatomical map. Mouse cards identify
+the atlas age and distinguish 2D sections from 3D viewers.
 
-One front page for every human nervous-system viewer in this repo: a clickable
-nervous-system map on the left, a grouped system list on the right, and a
-`規劃中` block for the systems still to come. Bilingual (中文 default), same
-dark/mono design tokens as the viewers.
+Viewer copies receive a responsive reading panel, accessible panel controls,
+viewport metadata, and navigation back to their species hub. Scientific content,
+embedded meshes, and the original viewer controls remain in the source outputs.
+This worktree is a local redesign preview; no deployment has been performed.
 
-Unlike `mouse/` and `human/`, this is not a package — it is one script.
-It must not import `mouse_atlas` or `human_atlas`; it only reads their built
-outputs.
+## Build and preview
 
-## Build and deploy
+Run both commands from the repository root, in this order:
 
-```bash
-py -3.13 site/build_hub.py
-npx wrangler pages deploy site/dist --project-name=neuro-atlas
+```powershell
+rtk proxy py -3.13 site/build_hub.py
+rtk proxy py -3.13 site/build_mouse.py
+rtk proxy py -3.13 -m http.server 8767 --bind 127.0.0.1 --directory site/dist
 ```
 
-`site/dist/` is gitignored — it is the hub page plus a *copy* of every viewer,
-about 43 MB of duplicates. Rebuild it rather than committing it. Wrangler
-hashes files, so redeploying after a change to one viewer only uploads that
-viewer.
+Open [the human hub](http://localhost:8767/) or
+[the mouse hub](http://localhost:8767/mouse/).
+`build_hub.py` clears the previous `site/dist/`, including its mouse section;
+`build_mouse.py` then adds the mouse pages. The generated directory is gitignored.
+Building uses the tracked viewer outputs and needs no atlas download.
 
-```
-site/dist/
-  index.html                 the hub
-  404.html
-  auditory/index.html        \
-  visual/index.html           |
-  olfactory/index.html        |  a copy of each viewer,
-  limbic/index.html           |  with navigation injected
-  motor-hippocampus/index.html|
-  pain/index.html            /
-```
+## Architecture
 
-## Adding a system
+- `build_hub.py` owns the human registry, anatomical SVG map, 404 page, and copies
+  of the 12 human viewers.
+- `build_mouse.py` owns the mouse registry and map, copies three pathway viewers,
+  and preserves the seven legacy viewers under `mouse/P56/`, `mouse/P15/`, and
+  `mouse/P14/` so their cross-links and slice query parameters continue to work.
+- `hub_design.py`, `brain_art.py`, and `templates/atlas.*` produce both homepages
+  with inline CSS, JavaScript, and SVG.
+- `viewer_upgrade.py` adds the interface only to assembled viewer copies,
+  fits recognized 3D scenes into the available workspace, and provides a reset
+  view control. Existing pointer picking remains relative to the canvas.
 
-Add one entry to `SYSTEMS` in [build_hub.py](build_hub.py) — slug, source path,
-accent colour, group, and the bilingual name/short/route/fact/source strings —
-then rebuild and redeploy. If it has an obvious anatomical home, give it a
-`hotspot` and draw that shape in `build_svg()`; otherwise set `hotspot: None`
-and it is listed but not on the map. Moving something out of `PLANNED` into
-`SYSTEMS` is the same edit in reverse.
+The site layer reads built files; it does not import `human_atlas` or
+`mouse_atlas`. Those packages remain independent. Each viewer keeps its own
+embedded three.js, OrbitControls, mesh/image data, and injected interface; no CDN
+or neighboring runtime asset is required.
 
-## Two things worth knowing before you change this
+Source viewers are HTML fragments with no enclosing document tags. Build scripts
+prepend charset and viewport metadata, then append navigation, language sync, and
+the viewer interface. They also repair the mouse hippocampus section link and
+keep the two orphan human viewers' cross-links within this site. Original outputs
+are never rewritten. The limbic and whole-brain source outputs have no remaining
+generators and cannot be regenerated here.
 
-**The viewers are body fragments.** Every `*/outputs/**.html` in this repo
-starts at `<title>` and ends at `</script>` — no doctype, no `<html>`, no
-`<head>`, no charset meta. So the injector *appends* the nav markup and
-*prepends* a charset meta. There is no `</body>` to anchor on, and
-`build_hub.py` asserts the `</script>` ending rather than silently shipping a
-page with no way back to the hub.
+## Content and language
 
-**Injection happens on the copy, never the original.** `human/outputs/limbic/`
-and `human/outputs/whole_brain/` are orphans — the scripts that built them are
-gone, so they cannot be regenerated. Post-processing the copy in `dist/` is
-what makes them work here, and it also leaves the six original per-system
-deployments untouched:
+Add new topics to the relevant registry with bilingual names, pathway summaries,
+source labels, and optional anatomical hotspots. Topic cards and filters are
+assembled from that registry. The map is a schematic navigation diagram; the hero
+uses atlas surface geometry. Pathway viewers combine atlas structures with
+schematic teaching elements, as described by their existing source notes.
 
-| | |
-|---|---|
-| 聽覺 | https://human-auditory-system.pages.dev/ |
-| 視覺 | https://human-visual-system.pages.dev/ |
-| 嗅覺 | https://human-olfactory-system.pages.dev/ |
-| 痛覺 | https://human-pain-system.pages.dev/ |
-| 邊緣系統 | https://human-limbic-system.pages.dev/ |
-| 運動皮質+海馬迴 | https://human-brain-motor-cortex-hippocampus.pages.dev/ |
+The site defaults to Traditional Chinese and stores the language in
+`localStorage.neuroLang`. Bilingual viewers inherit that choice through their own
+language control; older single-language viewers keep their existing content.
 
-Those still work and are not redirects. The hub is an addition, not a move.
+## Redesign validation
 
-## Language
+The assembled site contains two hubs, 22 viewers (19 in 3D and three 2D plates),
+and a 404 page. All viewer routes were loaded in Chromium without application
+errors. Generated relative links, viewport metadata, unique element IDs, and
+inline JavaScript syntax were checked. Original viewer outputs are unchanged.
 
-The hub defaults to 中文 and writes the choice to `localStorage.neuroLang`.
-Because everything now shares one origin, the injected snippet in the four
-bilingual viewers reads that key and clicks their own `#langToggle` once if it
-says `zh` — so a language picked on the hub carries through the site. The two
-Allen-atlas pages have no i18n and are unaffected.
+Browser checks cover Chinese/English search, category filters, empty/reset states,
+language persistence, widths from 320 to 1440 pixels, exclusive viewer panels,
+layer toggles, zoom/reset, and canvas-relative pointer coordinates. The 2D plates
+retain their existing purpose-built interface; the new reading rail applies to
+the 3D viewers. Existing atlas and scientific-content limitations still apply.

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Neuro Atlas — 用互動 3D 圖譜探索人類與小鼠神經系統，從結構位置理解訊號路徑。">
+<meta name="theme-color" content="#0b1418">
+<title>__TITLE__ · Neuro Atlas</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%230b1418'/%3E%3Cpath d='M10 27V13l20 14V13M10 13l10 7 10-7' fill='none' stroke='%2384dcc5' stroke-width='2'/%3E%3C/svg%3E">
+<style>__CSS__</style>
+</head>
+<body data-species="__SPECIES__">
+<a class="skip-link" href="#explore" data-zh="跳到圖譜列表" data-en="Skip to the atlas library">跳到圖譜列表</a>
+<div class="page-shell">
+  <header class="site-header">
+    <a class="brand" href="__HOME__" aria-label="Neuro Atlas">
+      <svg viewBox="0 0 36 36" aria-hidden="true"><path d="M7 27V9l22 18V9M7 9l11 9 11-9M7 27l11-9 11 9"/><circle cx="7" cy="9" r="2.5"/><circle cx="18" cy="18" r="3"/><circle cx="29" cy="27" r="2.5"/></svg>
+      <span>neuro<span class="brand-light">atlas</span><small>AN INTERACTIVE FIELD GUIDE</small></span>
+    </a>
+    <nav class="species-switch" aria-label="Atlas species">
+      <a href="__HUMAN_LINK__" __HUMAN_CURRENT__ data-zh="人類 Human" data-en="Human">人類 Human</a>
+      <a href="__MOUSE_LINK__" __MOUSE_CURRENT__ data-zh="小鼠 Mouse" data-en="Mouse">小鼠 Mouse</a>
+    </nav>
+    <div class="header-actions"><a href="#guide" data-zh="閱讀指南" data-en="Field guide">閱讀指南</a><span class="header-divider"></span><button id="langToggle" type="button" aria-label="Switch to English">EN <span aria-hidden="true">↗</span></button></div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow"><i class="status-dot"></i> __EYEBROW__</div>
+        <h1 id="hero-title">__HERO_TITLE__</h1>
+        __HERO_INTRO__
+        <div class="hero-actions"><a class="primary-button" href="__START_LINK__">__START_TEXT__ <span aria-hidden="true">↗</span></a><a class="text-button" href="#explore" data-zh="瀏覽全部圖譜 ↓" data-en="Browse the atlas ↓">瀏覽全部圖譜 ↓</a></div>
+        <div class="hero-stats"><div><strong>__COUNT__</strong>__STAT_LABEL__</div><div><strong>__STAT_TWO__</strong>__STAT_TWO_LABEL__</div><div><strong>中 / EN</strong><span data-zh="雙語閱讀" data-en="bilingual learning">雙語閱讀</span></div></div>
+      </div>
+      <figure class="brain-figure">
+        <div class="figure-top"><span>STRUCTURE / CONNECTION / DISCOVERY</span><span class="figure-no">FIG. 01</span></div>
+        <div class="brain-art">__BRAIN__</div>
+        <figcaption><span><i></i> __BRAIN_LABEL__</span><span>__BRAIN_SOURCE__</span></figcaption>
+        <p class="figure-note" data-zh="由圖譜表面網格投影繪製 · 下方可開啟互動 3D" data-en="Projected from atlas surface geometry · Open a viewer below to explore in 3D">由圖譜表面網格投影繪製 · 下方可開啟互動 3D</p>
+      </figure>
+    </section>
+
+    <section class="library" id="explore" aria-labelledby="library-title">
+      <div class="section-heading"><div><div class="section-kicker">THE ATLAS LIBRARY</div><h2 id="library-title" data-zh="選一條路徑，開始探索。" data-en="Choose a route. Start exploring.">選一條路徑，開始探索。</h2></div><p data-zh="從熟悉的感覺，連結到陌生的結構。" data-en="Connect a familiar sensation to an unfamiliar structure.">從熟悉的感覺，連結到陌生的結構。</p></div>
+      <div class="library-toolbar">
+        <div class="filters" role="group" aria-label="Filter atlas topics">__FILTERS__</div>
+        <label class="search-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="atlasSearch" type="search" placeholder="搜尋系統、腦區、關鍵字…" aria-label="搜尋圖譜" autocomplete="off"><kbd aria-hidden="true">/</kbd></label>
+      </div>
+      <div class="library-layout">
+        <aside class="map-panel" aria-labelledby="map-heading">
+          <div class="map-heading"><h3 id="map-heading" data-zh="依位置探索" data-en="Explore by location">依位置探索</h3><span>MAP / 01</span></div>
+          __MAP__
+          <p class="map-feedback" data-zh="選擇一個標記，開啟對應圖譜 ↗" data-en="Select a marker to open its atlas ↗">選擇一個標記，開啟對應圖譜 ↗</p>
+          <p class="map-note" data-zh="位置導覽示意圖，非真實比例。亮色標記可點擊；虛線為規劃中主題。" data-en="Schematic navigation, not to scale. Colored markers open viewers; dashed markers are planned.">位置導覽示意圖，非真實比例。亮色標記可點擊；虛線為規劃中主題。</p>
+        </aside>
+        <div class="library-results"><div class="result-caption"><span data-zh="探索主題" data-en="AVAILABLE TO EXPLORE">探索主題</span><span id="resultCount" role="status" aria-live="polite"></span></div>__CARDS__
+          <div id="emptyState" class="empty-state" hidden><span class="empty-symbol" aria-hidden="true">⌕</span><h3 data-zh="還沒找到符合的圖譜" data-en="No matching atlases">還沒找到符合的圖譜</h3><p data-zh="試試其他腦區名稱、英文縮寫，或清除篩選。" data-en="Try another region, an abbreviation, or clear the filters.">試試其他腦區名稱、英文縮寫，或清除篩選。</p><button id="clearFilters" class="secondary-button" type="button" data-zh="清除搜尋與篩選" data-en="Clear search & filters">清除搜尋與篩選</button></div>
+          __PLANNED__
+        </div>
+      </div>
+    </section>
+
+    <section class="reading-guide" id="guide" aria-labelledby="guide-title">
+      <div class="section-heading"><div><div class="section-kicker">A LITTLE GUIDANCE</div><h2 id="guide-title" data-zh="不只看見，也讀懂。" data-en="Look closer. Make connections.">不只看見，也讀懂。</h2></div><p data-zh="第一次使用？從這三個步驟開始。" data-en="Your first visit? Start with these three steps.">第一次使用？從這三個步驟開始。</p></div>
+      <div class="guide-grid">
+        <article><span class="guide-number">01 / LOCATE</span><h3 data-zh="先找到位置" data-en="Locate the structure">先找到位置</h3><p data-zh="開啟 3D 圖譜，拖曳旋轉、滾輪縮放。先觀察結構與整個腦的相對位置。" data-en="Open a 3D viewer. Drag to rotate and scroll to zoom. First, see where a structure sits within the brain.">開啟 3D 圖譜，拖曳旋轉、滾輪縮放。先觀察結構與整個腦的相對位置。</p></article>
+        <article><span class="guide-number">02 / TRACE</span><h3 data-zh="再跟著訊號走" data-en="Trace the signal">再跟著訊號走</h3><p data-zh="在路徑圖譜中，搭配解說逐站閱讀。注意訊號的入口、中繼站，以及可能的交叉位置。" data-en="In pathway viewers, follow the guide relay by relay. Look for the entry point, intermediate stations and crossings.">在路徑圖譜中，搭配解說逐站閱讀。注意訊號的入口、中繼站，以及可能的交叉位置。</p></article>
+        <article><span class="guide-number">03 / REVEAL</span><h3 data-zh="一次看清一個結構" data-en="Reveal one layer at a time">一次看清一個結構</h3><p data-zh="切換結構的顯示狀態，減少遮擋。把圖例的顏色、解說文字與立體位置連在一起。" data-en="Toggle structures to reduce overlap. Connect the legend colors and explanations to what you see in three dimensions.">切換結構的顯示狀態，減少遮擋。把圖例的顏色、解說文字與立體位置連在一起。</p></article>
+      </div>
+      <div class="evidence-note"><span class="evidence-icon" aria-hidden="true">i</span><div><h3 data-zh="分清楚：圖譜結構與示意標記" data-en="Read the geometry: atlas structures and schematic markers">分清楚：圖譜結構與示意標記</h3><p data-zh="路徑檢視器中的實體網格來自圖譜；部分小型神經核、周邊器官與連線以示意方式呈現。線框位置與路徑不代表精確分割或實測纖維追蹤，請搭配各頁的來源與說明閱讀。" data-en="Pathway viewers combine atlas-derived solid meshes with schematic markers for some small nuclei, peripheral organs and connections. Wireframes and routes are not exact segmentations or measured tractography; consult each viewer’s source notes.">路徑檢視器中的實體網格來自圖譜；部分小型神經核、周邊器官與連線以示意方式呈現。線框位置與路徑不代表精確分割或實測纖維追蹤，請搭配各頁的來源與說明閱讀。</p></div></div>
+    </section>
+  </main>
+  <footer class="site-footer"><div><a class="footer-brand" href="__HOME__">neuroatlas<span> / </span></a><span data-zh="讓神經科學，有跡可循。" data-en="A field guide to neural connections.">讓神經科學，有跡可循。</span></div><div class="sources">__SOURCE__<p data-zh="學習與探索用圖譜 · 使用資料請查閱各來源的授權與引用要求。" data-en="An atlas for learning and exploration · Consult each source for licensing and citation requirements.">學習與探索用圖譜 · 使用資料請查閱各來源的授權與引用要求。</p></div><a href="#" data-zh="回到頂端 ↑" data-en="Back to top ↑">回到頂端 ↑</a></footer>
+</div>
+<script>__JS__</script>
+</body>
+</html>

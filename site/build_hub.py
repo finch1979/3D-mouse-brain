@@ -9,7 +9,7 @@ Assembles `site/dist/`:
 Every viewer output in this repo is a *body fragment* — it starts at `<title>`
 and ends at `</script>`, with no doctype/html/head/body tags and no charset
 meta. So the injector appends the nav markup at the end of the copy and
-prepends a charset meta at the front. It works on the copy in `dist/`, never
+prepends charset and viewport metadata at the front. It works on the copy in `dist/`, never
 on the original, which matters because `limbic/` and `whole_brain/` are orphan
 outputs with no build script left in the repo — they cannot be regenerated.
 
@@ -26,6 +26,9 @@ import math
 import shutil
 import sys
 from pathlib import Path
+
+from hub_design import render_hub
+from viewer_upgrade import prepare_viewer, viewer_upgrade
 
 SITE_DIR = Path(__file__).resolve().parent
 REPO = SITE_DIR.parent
@@ -324,312 +327,9 @@ def build_svg() -> str:
 
 
 # --- the list ---------------------------------------------------------------
-def build_list() -> str:
-    out = []
-    for key, title, sub in GROUPS:
-        rows = []
-        for s in (x for x in SYSTEMS if x["group"] == key):
-            rows.append(f"""
-      <a class="card" href="./{s['slug']}/" data-card="{s['slug']}" style="--accent:{s['accent']}">
-        <span class="card-head">
-          <span class="card-name" {bi(s['name'])}></span>
-          <span class="card-status" data-en="live" data-zh="上線"></span>
-        </span>
-        <span class="card-route" {bi(s['route'])}></span>
-        <span class="card-fact" {bi(s['fact'])}></span>
-        <span class="card-source">{s['source']}</span>
-      </a>""")
-        out.append(f"""
-    <section class="group">
-      <h2 class="group-title" {bi(title)}></h2>
-      <p class="group-sub" {bi(sub)}></p>
-      <div class="cards">{''.join(rows)}</div>
-    </section>""")
-
-    if PLANNED:
-        soon_rows = "".join(
-            f"""
-        <li class="soon-row"{f' data-soon-row="{p["hotspot"]}"' if p["hotspot"] else ''}>
-          <span class="soon-name" {bi(p['name'])}></span>
-          <span class="soon-note" {bi(p['note'])}></span>
-        </li>"""
-            for p in PLANNED
-        )
-        out.append(f"""
-        <section class="group group--soon">
-          <h2 class="group-title" data-en="Planned" data-zh="規劃中"></h2>
-          <p class="group-sub" data-en="Being added one at a time. Dimmed marks on the map are these."
-             data-zh="逐一慢慢完成。導覽圖上的暗色標記就是這些。"></p>
-          <ul class="soon-list">{soon_rows}</ul>
-        </section>""")
-    return "".join(out)
 
 
 # --- the hub page -----------------------------------------------------------
-HUB = """<!doctype html>
-<html lang="zh-Hant">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>神經系統整合 · Neuro Atlas</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#129504;</text></svg>" />
-<style>
-  :root {
-    --bg: #12151a;
-    --panel: rgba(27, 32, 40, 0.86);
-    --panel-border: #2b323d;
-    --text: #e9edf1;
-    --text-dim: #8b96a3;
-    --text-faint: #5c6672;
-    --accent: #e0a458;
-    --mono: ui-monospace, "Cascadia Code", "SF Mono", "JetBrains Mono", Consolas, "Liberation Mono", monospace;
-    --sans: -apple-system, "Segoe UI", system-ui, Roboto, "Noto Sans TC", sans-serif;
-  }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0; min-height: 100%;
-    background: var(--bg); color: var(--text); font-family: var(--sans);
-    -webkit-font-smoothing: antialiased;
-  }
-  a { color: inherit; text-decoration: none; }
-
-  .wrap { max-width: 1320px; margin: 0 auto; padding: 34px 30px 60px; }
-
-  header { display: flex; flex-direction: column; gap: 6px; position: relative; }
-  .eyebrow {
-    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--text-faint);
-  }
-  h1 {
-    margin: 0; font-family: var(--mono); font-weight: 600;
-    font-size: clamp(22px, 3vw, 34px); letter-spacing: 0.01em;
-  }
-  h1 .accent { color: var(--accent); }
-  .subtitle {
-    font-size: 13px; color: var(--text-dim); max-width: 76ch; line-height: 1.6;
-  }
-  .subtitle b { color: var(--text); font-weight: 600; }
-
-  .lang {
-    position: absolute; right: 0; top: 0;
-    background: var(--panel); border: 1px solid var(--panel-border);
-    border-radius: 10px; padding: 8px 16px; cursor: pointer;
-    font-family: var(--mono); font-size: 12px; color: var(--text);
-    backdrop-filter: blur(10px);
-  }
-  .lang:hover { border-color: var(--accent); color: var(--accent); }
-
-  main {
-    display: grid; grid-template-columns: minmax(300px, 420px) 1fr;
-    gap: 32px; align-items: start; margin-top: 30px;
-  }
-
-  /* ---- map ---- */
-  .map-panel {
-    background: var(--panel); border: 1px solid var(--panel-border);
-    border-radius: 14px; padding: 18px 16px 14px; position: sticky; top: 24px;
-  }
-  #map { width: 100%; height: auto; display: block; }
-  .map-note {
-    font-size: 10.5px; color: var(--text-faint); line-height: 1.55;
-    border-top: 1px solid var(--panel-border); margin-top: 10px; padding-top: 10px;
-  }
-
-  .frame path, .frame line { fill: none; stroke: #333d49; stroke-width: 1.6; }
-  .frame .trunk { fill: rgba(124, 139, 153, 0.04); stroke: #29313a; stroke-width: 1.4; }
-  .frame .limb, .frame .foot, .frame .shoulder { stroke-linecap: round; stroke-width: 2; }
-  .sulci { pointer-events: none; }
-  .sulci path { fill: none; stroke: #46515e; stroke-width: 1.2; opacity: 0.85; }
-
-  .hot .hit-brain {
-    fill: color-mix(in srgb, var(--accent) 16%, transparent);
-    stroke: var(--accent); stroke-width: 1.6; stroke-linejoin: round;
-    transition: fill 0.16s ease, stroke-width 0.16s ease;
-  }
-  .hot:hover .hit-brain, .hot.on .hit-brain, .hot:focus-visible .hit-brain {
-    fill: color-mix(in srgb, var(--accent) 34%, transparent); stroke-width: 2.4;
-  }
-
-  .hot { cursor: pointer; outline: none; }
-  .hot .hit-band, .hot .hit-blob, .hot .hit-dot, .hot .hit-dot-p, .hot .hit-cord {
-    fill: color-mix(in srgb, var(--accent, #5c6672) 26%, transparent);
-    stroke: var(--accent, #5c6672); stroke-width: 1.6;
-    transition: fill 0.16s ease, stroke-width 0.16s ease;
-  }
-  .hot .hit-dot-p, .hot .hit-band { fill: color-mix(in srgb, var(--accent, #5c6672) 30%, transparent); }
-  .hot .pupil { fill: var(--accent); stroke: none; }
-  .hot .leader { fill: none; stroke: var(--accent, #5c6672); stroke-width: 1; stroke-dasharray: 3 3; opacity: 0.7; }
-  .hot .cord-ticks line { stroke: var(--accent); stroke-width: 1; opacity: 0.5; }
-  .hot .foliate path { fill: none; stroke: #46505c; stroke-width: 1; opacity: 0.9; }
-  .hot-label {
-    font-family: var(--mono); font-size: 12px; fill: var(--text-dim);
-    transition: fill 0.16s ease;
-  }
-  .hot:hover .hit-band, .hot:hover .hit-blob, .hot:hover .hit-dot,
-  .hot:hover .hit-dot-p, .hot:hover .hit-cord,
-  .hot.on .hit-band, .hot.on .hit-blob, .hot.on .hit-dot,
-  .hot.on .hit-dot-p, .hot.on .hit-cord,
-  .hot:focus-visible .hit-band, .hot:focus-visible .hit-blob,
-  .hot:focus-visible .hit-dot, .hot:focus-visible .hit-dot-p, .hot:focus-visible .hit-cord {
-    fill: color-mix(in srgb, var(--accent) 62%, transparent); stroke-width: 2.4;
-  }
-  .hot:hover .hot-label, .hot.on .hot-label, .hot:focus-visible .hot-label {
-    fill: var(--accent);
-  }
-
-  .hot--soon { cursor: default; }
-  .hot--soon .hit-blob, .hot--soon .hit-dot, .hot--soon .hit-dot-p {
-    fill: rgba(110, 121, 134, 0.2); stroke: #56616e;
-    stroke-width: 1.3; stroke-dasharray: 4 3;
-  }
-  .hot--soon .hot-label { fill: var(--text-faint); font-size: 11px; }
-  .hot--soon.on .hit-blob, .hot--soon.on .hit-dot, .hot--soon.on .hit-dot-p {
-    fill: rgba(139, 150, 163, 0.28); stroke: #8b96a3;
-  }
-  .hot--soon.on .hot-label { fill: var(--text-dim); }
-
-  /* ---- list ---- */
-  .group { margin-bottom: 26px; }
-  .group-title {
-    margin: 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--text-faint);
-  }
-  .group-sub { margin: 4px 0 12px; font-size: 12px; color: var(--text-faint); }
-
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
-  .card {
-    display: flex; flex-direction: column; gap: 5px;
-    background: var(--panel); border: 1px solid var(--panel-border);
-    border-left: 3px solid var(--accent); border-radius: 10px;
-    padding: 13px 15px 14px;
-    transition: border-color 0.16s ease, transform 0.16s ease, background 0.16s ease;
-  }
-  .card:hover, .card.on {
-    background: rgba(35, 41, 51, 0.92);
-    border-color: color-mix(in srgb, var(--accent) 55%, var(--panel-border));
-    border-left-color: var(--accent); transform: translateX(2px);
-  }
-  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-  .card-name { font-family: var(--mono); font-size: 14px; color: var(--text); }
-  .card-status {
-    font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--accent); white-space: nowrap;
-  }
-  .card-status::before { content: "● "; }
-  .card-route { font-family: var(--mono); font-size: 11px; color: var(--text-dim); line-height: 1.5; }
-  .card-fact { font-size: 12px; color: var(--text-dim); line-height: 1.55; }
-  .card-source {
-    font-family: var(--mono); font-size: 10px; color: var(--text-faint);
-    letter-spacing: 0.04em; margin-top: 2px;
-  }
-
-  .group--soon .soon-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 1px; }
-  .soon-row {
-    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px;
-    padding: 9px 12px; border-radius: 8px;
-    border: 1px dashed transparent; transition: background 0.16s ease, border-color 0.16s ease;
-  }
-  .soon-row.on { background: rgba(35, 41, 51, 0.7); border-color: var(--panel-border); }
-  .soon-name { font-family: var(--mono); font-size: 12.5px; color: var(--text-dim); }
-  .soon-name::before { content: "○ "; color: var(--text-faint); }
-  .soon-note { font-size: 11.5px; color: var(--text-faint); }
-
-  footer {
-    margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--panel-border);
-    font-size: 11px; color: var(--text-faint); line-height: 1.7;
-  }
-  footer a { color: var(--text-dim); text-decoration: underline; text-underline-offset: 2px; }
-  footer a:hover { color: var(--accent); }
-
-  @media (max-width: 900px) {
-    main { grid-template-columns: 1fr; }
-    .map-panel { position: static; max-width: 460px; }
-    .wrap { padding: 26px 18px 48px; }
-    .lang { position: static; align-self: flex-start; margin-top: 6px; }
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header>
-    <span class="eyebrow" data-en="Human · MNI152 &amp; Allen atlases · self-contained 3D viewers"
-          data-zh="人體 · MNI152 與 Allen 圖譜 · 自足式 3D 檢視器"></span>
-    <h1>神經系統整合 <span class="accent">Neuro Atlas</span></h1>
-    <p class="subtitle"
-       data-en="Every viewer here traces <b>one route through the nervous system</b> in 3D — where a signal enters, which nuclei it relays through, where it crosses the midline, and where it ends up. Solid meshes are real atlas anatomy; wireframe markers are schematic. Pick a system from the map or the list. The map is a <b>stylised diagram</b>, not atlas geometry."
-       data-zh="這裡的每一頁都以 3D 追蹤<b>神經系統裡的一條路徑</b>——訊號從哪裡進入、經過哪些神經核、在哪裡越過中線、最後到哪裡。實心網格是真實的圖譜解剖;線框標記為示意。可以從導覽圖或右側清單進入各系統。導覽圖本身是<b>示意圖</b>,不是真實的圖譜幾何。"></p>
-    <a class="lang" style="right:76px" href="./mouse/" title="Mouse Atlas"
-       data-en="&#1280; Mouse" data-zh="&#1280; 小鼠"></a>
-    <button class="lang" id="langToggle" type="button">EN</button>
-  </header>
-
-  <main>
-    <div class="map-panel">
-      __SVG__
-      <p class="map-note"
-         data-en="Every mark is a live system — click to open. The map is a stylised diagram."
-         data-zh="每個標記都是已上線的系統,點擊即可開啟。導覽圖為示意圖。"></p>
-    </div>
-
-    <div class="list">__LIST__</div>
-  </main>
-
-  <footer>
-    <p data-en="Atlas sources: MNI152 template with the Harvard-Oxford and AAL3 atlases, the PAM50 spinal cord template, the Diedrichsen (2009) cerebellar atlas, and the Allen Human Brain Atlas. For free educational use with citation; Harvard-Oxford is non-commercial."
-       data-zh="圖譜來源:MNI152 模板與 Harvard-Oxford、AAL3 圖譜,PAM50 脊髓模板,Diedrichsen (2009) 小腦圖譜,以及 Allen Human Brain Atlas。供免費教育用途並註明出處;Harvard-Oxford 為非商業授權。"></p>
-    <p data-en="Each viewer is a single self-contained HTML file with its meshes baked in — no server, no CDN. The original per-system addresses still work."
-       data-zh="每個檢視器都是把網格資料內嵌好的單一 HTML 檔案,不需要伺服器,也不依賴 CDN。原本各系統的獨立網址仍然可以使用。"></p>
-  </footer>
-</div>
-
-<script>
-(function () {
-  var LANG = "zh";
-  try { LANG = localStorage.getItem("neuroLang") || "zh"; } catch (e) {}
-  var SVG_NS = "http://www.w3.org/2000/svg";
-
-  function applyLang() {
-    document.querySelectorAll("[data-en]").forEach(function (el) {
-      var txt = el.dataset[LANG];
-      if (txt === undefined) return;
-      if (el.namespaceURI === SVG_NS) el.textContent = txt;
-      else el.innerHTML = txt;
-    });
-    document.getElementById("langToggle").textContent = LANG === "zh" ? "EN" : "中文";
-    document.documentElement.lang = LANG === "zh" ? "zh-Hant" : "en";
-  }
-
-  document.getElementById("langToggle").addEventListener("click", function () {
-    LANG = LANG === "zh" ? "en" : "zh";
-    try { localStorage.setItem("neuroLang", LANG); } catch (e) {}
-    applyLang();
-  });
-  applyLang();
-  // Write it through even if untouched, so the viewers follow the hub's language.
-  try { localStorage.setItem("neuroLang", LANG); } catch (e) {}
-
-  // Map <-> list cross-highlighting, both directions.
-  function pair(hotSel, cardSel, attr) {
-    document.querySelectorAll(hotSel).forEach(function (hot) {
-      var key = hot.dataset.slug || hot.dataset.soon;
-      var card = document.querySelector(cardSel.replace("KEY", key));
-      if (!card) return;
-      function on(v) { hot.classList.toggle("on", v); card.classList.toggle("on", v); }
-      hot.addEventListener("mouseenter", function () { on(true); });
-      hot.addEventListener("mouseleave", function () { on(false); });
-      hot.addEventListener("focus", function () { on(true); });
-      hot.addEventListener("blur", function () { on(false); });
-      card.addEventListener("mouseenter", function () { on(true); });
-      card.addEventListener("mouseleave", function () { on(false); });
-    });
-  }
-  pair(".hot[data-slug]", '[data-card="KEY"]', "slug");
-  pair(".hot--soon[data-soon]", '[data-soon-row="KEY"]', "soon");
-})();
-</script>
-</body>
-</html>
-"""
 
 NOT_FOUND = """<!doctype html>
 <html lang="zh-Hant">
@@ -710,19 +410,31 @@ def assemble() -> list[tuple[str, int, bool]]:
         if "neuroNav" in html:
             sys.exit(f"ERROR: {src} already contains the nav - refusing to double-inject")
 
+        # Keep the orphan viewers' cross-links inside this assembled site.
+        html = html.replace(
+            'href="https://human-brain-motor-cortex-hippocampus.pages.dev/"',
+            'href="../motor-hippocampus/"',
+        ).replace(
+            'href="https://human-limbic-system.pages.dev/"',
+            'href="../limbic/"',
+        )
         bilingual = 'id="langToggle"' in html
+        html = prepare_viewer(html)
         # The viewers are body fragments with no <head>: the charset meta has to
         # be prepended so the file is self-describing however it gets served.
-        out = '<meta charset="utf-8" />\n' + html.rstrip("\n") + "\n" + NAV_SNIPPET
+        out = ('<meta charset="utf-8" />\n'
+               '<meta name="viewport" content="width=device-width, initial-scale=1" />\n'
+               + html.rstrip("\n") + "\n" + NAV_SNIPPET)
         if bilingual:
             out += LANG_SNIPPET
+        out += viewer_upgrade()
 
         dest = DIST / s["slug"] / "index.html"
         dest.parent.mkdir(parents=True, exist_ok=True)
         dest.write_text(out, encoding="utf-8")
         report.append((s["slug"], dest.stat().st_size, bilingual))
 
-    hub = HUB.replace("__SVG__", build_svg()).replace("__LIST__", build_list())
+    hub = render_hub("human", SYSTEMS, GROUPS, PLANNED, build_svg(), REPO)
     (DIST / "index.html").write_text(hub, encoding="utf-8")
     (DIST / "404.html").write_text(NOT_FOUND, encoding="utf-8")
     return report

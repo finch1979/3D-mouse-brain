@@ -38,6 +38,9 @@ Building uses the tracked viewer outputs and needs no atlas download.
 - `viewer_upgrade.py` adds the interface only to assembled viewer copies,
   fits recognized 3D scenes into the available workspace, and provides a reset
   view control. Existing pointer picking remains relative to the canvas.
+- `templates/scene.js` and `scene.css` style the actual 3D scene and its projected
+  annotations. They are inlined into the copied viewer, alongside its existing
+  application script; three.js and OrbitControls remain unchanged.
 
 The site layer reads built files; it does not import `human_atlas` or
 `mouse_atlas`. Those packages remain independent. Each viewer keeps its own
@@ -75,3 +78,32 @@ language persistence, widths from 320 to 1440 pixels, exclusive viewer panels,
 layer toggles, zoom/reset, and canvas-relative pointer coordinates. The 2D plates
 retain their existing purpose-built interface; the new reading rail applies to
 the 3D viewers. Existing atlas and scientific-content limitations still apply.
+
+## Anatomical layer design
+
+Open [the visual-system layer panel](http://localhost:8767/visual/?panel=layers)
+to compare the new scene with the earlier renderer. The layer panel provides
+anatomy/pathway presentation presets, brain-surface opacity, and key/detailed/off
+annotation modes. The exact atlas shell receives a transparent rim material;
+the approximate expanded head shell starts hidden. Tissue, pathway colors and
+schematic wireframe markers retain their original identities.
+
+Projected callouts replace overlapping 3D text. Their leaders end at original
+waypoints; labels move in screen space, while anatomy stays in place. Shared
+branch labels are deduplicated, hidden pathways lose their annotations, and a
+node index exposes every visible node even when screen space limits callouts.
+Legacy atlas-only annotations use the structure's bounding-box center, explicitly
+identified in the selection detail. The limbic Papez-loop annotations follow
+their existing visibility toggle and original waypoint positions.
+
+The orientation indicator follows each source's coordinate convention. The
+millimeter reference bar is calibrated at the orbit target's depth and updates
+with perspective zoom; it is not a universal ruler for every depth in the scene.
+The pain viewer now starts in its existing true-scale mode. Its optional native
+compressed teaching mode remains available, with a visible note and no mm bar.
+
+All 101 atlas regions across 19 3D viewers retain byte-identical position, normal,
+and triangle-index payloads. No atlas vertices or anatomical transforms are
+changed by the styling layer. Browser checks cover all 19 renderers, annotation
+collisions, hidden branches, layer presets, language changes, mobile placement,
+and the pain/Papez mode controls. Three 2D plates retain their existing layout.

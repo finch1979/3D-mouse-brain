@@ -5,6 +5,10 @@ The script moves existing controls without replacing them, preserving the viewer
 event listeners, translations, scientific notes, and embedded offline assets.
 """
 
+from pathlib import Path
+
+TEMPLATES = Path(__file__).resolve().parent / "templates"
+
 
 def prepare_viewer(html: str) -> str:
     """Fit known 3D viewers to their workspace without touching vendored scripts.
@@ -34,6 +38,27 @@ def prepare_viewer(html: str) -> str:
     script = script.replace("    camera.updateProjectionMatrix();",
         "    camera.zoom = Math.min(1, camera.aspect) * 0.92;\n    camera.updateProjectionMatrix();")
     script = script.replace("renderer.setClearColor(0x12151a, 1)", "renderer.setClearColor(0x0b1418, 1)")
+    # Use the pain viewer's existing anatomical (uncompressed) coordinate mode.
+    script = script.replace("let SCALE_T = 0;", "let SCALE_T = 1;")
+    script = script.replace(
+        'The figure is <b>vertically compressed</b> by default so the crossings are visible; toggle <b>true scale</b> for the real 170 cm body,',
+        'The figure starts at <b>true body proportions</b>. Turn off <b>true scale</b> for the compressed teaching view. At the original 170 cm scale,')
+    script = script.replace(
+        '垂直方向預設<b>壓縮</b>以便看清交叉點;切換<b>真實比例</b>可還原成真正 170 公分的身體,',
+        '預設使用<b>真實比例</b>呈現 170 公分的身體;取消勾選可切換到壓縮教學模式,便於觀察交叉點。')
+    script = script.replace('un-compress to a real 170 cm body',
+        'preserve body proportions; turn off for the compressed teaching view')
+    script = script.replace('還原成真實 170 公分的身體', '保留身體比例;取消勾選可用壓縮教學模式')
+    if "function makeLabel(text)" in script:
+        script = script.replace("const sprite = new THREE.Sprite(mat);",
+            "const sprite = new THREE.Sprite(mat);\n      sprite.userData.neuroText = text;")
+    script = script.replace("label.position.set(p[0], p[1] - EXTENT * 0.035, p[2]);",
+        "label.position.set(p[0], p[1] - EXTENT * 0.035, p[2]);\n"
+        "      label.userData.neuroAnchor = new THREE.Vector3(p[0], p[1], p[2]);")
+    script = script.replace("raycaster.intersectObjects(hitMeshes, false)",
+        "raycaster.intersectObjects(hitMeshes.filter(mesh => { "
+        "for (let parent = mesh; parent; parent = parent.parent) { "
+        "if (!parent.visible) return false; } return true; }), false)")
     script = script.replace(resize_anchor, resize_anchor + """
   const naDefaultPosition = camera.position.clone();
   const naDefaultTarget = controls.target.clone();
@@ -45,7 +70,18 @@ def prepare_viewer(html: str) -> str:
     resize();
   });
 """, 1)
-    return html[:start] + script + html[end:]
+    scene_design = (TEMPLATES / "scene.js").read_text(encoding="utf-8")
+    scene_css = (TEMPLATES / "scene.css").read_text(encoding="utf-8")
+    setup = "  const neuroSceneDesign = " + scene_design + """({
+    scene, camera, renderer, controls, meshes, regions: REGIONS, extent: EXTENT,
+    nodes: typeof HOVER_NODES !== 'undefined' ? HOVER_NODES : [],
+    axes: typeof AXIS_SPRITES !== 'undefined' ? AXIS_SPRITES : []
+  });
+"""
+    script = script.replace("  function animate() {", setup + "\n  function animate() {", 1)
+    script = script.replace("    renderer.render(scene, camera);",
+                            "    neuroSceneDesign.update();\n    renderer.render(scene, camera);")
+    return html[:start] + '<style id="neuroSceneStyle">' + scene_css + '</style>\n' + script + html[end:]
 
 
 def viewer_upgrade() -> str:
@@ -383,7 +419,9 @@ def viewer_upgrade() -> str:
     try { localStorage.setItem('neuroLang',isChinese() ? 'zh' : 'en'); } catch (error) {}
   });
   updateLanguage();
-  select(window.matchMedia('(max-width:760px)').matches ? null : 'guide');
+  const requestedPanel = new URLSearchParams(window.location.search).get('panel');
+  select(Object.prototype.hasOwnProperty.call(panes,requestedPanel) ? requestedPanel
+    : window.matchMedia('(max-width:760px)').matches ? null : 'guide');
 })();
 </script>
 """

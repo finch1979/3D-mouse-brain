@@ -1,0 +1,637 @@
+/* The scene overlay annotates projected anatomy without changing model geometry. */
+#naSceneOverlay {
+  position:absolute;
+  inset:0;
+  z-index:12;
+  overflow:hidden;
+  pointer-events:none;
+  color:#dce8e5;
+  font-family:var(--sans,"Segoe UI","Microsoft JhengHei",system-ui,sans-serif);
+  -webkit-font-smoothing:antialiased;
+}
+
+#naSceneOverlay *, #naDisplayDesign *, #naRail .na-node-list * {
+  box-sizing:border-box;
+}
+
+#naSceneOverlay [hidden], #naDisplayDesign [hidden], #naRail .na-node-list [hidden] {
+  display:none!important;
+}
+
+#naSceneOverlay .na-connectors {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none;
+}
+
+#naSceneOverlay .na-connectors :is(path,line,polyline) {
+  fill:none;
+  stroke:var(--node-color,#8eb9b0);
+  stroke-width:1;
+  stroke-opacity:.5;
+  vector-effect:non-scaling-stroke;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+#naSceneOverlay .na-connectors circle {
+  fill:var(--node-color,#a6d2c7);
+  stroke:#0b1418;
+  stroke-width:1.5;
+  vector-effect:non-scaling-stroke;
+}
+
+#naSceneOverlay .na-callout {
+  position:absolute;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  height:44px;
+  min-height:44px;
+  max-height:44px;
+  margin:0;
+  padding:6px 10px 6px 8px;
+  border:1px solid #34484e;
+  border-color:color-mix(in srgb,var(--node-color,#84dcc5) 27%,#22343c);
+  border-radius:5px;
+  background:#101e24ed;
+  box-shadow:0 3px 12px #00000020,inset 0 1px 0 #ffffff03;
+  backdrop-filter:blur(8px);
+  color:#e0e9e7;
+  text-align:left;
+  font:11px/1.35 var(--sans,"Segoe UI","Microsoft JhengHei",sans-serif);
+  cursor:pointer;
+  pointer-events:auto;
+  touch-action:manipulation;
+  transition:background-color .15s,border-color .15s,box-shadow .15s;
+}
+
+#naSceneOverlay .na-callout::before {
+  content:"";
+  position:absolute;
+  top:10px;
+  bottom:10px;
+  left:-1px;
+  width:2px;
+  border-radius:2px;
+  background:var(--node-color,#84dcc5);
+  opacity:.8;
+}
+
+#naSceneOverlay .na-callout:hover,
+#naSceneOverlay .na-callout.is-selected {
+  z-index:3;
+  border-color:var(--node-color,#84dcc5);
+  background:#182d33f5;
+  box-shadow:0 4px 18px #00000035;
+}
+
+#naSceneOverlay .na-callout-number {
+  flex:0 0 23px;
+  width:23px;
+  height:23px;
+  display:grid;
+  place-items:center;
+  border:1px solid #47615f;
+  border-color:color-mix(in srgb,var(--node-color,#84dcc5) 30%,#283b3e);
+  border-radius:4px;
+  background:#0c191d80;
+  color:var(--node-color,#84dcc5);
+  font:10px/1 var(--mono,"Cascadia Code",Consolas,monospace);
+  font-variant-numeric:tabular-nums;
+}
+
+#naSceneOverlay .na-callout-copy {
+  display:flex;
+  min-width:0;
+  flex-direction:column;
+  gap:3px;
+}
+
+#naSceneOverlay .na-callout-copy strong {
+  display:block;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  font-size:11px;
+  font-weight:550;
+  line-height:1.4;
+}
+
+#naSceneOverlay .na-callout-copy small {
+  display:block;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  color:#93abaa;
+  font-size:8px;
+  line-height:1.3;
+  letter-spacing:.04em;
+}
+
+#naSceneOverlay .na-stage-caption {
+  position:absolute;
+  top:22px;
+  left:24px;
+  max-width:calc(100% - 142px);
+  padding:0 0 0 11px;
+  border-left:1px solid #527b70;
+  text-shadow:0 1px 5px #0b1418;
+}
+
+#naSceneOverlay .na-stage-kicker {
+  display:block;
+  margin:0 0 7px;
+  color:#89baa9;
+  font:8px/1.4 var(--mono,"Cascadia Code",Consolas,monospace);
+  letter-spacing:.17em;
+  text-transform:uppercase;
+}
+
+#naSceneOverlay .na-stage-title {
+  display:block;
+  margin:0;
+  color:#d4e3de;
+  font-size:13px;
+  line-height:1.55;
+  font-weight:500;
+  letter-spacing:.025em;
+}
+
+#naSceneOverlay .na-stage-sub {
+  display:block;
+  margin:4px 0 0;
+  color:#8fa5a5;
+  font-size:10px;
+  line-height:1.5;
+}
+
+#naOrientation {
+  position:absolute;
+  top:18px;
+  right:22px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:76px;
+  height:86px;
+  border:1px solid #30454a80;
+  border-radius:6px;
+  background:#0e1b2070;
+  padding:4px;
+}
+
+#naOrientation svg {
+  display:block;
+  width:68px;
+  height:64px;
+  overflow:visible;
+}
+
+#naOrientation svg text {
+  font:9px var(--sans,"Microsoft JhengHei",sans-serif);
+  paint-order:stroke;
+  stroke:#0b1418;
+  stroke-width:2px;
+  stroke-linejoin:round;
+}
+
+#naOrientation :is(small,span) {
+  color:#829b9c;
+  font:8px/1.5 var(--mono,"Cascadia Code",Consolas,monospace);
+  letter-spacing:.08em;
+}
+
+#naScale {
+  position:absolute;
+  left:24px;
+  bottom:25px;
+  min-width:45px;
+  color:#b1c8c2;
+  text-shadow:0 1px 4px #0b1418;
+}
+
+#naScale .na-scale-line {
+  position:relative;
+  height:6px;
+  margin-bottom:7px;
+  border:solid #9bbab1;
+  border-width:0 1px 1px;
+}
+
+#naScale span {
+  display:block;
+  font:9px/1.4 var(--mono,"Cascadia Code",Consolas,monospace);
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.06em;
+}
+
+#naSceneOverlay .na-stage-note {
+  position:absolute;
+  bottom:58px;
+  right:24px;
+  max-width:240px;
+  text-align:right;
+  color:#879e9e;
+  font-size:9px;
+  line-height:1.7;
+  text-shadow:0 1px 4px #0b1418;
+}
+
+#naNodeDetail {
+  position:absolute;
+  left:50%;
+  bottom:23px;
+  z-index:4;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  width:max-content;
+  min-width:180px;
+  max-width:min(380px,calc(100% - 280px));
+  padding:12px 40px 12px 15px;
+  transform:translateX(-50%);
+  border:1px solid #49675e;
+  border-left:2px solid var(--node-color,#84dcc5);
+  border-radius:6px;
+  background:#102127f5;
+  box-shadow:0 8px 24px #00000038;
+  pointer-events:auto;
+}
+
+#naNodeDetail strong {
+  color:#e4ece7;
+  font-size:12px;
+  line-height:1.6;
+  font-weight:550;
+  overflow-wrap:anywhere;
+}
+
+#naNodeDetail>span {
+  color:#a4bdb6;
+  font-size:10px;
+  line-height:1.7;
+}
+
+#naNodeDetail .na-detail-close {
+  position:absolute;
+  right:4px;
+  top:4px;
+  display:grid;
+  place-items:center;
+  width:32px;
+  height:32px;
+  padding:0;
+  border:0;
+  border-radius:4px;
+  background:transparent;
+  color:#adc1bd;
+  font:21px/1 var(--sans,"Segoe UI",sans-serif);
+  cursor:pointer;
+}
+
+#naNodeDetail .na-detail-close:hover {
+  background:#243e40;
+  color:#eef4ee;
+}
+
+#naDisplayDesign {
+  margin:0 0 23px;
+  padding:0 0 20px;
+  border-bottom:1px solid #2d454a;
+  color:#dce8e3;
+}
+
+#naDisplayDesign header {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:15px;
+}
+
+#naDisplayDesign h3 {
+  margin:0;
+  color:#dce8e3;
+  font:550 12px/1.5 var(--sans,"Microsoft JhengHei",sans-serif);
+  letter-spacing:.04em;
+}
+
+#naDisplayDesign header small {
+  color:#82b9a6;
+  font:8px/1.5 var(--mono,"Cascadia Code",Consolas,monospace);
+  letter-spacing:.09em;
+}
+
+#naDisplayDesign .na-render-presets,
+#naDisplayDesign .na-label-modes {
+  display:flex;
+  gap:4px;
+  padding:4px;
+  border:1px solid #2e434a;
+  border-radius:5px;
+  background:#0b181d;
+}
+
+#naDisplayDesign .na-render-presets { margin-bottom:18px; }
+
+#naDisplayDesign .na-label-title {
+  margin:0 0 9px;
+  color:#bbcdca;
+  font:11px/1.5 var(--sans,"Microsoft JhengHei",sans-serif);
+}
+
+#naDisplayDesign .na-render-presets button,
+#naDisplayDesign .na-label-modes button {
+  display:flex;
+  flex:1;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-width:0;
+  min-height:33px;
+  margin:0;
+  padding:6px 5px;
+  border:1px solid transparent;
+  border-radius:3px;
+  background:transparent;
+  color:#9fb6b6;
+  font:11px/1.5 var(--sans,"Microsoft JhengHei",sans-serif);
+  cursor:pointer;
+  transition:background-color .15s,color .15s;
+}
+
+#naDisplayDesign .na-render-presets button.active,
+#naDisplayDesign .na-label-modes button.active {
+  border-color:#3a6057;
+  background:#1b3933;
+  color:#b0e9d5;
+}
+
+#naDisplayDesign .na-render-presets button:hover,
+#naDisplayDesign .na-label-modes button:hover {
+  background:#233c3e;
+  color:#e5efea;
+}
+
+#naDisplayDesign .na-range-row {
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:10px;
+  margin:0 0 18px;
+}
+
+#naDisplayDesign .na-range-row label {
+  color:#bbcdca;
+  font:11px/1.5 var(--sans,"Microsoft JhengHei",sans-serif);
+}
+
+#naDisplayDesign .na-range-row output {
+  color:#92cbb9;
+  font:10px/1.5 var(--mono,"Cascadia Code",Consolas,monospace);
+  font-variant-numeric:tabular-nums;
+}
+
+#naDisplayDesign .na-range-row input[type=range] {
+  grid-column:1 / -1;
+  display:block;
+  appearance:none;
+  -webkit-appearance:none;
+  width:100%;
+  min-height:20px;
+  height:20px;
+  margin:-1px 0 0;
+  padding:0;
+  border:0;
+  background:transparent;
+  accent-color:#84dcc5;
+  cursor:pointer;
+}
+
+#naDisplayDesign .na-range-row input[type=range]::-webkit-slider-runnable-track {
+  height:3px;
+  border-radius:2px;
+  background:#37534f;
+}
+
+#naDisplayDesign .na-range-row input[type=range]::-moz-range-track {
+  height:3px;
+  border-radius:2px;
+  background:#37534f;
+}
+
+#naDisplayDesign .na-range-row input[type=range]::-webkit-slider-thumb {
+  appearance:none;
+  -webkit-appearance:none;
+  width:12px;
+  height:12px;
+  margin-top:-4.5px;
+  border:2px solid #0d2023;
+  border-radius:50%;
+  background:#a0dbc5;
+  box-shadow:0 0 0 1px #679c8b;
+}
+
+#naDisplayDesign .na-range-row input[type=range]::-moz-range-thumb {
+  width:8px;
+  height:8px;
+  border:2px solid #0d2023;
+  border-radius:50%;
+  background:#a0dbc5;
+  box-shadow:0 0 0 1px #679c8b;
+}
+
+#naDisplayDesign .na-layer-explanation {
+  display:block;
+  margin:11px 0 0;
+  color:#8da6a4;
+  font:10px/1.8 var(--sans,"Microsoft JhengHei",sans-serif);
+}
+
+#naRail:has(#naDisplayDesign) .legend-row {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-height:48px;
+  margin:0 0 5px;
+  padding:9px 10px;
+  border:1px solid #283e43;
+  border-radius:5px;
+  background:#102027;
+  transition:background-color .15s,border-color .15s;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row:hover {
+  background:#1a3036;
+  border-color:#47615f;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row:has(input:checked) {
+  background:#14272c;
+  border-color:#36544e;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row input[type=checkbox] {
+  width:14px;
+  height:14px;
+  flex:0 0 14px;
+  margin:0;
+  border:1px solid #66817f;
+  border-radius:3px;
+  background:transparent;
+  accent-color:#9bd6bd;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row input[type=checkbox]:checked {
+  border-color:#88bca7;
+  background:#86bda6;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row input[type=checkbox]:checked::after {
+  left:4px;
+  top:1px;
+  width:3px;
+  height:7px;
+  border-color:#142b28;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row .swatch {
+  width:10px;
+  height:10px;
+  flex:0 0 10px;
+  border-radius:2px;
+  box-shadow:none;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row--outline .swatch {
+  border:1px dashed var(--swatch,#9bb0a8);
+  background:transparent;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row .legend-text {
+  min-width:0;
+  gap:2px;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row .legend-acr {
+  color:#d5e3dc;
+  font-size:11px;
+  line-height:1.4;
+}
+
+#naRail:has(#naDisplayDesign) .legend-row .legend-name {
+  color:#9eb5b3;
+  font-size:10px;
+  line-height:1.55;
+}
+
+#naRail .na-node-list {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  margin:20px 0 0;
+  padding-top:17px;
+  border-top:1px solid #2c4147;
+}
+
+#naRail .na-node-list>h3 {
+  margin:0 0 7px;
+  color:#bad0c7;
+  font:500 11px/1.5 var(--sans,"Microsoft JhengHei",sans-serif);
+  letter-spacing:.04em;
+}
+
+#naRail .na-node-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  min-height:36px;
+  margin:0;
+  padding:7px 9px;
+  border:1px solid transparent;
+  border-radius:4px;
+  background:transparent;
+  color:#adc3be;
+  text-align:left;
+  font:11px/1.55 var(--sans,"Microsoft JhengHei",sans-serif);
+  cursor:pointer;
+  transition:background-color .15s,border-color .15s;
+}
+
+#naRail .na-node-item>small {
+  display:grid;
+  place-items:center;
+  flex:0 0 22px;
+  width:22px;
+  height:22px;
+  border:1px solid #38534e;
+  border-radius:4px;
+  color:var(--node-color,#99c9b7);
+  font:9px/1 var(--mono,"Cascadia Code",Consolas,monospace);
+  font-variant-numeric:tabular-nums;
+}
+
+#naRail .na-node-item-title {
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+#naRail .na-node-item:hover,
+#naRail .na-node-item.is-selected,
+#naRail .na-node-item[aria-pressed=true] {
+  border-color:#37574f;
+  background:#1a3433;
+  color:#e1ede5;
+}
+
+#naSceneOverlay button:focus-visible,
+#naDisplayDesign :is(button,input):focus-visible,
+#naRail .na-node-item:focus-visible {
+  outline:2px solid #a8e2cc;
+  outline-offset:3px;
+}
+
+@media (max-width:760px) {
+  #naSceneOverlay .na-stage-caption {
+    top:14px;
+    left:14px;
+    max-width:calc(100% - 106px);
+    padding-left:9px;
+  }
+  #naSceneOverlay .na-stage-kicker { font-size:7px; letter-spacing:.1em; margin-bottom:4px; }
+  #naSceneOverlay .na-stage-title { font-size:11px; }
+  #naSceneOverlay .na-stage-sub { font-size:9px; max-width:210px; }
+  #naOrientation { top:12px; right:12px; transform:scale(.82); transform-origin:top right; }
+  #naSceneOverlay .na-callout { gap:6px; padding:6px; font-size:10px; }
+  #naSceneOverlay .na-callout-number { flex-basis:20px; width:20px; height:20px; font-size:9px; }
+  #naSceneOverlay .na-callout-copy strong { font-size:10px; }
+  #naSceneOverlay .na-callout-copy small { display:none; }
+  #naScale { left:16px; bottom:18px; }
+  #naScale span { font-size:8px; }
+  #naSceneOverlay .na-stage-note { bottom:18px; right:14px; max-width:160px; font-size:8px; }
+  #naNodeDetail {
+    bottom:58px;
+    min-width:0;
+    width:calc(100% - 32px);
+    max-width:380px;
+    padding:10px 44px 10px 13px;
+  }
+  #naNodeDetail strong { font-size:11px; }
+  #naNodeDetail>span { font-size:9px; }
+  #naNodeDetail .na-detail-close { width:38px; height:38px; top:1px; right:1px; }
+  #naDisplayDesign .na-render-presets button,
+  #naDisplayDesign .na-label-modes button { min-height:38px; }
+  #naRail .na-node-item { min-height:40px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  #naSceneOverlay *, #naDisplayDesign *, #naRail .na-node-list *,
+  #naRail:has(#naDisplayDesign) .legend-row { animation:none!important; transition:none!important; }
+}

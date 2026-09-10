@@ -2,7 +2,7 @@
 
 Assembles `site/dist/`:
 
-    index.html            the hub: clickable nervous-system map + system list
+    index.html            the hub: atlas projection + numbered topic navigation
     404.html              small "not found" that links home
     <slug>/index.html     a copy of each viewer, with navigation injected
 
@@ -13,8 +13,8 @@ prepends charset and viewport metadata at the front. It works on the copy in `di
 on the original, which matters because `limbic/` and `whole_brain/` are orphan
 outputs with no build script left in the repo — they cannot be regenerated.
 
-Adding a system later = one entry in SYSTEMS (plus a hotspot in the map if it
-has an obvious anatomical home), then rebuild and redeploy.
+Adding a system later = one entry in SYSTEMS; a non-empty hotspot includes it
+in the grouped anatomical navigation. Then rebuild and redeploy.
 
     py -3.13 site/build_hub.py
     npx wrangler pages deploy site/dist --project-name=neuro-atlas
@@ -22,12 +22,12 @@ has an obvious anatomical home), then rebuild and redeploy.
 
 from __future__ import annotations
 
-import math
 import shutil
 import sys
 from pathlib import Path
 
 from hub_design import render_hub
+from navigation_map import render_navigation_map
 from viewer_upgrade import prepare_viewer, viewer_upgrade
 
 SITE_DIR = Path(__file__).resolve().parent
@@ -36,8 +36,8 @@ DIST = SITE_DIR / "dist"
 
 # --- the registry -----------------------------------------------------------
 # `src` is repo-relative. `accent` is the viewer's own accent colour where it
-# has one, so a card and its page match. `hotspot` names the map element that
-# links here (None = listed but not on the map).
+# has one, so a card and its page match. A non-empty `hotspot` includes the
+# topic in the anatomical navigation (None = listed in the cards only).
 SYSTEMS = [
     {
         "slug": "auditory",
@@ -198,132 +198,8 @@ GROUPS = [
 ]
 
 
-def bi(d: dict, extra: str = "") -> str:
-    """A bilingual text node: JS swaps innerHTML between the two attributes."""
-    return f'data-en="{d["en"]}" data-zh="{d["zh"]}"{extra}'
-
-
-# --- the map ----------------------------------------------------------------
-# A stylised sagittal brain (facing left) over a minimal body. NOT atlas
-# geometry - the page says so out loud. viewBox is 0 0 440 660 and the figure
-# stays inside x 90..320 so the label gutters never collide with it.
-#
-# Map labels are SHORT; the full name is on the card that lights up with the
-# hotspot. Full names overflow the gutters, badly so in English.
-def cerebrum_path(cx=208.0, cy=148.0, rx=104.0, ry=74.0,
-                  lobes=9, depth=0.032, steps=200) -> str:
-    """The cerebrum outline, generated rather than hand-drawn.
-
-    An ellipse with a sinusoidal scallop on the dorsal rim, fading to nothing
-    at the base, which is also flattened. Hand-tuned beziers kept reading as a
-    featureless blob; the scallop is what makes it read as cortex.
-    """
-    pts = []
-    for i in range(steps + 1):
-        th = 2 * math.pi * i / steps
-        up = max(0.0, math.sin(th))              # 1 at the vertex, 0 at the base
-        r = 1 + depth * up * math.sin(lobes * th + 0.6)
-        dx = rx * r * math.cos(th)
-        dy = ry * r * math.sin(th)
-        if dy < 0:
-            dy *= 0.52                           # flatten the underside
-        pts.append((cx + dx, cy - dy))
-    return (f"M {pts[0][0]:.1f} {pts[0][1]:.1f} "
-            + " ".join(f"L {x:.1f} {y:.1f}" for x, y in pts[1:]) + " Z")
-
-
-def build_svg() -> str:
-    live = {s["hotspot"]: s for s in SYSTEMS if s["hotspot"]}
-    soon = {p["hotspot"]: p for p in PLANNED if p["hotspot"]}
-
-    def hot(key: str, body: str, label_xy: tuple[float, float], anchor: str = "start") -> str:
-        """One hotspot: <a> if the system exists, inert <g> if it is planned."""
-        x, y = label_xy
-        src = live.get(key) or soon[key]
-        lab = (f'<text class="hot-label" x="{x}" y="{y}" text-anchor="{anchor}" '
-               f'{bi(src["short"])}></text>')
-        if key in live:
-            return (f'<a class="hot" href="./{live[key]["slug"]}/" data-slug="{live[key]["slug"]}" '
-                    f'style="--accent:{live[key]["accent"]}">{body}{lab}</a>')
-        return f'<g class="hot hot--soon" data-soon="{key}">{body}{lab}</g>'
-
-    return f"""
-<svg id="map" viewBox="0 0 440 660" role="img" aria-labelledby="mapTitle">
-  <title id="mapTitle" data-en="Nervous system navigation map" data-zh="神經系統導覽圖"></title>
-
-  <!-- ---------- static frame: trunk, limbs, sulci ---------- -->
-  <g class="frame">
-    <path class="trunk" d="M 158 314 C 146 342 143 372 150 400
-      C 155 421 159 434 161 444 L 251 444 C 253 434 257 421 262 400
-      C 269 372 266 342 254 314 Z" />
-    <path class="shoulder" d="M 160 316 C 190 306 222 306 252 316" />
-    <path class="limb" d="M 158 322 L 116 388 L 100 420" />
-    <path class="limb" d="M 190 444 L 180 596" />
-    <path class="limb" d="M 226 444 L 240 596" />
-    <path class="foot" d="M 164 600 L 194 600" />
-    <path class="foot" d="M 228 600 L 258 600" />
-  </g>
-
-  <!-- ---------- hotspots ---------- -->
-  {hot("cortex", f'<path class="hit-brain" d="{cerebrum_path()}" />'
-                 '<ellipse class="hit-brain" cx="168" cy="182" rx="46" ry="20" '
-                 'transform="rotate(-13 168 182)" />'
-                 '<path class="leader" d="M 292 100 L 330 92" />', (336, 96), "start")}
-
-  <!-- sulci sit on top of the cerebrum fill, and must not eat its hover -->
-  <g class="sulci">
-    <path d="M 140 126 C 168 146 190 168 196 194" />
-    <path d="M 196 90 C 200 120 212 144 236 158" />
-    <path d="M 256 96 C 250 126 252 150 266 166" />
-  </g>
-
-  {hot("limbic", '<ellipse class="hit-blob" cx="204" cy="162" rx="42" ry="22" />',
-         (204, 167), "middle")}
-
-  {hot("cerebellum", '<ellipse class="hit-blob" cx="290" cy="202" rx="32" ry="24" />'
-        '<g class="foliate">'
-        '<path d="M 266 192 C 282 188 300 192 314 200" />'
-        '<path d="M 264 206 C 280 204 300 208 314 214" />'
-        '</g>', (334, 198), "start")}
-
-  {hot("brainstem", '<path class="hit-blob" d="M 217 180 C 219 216 216 252 218 298 '
-        'L 234 298 C 234 252 233 216 235 178 Z" />'
-        '<path class="leader" d="M 214 268 L 186 276" />', (182, 280), "end")}
-
-  {hot("eye", '<circle class="hit-dot" cx="70" cy="162" r="13" />'
-        '<circle class="pupil" cx="70" cy="162" r="4.5" />'
-        '<path class="leader" d="M 83 164 L 108 170" />', (70, 136), "middle")}
-
-  {hot("nose", '<path class="hit-dot-p" d="M 56 214 L 80 202 L 80 226 Z" />'
-        '<path class="leader" d="M 82 214 L 120 198" />', (68, 246), "middle")}
-
-  {hot("tongue", '<path class="hit-dot-p" d="M 74 266 '
-        'C 90 260 110 264 114 272 C 108 280 86 282 74 276 Z" />', (94, 300), "middle")}
-
-  {hot("ear", '<path class="hit-dot-p" d="M 250 230 '
-        'C 268 224 280 236 278 252 C 276 268 262 276 250 272" />'
-        '<path class="leader" d="M 252 242 L 234 214" />', (296, 260), "start")}
-
-  {hot("vestibular", '<circle class="hit-dot" cx="263" cy="288" r="9" />'
-        '<circle class="pupil" cx="263" cy="288" r="3.5" />'
-        '<path class="leader" d="M 272 292 L 292 298" />', (298, 302), "start")}
-
-  {hot("hand", '<circle class="hit-dot" cx="94" cy="428" r="13" />', (94, 456), "middle")}
-
-  {hot("viscera", '<ellipse class="hit-blob" cx="200" cy="392" rx="31" ry="24" />',
-         (300, 392), "start")}
-
-  {hot("cord", '<path class="hit-cord" d="M 216 300 L 236 300 L 232 444 L 218 444 Z" />'
-        '<g class="cord-ticks">'
-        '<line x1="212" y1="328" x2="240" y2="328" /><line x1="212" y1="354" x2="240" y2="354" />'
-        '<line x1="212" y1="380" x2="240" y2="380" /><line x1="212" y1="406" x2="240" y2="406" />'
-        '<line x1="212" y1="432" x2="240" y2="432" />'
-        '</g>'
-        '<circle class="hit-dot" cx="168" cy="600" r="10" />'
-        '<path class="leader" d="M 172 588 L 196 460 L 216 442" />'
-        '<path class="leader" d="M 244 340 L 294 340" />', (300, 344), "start")}
-</svg>
-"""
+def build_map() -> str:
+    return render_navigation_map("human", SYSTEMS, REPO)
 
 
 # --- the list ---------------------------------------------------------------
@@ -434,7 +310,7 @@ def assemble() -> list[tuple[str, int, bool]]:
         dest.write_text(out, encoding="utf-8")
         report.append((s["slug"], dest.stat().st_size, bilingual))
 
-    hub = render_hub("human", SYSTEMS, GROUPS, PLANNED, build_svg(), REPO)
+    hub = render_hub("human", SYSTEMS, GROUPS, PLANNED, build_map(), REPO)
     (DIST / "index.html").write_text(hub, encoding="utf-8")
     (DIST / "404.html").write_text(NOT_FOUND, encoding="utf-8")
     return report

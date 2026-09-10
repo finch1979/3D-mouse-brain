@@ -2,7 +2,7 @@
 
 The redesigned human and mouse hubs introduce a brain-surface illustration from
 existing atlas geometry, a clear starting point, searchable topic cards, category
-filters, bilingual navigation, and a linked anatomical map. Mouse cards identify
+filters, bilingual navigation, and an anatomical topic index. Mouse cards identify
 the atlas age and distinguish 2D sections from 3D viewers.
 
 Viewer copies receive a responsive reading panel, accessible panel controls,
@@ -28,13 +28,18 @@ Building uses the tracked viewer outputs and needs no atlas download.
 
 ## Architecture
 
-- `build_hub.py` owns the human registry, anatomical SVG map, 404 page, and copies
+- `build_hub.py` owns the human registry, anatomical index, 404 page, and copies
   of the 12 human viewers.
 - `build_mouse.py` owns the mouse registry and map, copies three pathway viewers,
   and preserves the seven legacy viewers under `mouse/P56/`, `mouse/P15/`, and
   `mouse/P14/` so their cross-links and slice query parameters continue to work.
 - `hub_design.py`, `brain_art.py`, and `templates/atlas.*` produce both homepages
   with inline CSS, JavaScript, and SVG.
+- `navigation_map.py` provides the shared numbered index. Its brain illustration
+  is a uniformly scaled atlas projection with filled lighting contours. Topic
+  links are grouped by brain structures, sensory entry points, and body connections;
+  their numbers match the cards. They are navigation controls, not anatomical
+  attachment points. Both desktop and mobile show the index.
 - `viewer_upgrade.py` adds the interface only to assembled viewer copies,
   fits recognized 3D scenes into the available workspace, and provides a reset
   view control. Existing pointer picking remains relative to the canvas.
@@ -57,9 +62,11 @@ generators and cannot be regenerated here.
 ## Content and language
 
 Add new topics to the relevant registry with bilingual names, pathway summaries,
-source labels, and optional anatomical hotspots. Topic cards and filters are
-assembled from that registry. The map is a schematic navigation diagram; the hero
-uses atlas surface geometry. Pathway viewers combine atlas structures with
+source labels, and an optional hotspot to include it in the anatomical index.
+Topic cards and filters are assembled from that registry. The index and hero use
+atlas surface geometry; the index preserves the brain's projected proportions
+without a schematic body drawing. Planned topics remain in their separate list.
+Pathway viewers combine atlas structures with
 schematic teaching elements, as described by their existing source notes.
 
 The site defaults to Traditional Chinese and stores the language in
@@ -78,6 +85,11 @@ language persistence, widths from 320 to 1440 pixels, exclusive viewer panels,
 layer toggles, zoom/reset, and canvas-relative pointer coordinates. The 2D plates
 retain their existing purpose-built interface; the new reading rail applies to
 the 3D viewers. Existing atlas and scientific-content limitations still apply.
+
+The anatomical index was checked in both languages at 320, 390, 800, 1024 and
+1440 pixels on both hubs. All 17 navigation entries match their card numbers and
+destinations, with no label overlap or horizontal overflow. Keyboard focus also
+highlights the matching card, and Enter opens the existing viewer route.
 
 ## Anatomical layer design
 

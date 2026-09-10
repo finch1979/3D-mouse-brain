@@ -165,3 +165,147 @@ def render_brain(species: str, repo: Path) -> str:
         result.append(f'<path d="{"".join(points)}" stroke="{color}" stroke-width="{width:.2f}"/>')
     result.append('</g></svg>')
     return "".join(result)
+
+
+def _map_contour(values: list[float], threshold: float) -> str:
+    """Trace a scalar buffer with marching squares, retaining holes and islands.
+
+    Shared grid-edge keys join neighboring segments exactly. Interpolating the
+    crossings gives quieter contours than outlining the raster's square pixels.
+    """
+    points: dict[tuple[int, int, int], tuple[float, float]] = {}
+    neighbors: dict[tuple[int, int, int], list[tuple[int, int, int]]] = {}
+    # Corner order: top-left, top-right, bottom-right, bottom-left. Edge order:
+    # top, right, bottom, left. Ambiguous saddles use the actual center value.
+    cases = {
+        1: ((3, 0),), 2: ((0, 1),), 3: ((3, 1),), 4: ((1, 2),),
+        6: ((0, 2),), 7: ((3, 2),), 8: ((2, 3),), 9: ((2, 0),),
+        11: ((2, 1),), 12: ((1, 3),), 13: ((1, 0),), 14: ((0, 3),),
+    }
+    for y in range(_HEIGHT - 1):
+        for x in range(_WIDTH - 1):
+            corners = (values[y * _WIDTH + x], values[y * _WIDTH + x + 1],
+                       values[(y + 1) * _WIDTH + x + 1], values[(y + 1) * _WIDTH + x])
+            case = sum(1 << i for i, value in enumerate(corners) if value >= threshold)
+            if case in (0, 15):
+                continue
+            if case in (5, 10):
+                center_inside = sum(corners) / 4 >= threshold
+                pairs = ((0, 1), (2, 3)) if (case == 5) == center_inside else ((3, 0), (1, 2))
+            else:
+                pairs = cases[case]
+            edges = ((0, x, y), (1, x + 1, y), (0, x, y + 1), (1, x, y))
+            for a, b in pairs:
+                for edge in (a, b):
+                    key = edges[edge]
+                    if key not in points:
+                        axis, ex, ey = key
+                        start = values[ey * _WIDTH + ex]
+                        end = values[(ey + axis) * _WIDTH + ex + 1 - axis]
+                        fraction = (threshold - start) / (end - start)
+                        points[key] = (ex + (1 - axis) * fraction, ey + axis * fraction)
+                neighbors.setdefault(edges[a], []).append(edges[b])
+                neighbors.setdefault(edges[b], []).append(edges[a])
+
+    remaining = set(neighbors)
+    paths = []
+    # Dict insertion order makes builds reproducible without sorting the graph.
+    for start in neighbors:
+        if start not in remaining:
+            continue
+        ring = []
+        previous, current = None, start
+        while current in remaining:
+            remaining.remove(current)
+            ring.append(points[current])
+            following = neighbors[current]
+            next_point = following[0] if following[0] != previous else following[-1]
+            previous, current = current, next_point
+        if len(ring) < 3 or current != start:
+            continue
+        # Split the closed ring before Douglas-Peucker simplification. The
+        # maximum deviation is 0.14 source pixels (0.35 SVG units), so reducing
+        # file size cannot straighten a long, gently curving anatomical edge.
+        split = max(range(1, len(ring)), key=lambda i:
+                    (ring[i][0] - ring[0][0]) ** 2 + (ring[i][1] - ring[0][1]) ** 2)
+
+        def simplify(line):
+            keep = {0, len(line) - 1}
+            pending = [(0, len(line) - 1)]
+            while pending:
+                begin, end = pending.pop()
+                a, b = line[begin], line[end]
+                dx, dy = b[0] - a[0], b[1] - a[1]
+                length_squared = dx * dx + dy * dy
+                farthest, largest = None, 0.14 ** 2
+                for i in range(begin + 1, end):
+                    point = line[i]
+                    t = max(0.0, min(1.0, ((point[0] - a[0]) * dx + (point[1] - a[1]) * dy)
+                                        / length_squared)) if length_squared else 0.0
+                    distance = (point[0] - a[0] - t * dx) ** 2 + (point[1] - a[1] - t * dy) ** 2
+                    if distance > largest:
+                        farthest, largest = i, distance
+                if farthest is not None:
+                    keep.add(farthest)
+                    pending.extend(((begin, farthest), (farthest, end)))
+            return [line[i] for i in sorted(keep)]
+
+        simplified = simplify(ring[:split + 1])[:-1] + simplify(ring[split:] + ring[:1])[:-1]
+        if len(simplified) < 3:
+            simplified = ring
+        paths.append("M" + "L".join(f"{x * 2.5:.1f} {y * 2.5:.1f}" for x, y in simplified) + "Z")
+    return "".join(paths)
+
+
+def render_map_brain(species: str, repo: Path) -> str:
+    """Return a quiet, shaded atlas projection for the navigation map.
+
+    The silhouette and relief come directly from the root mesh used by the
+    viewer. Uniform projection scaling preserves its aspect ratio; the fill
+    bands describe surface lighting, not anatomical region boundaries.
+    """
+    if species not in _SOURCES:
+        raise ValueError(f"Unknown species: {species!r}; expected 'human' or 'mouse'")
+    depth, lighting = _surface(species, Path(repo))
+    visible = [value != -math.inf for value in depth]
+    silhouette = _map_contour([float(value) for value in visible], 0.5)
+    relief = [-1.0] * len(depth)
+    for y in range(1, _HEIGHT - 1):
+        for x in range(1, _WIDTH - 1):
+            pixel = y * _WIDTH + x
+            if not visible[pixel]:
+                continue
+            # A tiny local average suppresses triangle noise while leaving the
+            # depth-derived sulci in place. Missing background is never mixed
+            # into the surface, so the shell edge remains anatomically derived.
+            light, weight = 0.0, 0.0
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    neighbor = (y + dy) * _WIDTH + x + dx
+                    if visible[neighbor]:
+                        amount = (2 if dx == 0 else 1) * (2 if dy == 0 else 1)
+                        light += lighting[neighbor] * amount
+                        weight += amount
+            occlusion = 0.0
+            for dx, dy in ((-3, 0), (3, 0), (0, -3), (0, 3)):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < _WIDTH and 0 <= ny < _HEIGHT:
+                    neighbor = depth[ny * _WIDTH + nx]
+                    if neighbor != -math.inf:
+                        occlusion += max(0.0, min(1.0, (neighbor - depth[pixel] - 1.0) / 9.0))
+            relief[pixel] = light / weight * (1 - 0.10 * occlusion)
+
+    result = ['<svg xmlns="http://www.w3.org/2000/svg" class="map-brain-art" '
+              'viewBox="0 0 600 420" aria-hidden="true" focusable="false">',
+              f'<path d="{silhouette}" fill="#183735" fill-rule="evenodd"/>']
+    dark, bright = (28, 61, 57), (117, 152, 140)
+    for level in range(9):
+        fraction = level / 8
+        color = "#" + "".join(f"{round(a + (b - a) * fraction):02x}" for a, b in zip(dark, bright))
+        contour = _map_contour(relief, 0.19 + fraction * 0.72)
+        if contour:
+            result.append(f'<path d="{contour}" fill="{color}" fill-rule="evenodd"/>')
+    result.append(f'<path d="{silhouette}" fill="none" stroke="#a4bfb2" '
+                  'stroke-width="1.1" stroke-opacity=".45"/>')
+    result.append('</svg>')
+    return "".join(result)

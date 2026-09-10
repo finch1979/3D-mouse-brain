@@ -2,7 +2,7 @@
 
 Assembles `site/dist/mouse/`:
 
-    index.html            the mouse hub: clickable mouse-head map + list
+    index.html            the mouse hub: atlas projection + numbered navigation
     visual/index.html     new pathway viewers (body fragments + injected nav)
     whisker/index.html
     olfactory/index.html
@@ -23,6 +23,7 @@ import sys
 from pathlib import Path
 
 from hub_design import render_hub
+from navigation_map import render_navigation_map
 from viewer_upgrade import prepare_viewer, viewer_upgrade
 
 SITE_DIR = Path(__file__).resolve().parent
@@ -155,74 +156,9 @@ GROUPS = [
 ]
 
 
-def bi(d):
-    return f'data-en="{d["en"]}" data-zh="{d["zh"]}"'
+def build_map() -> str:
+    return render_navigation_map("mouse", PATHWAYS + LEGACY, REPO)
 
-
-def build_svg() -> str:
-    live = {}
-    for s in PATHWAYS + LEGACY:
-        if s["hotspot"]:
-            live[s["hotspot"]] = s
-    soon = {p["hotspot"]: p for p in PLANNED if p["hotspot"]}
-
-    def hot(key, body, label_xy, anchor="start"):
-        x, y = label_xy
-        src = live.get(key) or soon.get(key)
-        if src is None:
-            return ""
-        lab = (f'<text class="hot-label" x="{x}" y="{y}" text-anchor="{anchor}" '
-               f'{bi(src["short"])}></text>')
-        if key in live:
-            entry = live[key]
-            href = f'./{entry["slug"]}/' if entry in PATHWAYS else f'./{entry["src"]}'
-            return (f'<a class="hot" href="{href}" data-slug="{entry["slug"]}" '
-                    f'style="--accent:{live[key]["accent"]}">{body}{lab}</a>')
-        return f'<g class="hot hot--soon" data-soon="{key}">{body}{lab}</g>'
-
-    return f"""
-<svg id="map" viewBox="0 0 440 660" role="img" aria-labelledby="mapTitle">
-  <title id="mapTitle" data-en="Mouse atlas navigation map" data-zh="小鼠圖譜導覽圖"></title>
-
-  <g class="frame">
-    <path class="trunk" d="M 150 330 C 130 380 140 450 170 500
-      C 200 545 260 545 290 500 C 315 460 320 400 305 350 Z" />
-    <path class="limb" d="M 185 505 L 175 596" />
-    <path class="limb" d="M 262 505 L 272 596" />
-    <path class="foot" d="M 160 600 L 190 600" />
-    <path class="foot" d="M 258 600 L 288 600" />
-  </g>
-
-  <!-- head + snout + ear pinna, facing left -->
-  <path class="hit-head" d="M 62 306 C 90 268 130 240 170 228
-    C 200 200 240 186 268 196 C 300 176 330 178 342 200
-    C 356 226 348 258 326 274 C 344 300 346 336 330 362
-    C 306 398 250 408 204 396 C 160 386 110 366 84 340 C 70 326 58 318 62 306 Z" />
-  <circle class="pinnaline" cx="300" cy="212" r="26" />
-
-  {hot("motor", '<ellipse class="hit-blob" cx="222" cy="238" rx="40" ry="18" transform="rotate(-14 222 238)" />'
-        '<path class="leader" d="M 254 226 L 292 210" />', (298, 206), "start")}
-
-  {hot("hippocampus", '<ellipse class="hit-blob" cx="252" cy="296" rx="30" ry="16" transform="rotate(-18 252 296)" />'
-        '<path class="leader" d="M 278 306 L 316 320" />', (322, 324), "start")}
-
-  {hot("cerebellum", '<ellipse class="hit-blob" cx="312" cy="258" rx="22" ry="15" />', (340, 262), "start")}
-
-  {hot("ear", '<path class="hit-dot-p" d="M 288 186 C 300 176 316 180 320 192 C 322 202 312 210 300 206" />'
-        '<path class="leader" d="M 306 196 L 330 168" />', (336, 164), "start")}
-
-  {hot("eye", '<circle class="hit-dot" cx="152" cy="286" r="12" /><circle class="pupil" cx="152" cy="286" r="4.5" />'
-        '<path class="leader" d="M 164 288 L 196 300" />', (140, 262), "middle")}
-
-  {hot("nose", '<circle class="hit-dot-p" cx="66" cy="310" r="8" />'
-        '<path class="leader" d="M 74 314 L 100 322" />', (52, 344), "middle")}
-
-  {hot("whisker", '<circle class="hit-dot" cx="96" cy="336" r="9" />'
-        '<path class="leader" d="M 88 340 L 66 352" />'
-        '<path class="leader" d="M 90 344 L 72 366" />'
-        '<path class="leader" d="M 94 346 L 84 372" />', (118, 392), "middle")}
-</svg>
-"""
 
 
 NAV_SNIPPET = """
@@ -296,7 +232,7 @@ def assemble() -> None:
         dest.write_text(out, encoding="utf-8")
         print(f"  {s['slug']:12s} {dest.stat().st_size / 1e6:6.2f} MB  (legacy copy)")
 
-    hub = render_hub("mouse", PATHWAYS + LEGACY, GROUPS, PLANNED, build_svg(), REPO)
+    hub = render_hub("mouse", PATHWAYS + LEGACY, GROUPS, PLANNED, build_map(), REPO)
     (DIST / "index.html").write_text(hub, encoding="utf-8")
     print(f"  {'hub':12s} {(DIST / 'index.html').stat().st_size / 1024:6.1f} KB")
 

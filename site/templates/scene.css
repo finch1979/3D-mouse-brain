@@ -40,9 +40,18 @@
 #naSceneOverlay .na-connectors circle {
   fill:var(--node-color,#a6d2c7);
   stroke:#0b1418;
-  stroke-width:1.5;
+  stroke-width:2;
   vector-effect:non-scaling-stroke;
 }
+
+#naRail .na-node-status {
+  margin-left:auto;
+  color:#c1af97;
+  font-size:8px;
+  white-space:nowrap;
+}
+
+#naRail .na-node-item.is-obscured .na-node-item-title { color:#9bb1b3; }
 
 #naSceneOverlay .na-callout {
   position:absolute;

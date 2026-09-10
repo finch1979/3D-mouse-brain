@@ -142,7 +142,8 @@
     const key=clean(node.text.en)+'|'+position.toArray().map(n=>Math.round(n)).join(',');
     let entry=byKey.get(key);
     if (!entry) {
-      entry={refs:[],text:node.text,color:node.color,kind:'pathway',position:new THREE.Vector3()};
+      entry={refs:[],text:node.text,color:node.color,kind:'pathway',position:new THREE.Vector3(),
+        surface:meshes[node.regionKey]};
       byKey.set(key,entry); entries.push(entry);
     }
     entry.refs.push(node);
@@ -150,9 +151,8 @@
   if (!nodes.length) Object.entries(meshes).forEach(([key,mesh]) => {
     if (key==='root' || key==='skull') return;
     mesh.geometry.computeBoundingBox();
-    entries.push({mesh,refs:[],text:{en:regions[key]?.name || key,zh:regions[key]?.name || key},
-      color:mesh.material.color?.getHex() || 0x84dcc5,kind:'atlas',position:new THREE.Vector3(),
-      center:mesh.geometry.boundingBox.getCenter(new THREE.Vector3())});
+    entries.push({mesh,surface:mesh,regionKey:key,refs:[],text:{en:regions[key]?.name || key,zh:regions[key]?.name || key},
+      color:mesh.material.color?.getHex() || 0x84dcc5,kind:'atlas',position:new THREE.Vector3()});
   });
   // Legacy Papez-loop labels carry their exact waypoint as build-time metadata.
   originalSprites.filter(sprite=>sprite.userData.neuroAnchor).forEach(sprite=>{
@@ -162,12 +162,19 @@
   });
   entries.forEach((entry,index) => {
     entry.index=index; entry.number=String(index+1).padStart(2,'0');
-    entry.hex='#'+Number(entry.color).toString(16).padStart(6,'0');
+    // Annotation ink is independent of tissue color. A dark halo preserves the
+    // boundary on lit surfaces; the original anatomy and legend keep their hues.
+    const hue={};
+    new THREE.Color(entry.surface?.material.color || entry.color).getHSL(hue);
+    entry.hex=entry.surface ? (hue.h<.12 || hue.h>.91 ? '#80e5f2' : '#ffbd83')
+      : '#'+Number(entry.color).toString(16).padStart(6,'0');
     entry.line=svg('path',connectors,{fill:'none',stroke:entry.hex,'stroke-width':.8,'stroke-opacity':.52});
-    entry.dot=svg('circle',connectors,{r:2.5,fill:entry.hex,stroke:'#0b1418','stroke-width':1});
+    entry.dot=svg('circle',connectors,{r:entry.surface?4.5:3,fill:entry.hex,stroke:'#0b1418','stroke-width':2});
     entry.line.style.setProperty('--node-color',entry.hex);
     entry.dot.style.setProperty('--node-color',entry.hex);
     entry.button=make('button','na-callout',overlay); entry.button.type='button';
+    entry.button.dataset.region=entry.regionKey || entry.refs[0]?.regionKey || '';
+    entry.dot.dataset.region=entry.button.dataset.region;
     entry.button.style.setProperty('--node-color',entry.hex);
     make('span','na-callout-number',entry.button).textContent=entry.number;
     const copy=make('span','na-callout-copy',entry.button);
@@ -178,14 +185,18 @@
   });
   function label(entry) {return clean(entry.text[chinese() ? 'zh' : 'en'] || entry.text.en);}
   function kind(entry) {return entry.kind==='atlas' ? text('圖譜結構','ATLAS STRUCTURE') : text('路徑節點','PATHWAY NODE');}
+  function updateDetail(entry) {
+    detailName.textContent=label(entry);
+    detail.style.setProperty('--node-color',entry.hex);
+    detailMeta.textContent=kind(entry)+' · '+(entry.surface
+      ? entry.surfaceVisible
+        ? text('標記落在此結構的可見表面','Marker on this structure’s visible surface')
+        : text('此結構目前無可見表面；請旋轉或放大視角，或關閉遮擋圖層','No surface visible here. Rotate or zoom in, or hide an overlapping layer.')
+      : text('引線指向原始示意節點座標','Leader ends at the original schematic waypoint'));
+  }
   function select(entry) {
     state.selected=entry;detail.hidden=!entry;
-    if (entry) {
-      detailName.textContent=label(entry);
-      detailMeta.textContent=kind(entry)+' · '+(entry.kind==='atlas'
-        ? text('標註錨點：結構範圍中心','Anchor: center of the structure bounds')
-        : text('引線指向原始節點座標','Leader ends at the original node coordinate'));
-    }
+    if (entry) updateDetail(entry);
     entries.forEach(item=>{
       item.button.classList.toggle('is-selected',item===entry);
       item.button.setAttribute('aria-pressed',String(item===entry));
@@ -224,6 +235,7 @@
     entry.listButton=make('button','na-node-item',nodeList);entry.listButton.type='button';entry.listButton.style.setProperty('--node-color',entry.hex);
     make('small',null,entry.listButton).textContent=entry.number;
     entry.listName=make('span','na-node-item-title',entry.listButton);
+    entry.listStatus=make('span','na-node-status',entry.listButton);
     entry.listButton.addEventListener('click',()=>{select(state.selected===entry ? null : entry);update(true);});
   });
   function setShell(value) {state.shell=value;if(shellMaterial) shellMaterial.uniforms.opacity.value=value/100;range.value=value;rangeValue.textContent=value+'%';}
@@ -262,6 +274,123 @@
     if (pane && display.parentElement!==pane) {pane.prepend(display);pane.appendChild(nodeList);}
   }
 
+  function createSurfacePicker() {
+    // A small, cached ID pass identifies the frontmost tissue. Sharing geometry
+    // with presentation-free proxies preserves the atlas, including every hole
+    // and separate hemisphere. Root/skull are transparent context, not targets.
+    const surfaces=entries.filter(entry=>entry.surface);
+    if(!surfaces.length)return {refresh(){}};
+    const pickScene=new THREE.Scene();
+    const lateral=axes.length?'x':'z';
+    const records=Object.entries(meshes).filter(([key])=>key!=='root' && key!=='skull').map(([key,mesh],index)=>{
+      const material=new THREE.ShaderMaterial({uniforms:{regionId:{value:(index+1)/255}},
+        vertexShader:`varying float lateralPosition;
+          void main(){lateralPosition=position.${lateral};gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+        fragmentShader:`uniform float regionId; varying float lateralPosition;
+          void main(){gl_FragColor=vec4(regionId,step(0.0,lateralPosition),0.0,1.0);}`,
+        side:mesh.material.side,blending:THREE.NoBlending,toneMapped:false});
+      const proxy=new THREE.Mesh(mesh.geometry,material);
+      proxy.matrixAutoUpdate=false;pickScene.add(proxy);
+      mesh.geometry.computeBoundingBox();
+      return {mesh,proxy,id:index+1};
+    });
+    const byMesh=new Map(records.map(record=>[record.mesh,record]));
+    const target=new THREE.WebGLRenderTarget(1,1,{minFilter:THREE.NearestFilter,
+      magFilter:THREE.NearestFilter,depthBuffer:true,stencilBuffer:false});
+    target.texture.generateMipmaps=false;
+    target.texture.encoding=THREE.LinearEncoding;
+    const ray=new THREE.Raycaster();
+    const ndc=new THREE.Vector2(), preferred=new THREE.Vector3(), local=new THREE.Vector3();
+    const clip=new THREE.Vector3(), size=new THREE.Vector3();
+    const oldViewport=new THREE.Vector4(),oldScissor=new THREE.Vector4(),oldColor=new THREE.Color();
+    let signature='',pixels=new Uint8Array(4),pw=1,ph=1;
+    function refresh(width,height) {
+      if (!surfaces.length || width<1 || height<1) return;
+      const next=[width,height,...camera.matrixWorld.elements,...camera.projectionMatrix.elements,
+        ...records.flatMap(({mesh})=>[visible(mesh),...mesh.matrixWorld.elements]),
+        ...surfaces.flatMap(entry=>entry.refs.flatMap(ref=>[visible(ref.mesh),...ref.mesh.matrixWorld.elements]))].join(',');
+      if (next===signature) return;
+      signature=next;
+      ph=192;pw=Math.max(1,Math.min(512,Math.round(ph*width/height)));
+      if(target.width!==pw || target.height!==ph) {
+        target.setSize(pw,ph);pixels=new Uint8Array(pw*ph*4);
+      }
+      records.forEach(({mesh,proxy})=>{
+        proxy.visible=visible(mesh);proxy.matrix.copy(mesh.matrixWorld);
+      });
+      const oldTarget=renderer.getRenderTarget(),oldAlpha=renderer.getClearAlpha();
+      const oldAutoClear=renderer.autoClear,oldScissorTest=renderer.getScissorTest();
+      renderer.getClearColor(oldColor);renderer.getViewport(oldViewport);renderer.getScissor(oldScissor);
+      try {
+        renderer.setRenderTarget(target);renderer.setViewport(0,0,pw,ph);renderer.setScissorTest(false);
+        renderer.setClearColor(0x000000,0);renderer.autoClear=true;
+        renderer.render(pickScene,camera);
+        renderer.readRenderTargetPixels(target,0,0,pw,ph,pixels);
+      } finally {
+        renderer.setRenderTarget(oldTarget);renderer.setViewport(oldViewport);renderer.setScissor(oldScissor);
+        renderer.setScissorTest(oldScissorTest);renderer.setClearColor(oldColor,oldAlpha);renderer.autoClear=oldAutoClear;
+      }
+      const visibleProxies=records.filter(record=>record.proxy.visible).map(record=>record.proxy);
+      const occupied=[];
+      const idAt=(x,y)=>x<0 || y<0 || x>=pw || y>=ph ? 0 : pixels[(y*pw+x)*4];
+      surfaces.forEach(entry=>{
+        entry.surfaceVisible=false;
+        const record=byMesh.get(entry.surface);
+        if (!record?.proxy.visible) return;
+        const ref=entry.refs.find(ref=>visible(ref.mesh));
+        if (entry.refs.length && !ref) return;
+        const box=entry.surface.geometry.boundingBox;
+        box.getSize(size);
+        if(ref) ref.mesh.getWorldPosition(preferred);
+        else {
+          box.getCenter(preferred);
+          // A preference only; an actual surface intersection is always required.
+          preferred[lateral]+=size[lateral]*(entry.index%2 ? -.24 : .24);
+          entry.surface.localToWorld(preferred);
+        }
+        local.copy(preferred);entry.surface.worldToLocal(local);
+        const side=local[lateral]>=0?1:-1;
+        const bilateral=box.min[lateral]<-size[lateral]*.2 && box.max[lateral]>size[lateral]*.2;
+        const constrainSide=!!ref && bilateral && Math.abs(local[lateral])>size[lateral]*.04;
+        clip.copy(preferred).project(camera);
+        const tx=(clip.x+1)*pw/2,ty=(clip.y+1)*ph/2;
+        const candidates=[];
+        for(let y=0;y<ph;y++) for(let x=0;x<pw;x++) {
+          if(idAt(x,y)!==record.id) continue;
+          // Green encodes hemisphere before ranking, preventing a nearer,
+          // contralateral surface from displacing every valid candidate.
+          if(constrainSide && (pixels[(y*pw+x)*4+1]>127 ? 1 : -1)!==side) continue;
+          let clearance=0;
+          for(let step=1;step<=5;step++) {
+            if(idAt(x-step,y)!==record.id || idAt(x+step,y)!==record.id ||
+              idAt(x,y-step)!==record.id || idAt(x,y+step)!==record.id) break;
+            clearance=step;
+          }
+          let score=((x-tx)**2+(y-ty)**2)/(ph*ph)-clearance*.003;
+          occupied.forEach(point=>{score+=.04*Math.max(0,1-Math.hypot(x-point.x,y-point.y)/14);});
+          if(candidates.length===20 && score>=candidates[candidates.length-1].score) continue;
+          candidates.push({x,y,score});candidates.sort((a,b)=>a.score-b.score);
+          if(candidates.length>20)candidates.pop();
+        }
+        for(const point of candidates) {
+          ndc.set((point.x+.5)/pw*2-1,(point.y+.5)/ph*2-1);
+          ray.setFromCamera(ndc,camera);
+          // Verify against all tissue, so even a one-pixel ID edge cannot place
+          // an anchor through a foreground structure or onto a different mesh.
+          const hit=ray.intersectObjects(visibleProxies,false)[0];
+          if(!hit || hit.object!==record.proxy) continue;
+          local.copy(hit.point);entry.surface.worldToLocal(local);
+          if(constrainSide && local[lateral]*side<=0) continue;
+          entry.position.copy(hit.point);entry.surfaceVisible=true;occupied.push(point);break;
+        }
+      });
+    }
+    window.addEventListener('pagehide',()=>{
+      target.dispose();records.forEach(({proxy})=>proxy.material.dispose());
+    },{once:true});
+    return {refresh};
+  }
+  const surfacePicker=createSurfacePicker();
   const projected=new THREE.Vector3();
   const direction=new THREE.Vector3();
   const cameraPosition=new THREE.Vector3();
@@ -276,6 +405,7 @@
     const width=container.clientWidth,height=container.clientHeight;
     const mobile=width<600;
     scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);
+    surfacePicker.refresh(width,height);
     softLight.position.copy(camera.position).addScaledVector(camera.up,extent*.7);
     originalSprites.forEach(sprite=>{sprite.visible=false;});
     const active=[];
@@ -285,8 +415,14 @@
       entry.listButton.hidden=!on;
       entry.button.hidden=true;entry.line.style.display='none';entry.dot.style.display='none';
       if (!on) {if(state.selected===entry)select(null);return;}
-      if (entry.source) entry.position.copy(entry.anchor).applyMatrix4(entry.source.matrixWorld);
-      else if (entry.mesh) entry.position.copy(entry.center).applyMatrix4(entry.mesh.matrixWorld);
+      const obscured=entry.surface && !entry.surfaceVisible;
+      entry.listStatus.textContent=obscured ? text('未顯露','OUT OF VIEW') : '';
+      entry.listButton.classList.toggle('is-obscured',!!obscured);
+      entry.listButton.title=label(entry)+(obscured ? text('：旋轉、放大視角或關閉遮擋圖層',': rotate, zoom in or hide an overlapping layer') : '');
+      if(state.selected===entry)updateDetail(entry);
+      if(obscured)return;
+      if (entry.surface) { /* The picker supplies an exact visible triangle hit. */ }
+      else if (entry.source) entry.position.copy(entry.anchor).applyMatrix4(entry.source.matrixWorld);
       else ref.mesh.getWorldPosition(entry.position);
       projected.copy(entry.position).project(camera);
       if (projected.z<-1 || projected.z>1 || Math.abs(projected.x)>1.12 || Math.abs(projected.y)>1.12) return;

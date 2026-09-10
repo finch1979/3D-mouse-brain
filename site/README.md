@@ -88,13 +88,21 @@ annotation modes. The exact atlas shell receives a transparent rim material;
 the approximate expanded head shell starts hidden. Tissue, pathway colors and
 schematic wireframe markers retain their original identities.
 
-Projected callouts replace overlapping 3D text. Their leaders end at original
-waypoints; labels move in screen space, while anatomy stays in place. Shared
-branch labels are deduplicated, hidden pathways lose their annotations, and a
-node index exposes every visible node even when screen space limits callouts.
-Legacy atlas-only annotations use the structure's bounding-box center, explicitly
-identified in the selection detail. The limbic Papez-loop annotations follow
-their existing visibility toggle and original waypoint positions.
+Projected callouts replace overlapping 3D text. Structure annotations end at an
+exact triangle intersection on their own visible tissue, including named brain
+endpoints in pathway viewers. A cached object-ID pass finds exposed surfaces;
+a raycast against all tissue confirms the first intersection and rejects points
+behind another region. Hemisphere checks keep bilateral pathway labels on their
+original side. Context shells are excluded from the surface check.
+
+Warm or cyan annotation ink contrasts with the original tissue palette, and a
+dark marker outline stays legible on lit surfaces. The hippocampus opens from an
+anterior-oblique angle exposing CA1, CA2, CA3 and DG. Only the camera changes.
+Occluded or very small surfaces have no leader; their node-index entries explain
+how to rotate, zoom in or hide overlapping layers. Hidden pathways lose their
+annotations. Shared branch labels are deduplicated, and the index remains usable
+when screen space limits callouts. Schematic waypoints, tract-level aliases and
+the limbic Papez loop retain their original coordinates and visibility controls.
 
 The orientation indicator follows each source's coordinate convention. The
 millimeter reference bar is calibrated at the orbit target's depth and updates
@@ -106,4 +114,6 @@ All 101 atlas regions across 19 3D viewers retain byte-identical position, norma
 and triangle-index payloads. No atlas vertices or anatomical transforms are
 changed by the styling layer. Browser checks cover all 19 renderers, annotation
 collisions, hidden branches, layer presets, language changes, mobile placement,
-and the pain/Papez mode controls. Three 2D plates retain their existing layout.
+and the pain/Papez mode controls. Surface checks additionally cover six atlas-only
+viewers and thirteen pathway viewers at multiple angles, with independent
+first-hit and hemisphere verification. Three 2D plates retain their existing layout.

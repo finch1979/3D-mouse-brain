@@ -34,7 +34,12 @@ def prepare_viewer(html: str) -> str:
     script = script.replace("window.innerHeight", "Math.max(1, container.clientHeight)")
     script = script.replace(camera_anchor, '  container.dataset.naViewport = "true";\n' + camera_anchor, 1)
     script = script.replace(renderer_anchor,
-        "  camera.position.setLength(Math.max(camera.position.length(), EXTENT * 1.85));\n" + renderer_anchor, 1)
+        "  camera.position.setLength(Math.max(camera.position.length(), EXTENT * 1.85));\n"
+        # An anterior-oblique overview exposes all four hippocampal subregions.
+        # Change only the camera, retaining the original anatomical dimensions.
+        "  if (REGIONS.CA1 && REGIONS.CA2 && REGIONS.CA3 && REGIONS.DG) {\n"
+        "    camera.position.set(-1, 0.3, 0).setLength(EXTENT * 1.85);\n"
+        "  }\n" + renderer_anchor, 1)
     script = script.replace("    camera.updateProjectionMatrix();",
         "    camera.zoom = Math.min(1, camera.aspect) * 0.92;\n    camera.updateProjectionMatrix();")
     script = script.replace("renderer.setClearColor(0x12151a, 1)", "renderer.setClearColor(0x0b1418, 1)")
@@ -70,6 +75,38 @@ def prepare_viewer(html: str) -> str:
     resize();
   });
 """, 1)
+    # Bind named atlas endpoints to their mesh without moving the pathway's
+    # original educational coordinates. Tract-level aliases deliberately stay
+    # unresolved: several waypoints describe different levels of one tract.
+    endpoint_shapes = (
+        ("labels[key]", "isReal"),
+        ("LABELS[key]", "REAL.has(key)"),
+    )
+    for label_expression, real_expression in endpoint_shapes:
+        original = ("HOVER_NODES.push({ mesh: hitMesh, pos, labelPos, "
+                    f"labelSprite: label, text: {label_expression}, color }});")
+        replacement = ("HOVER_NODES.push({ "
+                       f"regionKey: naAtlasRegionKey(key, {real_expression}), "
+                       "mesh: hitMesh, pos, labelPos, "
+                       f"labelSprite: label, text: {label_expression}, color }});")
+        script = script.replace(original, replacement)
+    script = script.replace("      HOVER_NODES.push(node);",
+        "      node.regionKey = naAtlasRegionKey(key, isReal);\n"
+        "      HOVER_NODES.push(node);")
+    if "naAtlasRegionKey(key," in script:
+        script = script.replace("  const HOVER_NODES = [];", """
+  function naAtlasRegionKey(key, isReal) {
+    if (!isReal) return null;
+    const aliases = {
+      V1_R:'V1', V1_L:'V1', CBLM_R:'CBLM', CBLM_L:'CBLM',
+      LGd_R:'LGd', VISp_R:'VISp', SC_R:'SCs',
+      PSV_R:'PSV', VPM_R:'VPM', BFD_R:'BFD', SPVC_R:'SPVC',
+      MOB_R:'MOB', AON_R:'AON', PIR_R:'PIR'
+    };
+    const regionKey = meshes[key] ? key : aliases[key];
+    return regionKey && meshes[regionKey] ? regionKey : null;
+  }
+  const HOVER_NODES = [];""", 1)
     scene_design = (TEMPLATES / "scene.js").read_text(encoding="utf-8")
     scene_css = (TEMPLATES / "scene.css").read_text(encoding="utf-8")
     setup = "  const neuroSceneDesign = " + scene_design + """({

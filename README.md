@@ -5,7 +5,7 @@ Fetch/build pipelines and self-contained 3D/2D structure viewers for mouse
 atlases. Every viewer is a single static HTML file with its mesh/image data
 baked in as base64 — open it directly in a browser, no server needed.
 
-The human nervous-system viewers are collected under one front page:
+Human and mouse viewers share one bilingual atlas website:
 
 **Neuro Atlas — https://neuro-atlas.pages.dev/**
 
@@ -20,8 +20,9 @@ map.
   `configs/*.yaml`, `data/cache/`, `outputs/{P14,P15,P56}/`.
 - `human/` — the human pipeline: `src/human_atlas/` (`build`/`render`/`common`),
   `data/cache/`, `outputs/{whole_brain,limbic,auditory_system}/`.
-- `site/` — the Neuro Atlas hub: a clickable nervous-system map plus a system
-  list, assembled into `site/dist/` together with a copy of every human viewer.
+- `site/` — the Neuro Atlas website: atlas-derived navigation, searchable topic
+  cards and anatomical annotations, assembled into `site/dist/` with both human
+  and mouse viewers.
   See [site/README.md](site/README.md).
 - `web/lib/` — vendored three.js + OrbitControls source, kept for reference
   (every viewer currently inlines its own copy, so nothing loads this at
@@ -60,6 +61,7 @@ python -m human_atlas.build.human_pain
 
 # the hub (run from the repo root, not a package)
 py -3.13 site/build_hub.py
+py -3.13 site/build_mouse.py
 ```
 
 Outputs land under `mouse/outputs/...` or `human/outputs/...`; open the

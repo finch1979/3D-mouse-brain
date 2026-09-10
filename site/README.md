@@ -8,7 +8,8 @@ the atlas age and distinguish 2D sections from 3D viewers.
 Viewer copies receive a responsive reading panel, accessible panel controls,
 viewport metadata, and navigation back to their species hub. Scientific content,
 embedded meshes, and the original viewer controls remain in the source outputs.
-This worktree is a local redesign preview; no deployment has been performed.
+Production site: [Neuro Atlas](https://neuro-atlas.pages.dev/) and
+[Mouse Atlas](https://neuro-atlas.pages.dev/mouse/).
 
 ## Build and preview
 
@@ -25,6 +26,20 @@ Open [the human hub](http://localhost:8767/) or
 `build_hub.py` clears the previous `site/dist/`, including its mouse section;
 `build_mouse.py` then adds the mouse pages. The generated directory is gitignored.
 Building uses the tracked viewer outputs and needs no atlas download.
+
+## Production deployment
+
+The Cloudflare Pages project is `neuro-atlas`, with `main` as its production
+branch. It uses Direct Upload; pushing GitHub alone does not deploy the site.
+After building both species and checking the output, deploy from a clean checkout
+of the release commit:
+
+```powershell
+rtk proxy npx wrangler pages deploy site/dist --project-name=neuro-atlas --branch=main
+```
+
+Verify both hubs and their viewer routes at the production URL after deployment.
+Previous production deployments remain available in Cloudflare Pages for rollback.
 
 ## Architecture
 

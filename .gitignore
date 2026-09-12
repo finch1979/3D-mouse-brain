@@ -24,3 +24,10 @@ site/dist/
 .DS_Store
 Thumbs.db
 *.swp
+
+# Windows `tree /f` dumps left at the repo root by ad-hoc directory
+# listing - not project content, and not even UTF-8 (codepage-encoded).
+project_tree.txt
+
+# pytest's own cache
+.pytest_cache/

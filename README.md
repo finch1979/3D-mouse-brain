@@ -66,3 +66,21 @@ py -3.13 site/build_mouse.py
 
 Outputs land under `mouse/outputs/...` or `human/outputs/...`; open the
 resulting `.html` file directly in a browser.
+
+## License
+
+This repository's source code (the `fetch`/`build`/`render` pipelines, the
+`site/` assembler, and every test and script) is licensed under the
+[GNU General Public License v3.0](LICENSE).
+
+That covers the code, not everything the code produces or embeds:
+
+- **Anatomical data** (Allen CCFv3, DeMBA, Allen Developing Mouse Brain,
+  and the human-side atlases) is © the Allen Institute and the other
+  original providers, used here under their own terms - see the licensing
+  note in each `build/*.py` module's docstring, and cite the source atlas
+  when reusing a generated viewer's content.
+- **Vendored third-party code** under `web/lib/` (three.js, OrbitControls)
+  and `external/brainglobe-atlasapi/` keeps its own upstream license
+  (MIT and BSD-3-Clause respectively); this repo's GPL-3.0 does not
+  relicense them.

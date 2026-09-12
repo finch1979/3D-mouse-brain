@@ -1,55 +1,41 @@
-# Current task: install `code-router`
+# Next phase: DeepSeek mechanical audit of nine mouse pages
 
-Status: complete
+Status: worker assigned; production release b9122f5 already verified.
 
 ## Objective
 
-Install the existing `code-router` skill as a repository-scoped Codex skill for this project.
+Read-only audit of bilingual consistency, link destinations and control wording
+for the nine new mouse systems. Report concrete findings, not generic advice.
+Prior completed router-install task is preserved in code-router-install-completed.md.
 
-## Non-goals
+## Allowed work
 
-- Do not resume or alter the human visual-system deployment in this task.
-- Do not modify mouse or human source, data, or generated viewer outputs.
-- Do not commit or publish changes.
+- Read mouse/src/mouse_atlas/build/systems.py and adult_system.py.
+- Read mouse/outputs/P56/pathway_meshes/systems.json (small hub registry).
+- Read site/build_mouse.py, hub_design.py and templates/mouse.css.
+- Read tests/check_mouse_systems_ui.py and docs/architecture/mouse-systems-evidence.md.
+- Write ONLY .agents/dp_result.md, in Traditional Chinese.
 
-## Allowed files
+## Forbidden
 
-- `.agents/current_task.md`
-- `.agents/skills/code-router/SKILL.md`
-- `.agents/skills/code-router/agents/openai.yaml`
+- Do not modify any other file, especially raw meshes/data, source, generated HTML,
+  existing project_tree.txt, human/, web/lib/, external/ or C: copies.
+- Do not run fetch/build/deploy/git mutations, install packages, access credentials,
+  contact third parties, or perform network research. Do not change scientific claims.
+- Do not read giant HTML/base64 mesh blobs; relevant wording is in the source registry.
 
-## Forbidden files
+## Assignment
 
-- `mouse/data/`, `human/data/`, and `external/`
-- Existing files under `mouse/outputs/` and `human/outputs/`
-- Existing untracked visual-system work and `project_tree.txt`
+DeepSeek via OpenCode: one focused audit pass. Check missing zh/en values,
+misleading human-only wording, broken intended internal paths, navigation grouping,
+and mismatches between documented controls and new-page behavior. Distinguish
+verified findings from items requiring browser confirmation. Do not claim tests run.
+Codex: independently verify the report, preserve source/data and review follow-up.
 
-## Safety requirements
+## Expected commands and acceptance
 
-- Preserve all raw data and generated outputs.
-- Preserve unrelated worktree changes.
-- Copy the existing user-level skill without changing its workflow semantics.
-
-## Expected checks
-
-- Confirm the installed directory contains `SKILL.md` and `agents/openai.yaml`.
-- Compare installed files with the user-level source, allowing only platform line-ending normalization.
-- Inspect `git status --short` and verify no unrelated files changed.
-
-## Worker assignments
-
-- Orchestrator only; no worker task is needed for this bounded installation.
-- Required worker result files: none.
-
-## Acceptance criteria
-
-- Codex can discover `code-router` from `$REPO_ROOT/.agents/skills/code-router`.
-- Installed files match `C:/Users/User/.codex/skills/code-router` apart from CRLF-to-LF normalization.
-- Existing worktree changes remain untouched.
-
-## Completion record
-
-- Installed `SKILL.md` and `agents/openai.yaml` under the repository skill location.
-- Normalized comparisons found no content differences; only CRLF-to-LF line endings differ.
-- `git diff --check` passed.
-- Existing untracked human visual-system files and `project_tree.txt` were left untouched.
+Read files and optionally run read-only text searches or git status. Every finding
+must cite file/line and a specific reproduction/check. .agents/dp_result.md must
+include files changed, commands run, passed/failed/skipped checks, assumptions,
+data-safety statement and unrelated changes noticed. End with a prioritized list;
+explicitly say if no actionable issue was found. Do not implement fixes.

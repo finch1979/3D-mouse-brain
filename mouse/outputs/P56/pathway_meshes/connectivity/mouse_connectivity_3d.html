@@ -1745,13 +1745,26 @@ const ORDER = ["root", "VISp", "LGd", "SCs", "LP", "SSp-bfd", "VPM", "PSV", "SPV
       "color:#e9edf1;font:12px/1.4 -apple-system,'Segoe UI',system-ui,sans-serif;",
       "box-shadow:0 10px 30px rgba(0,0,0,.4)}",
       "#mouseStage .ms-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;",
-      "opacity:.65;margin-bottom:8px}",
+      "opacity:.65;margin-bottom:4px}",
+      "#mouseStage .ms-cta{font-size:11.5px;line-height:1.35;margin-bottom:8px;opacity:.88}",
       "#mouseStage .ms-btns{display:flex;gap:6px;margin-bottom:8px}",
       "#mouseStage .ms-btns button{flex:1 1 auto;min-height:38px;background:transparent;",
       "border:1px solid rgba(255,255,255,.18);border-radius:7px;color:inherit;font:inherit;",
       "font-size:12px;cursor:pointer}",
       "#mouseStage .ms-btns button:hover{border-color:#84dcc5}",
-      "#mouseStage #mouseStart[aria-pressed='true']{border-color:#84dcc5;background:rgba(132,220,197,.14)}",
+      // primary CTA styling: filled, not just outlined, so Start reads as
+      // the one thing to press on first landing. This array is JS, so a
+      // "//" line between string elements is a real comment, stripped
+      // before the strings are joined into CSS text.
+      "#mouseStage #mouseStart{background:#84dcc5;border-color:#84dcc5;color:#0c1512;",
+      "font-weight:600}",
+      "#mouseStage #mouseStart:hover{background:#9ee6d1;border-color:#9ee6d1}",
+      "#mouseStage #mouseStart[aria-pressed='true']{background:rgba(132,220,197,.14);",
+      "border-color:#84dcc5;color:inherit;font-weight:400}",
+      "#mouseStage #mouseStart.ms-pulse{animation:msPulse 1.8s ease-in-out infinite}",
+      "@keyframes msPulse{0%,100%{box-shadow:0 0 0 0 rgba(132,220,197,.55)}",
+      "50%{box-shadow:0 0 0 7px rgba(132,220,197,0)}}",
+      "@media (prefers-reduced-motion: reduce){#mouseStage #mouseStart.ms-pulse{animation:none}}",
       "#mouseStage svg{display:block;width:100%;height:auto}",
       "#mouseStage .ms-rim{fill:none;stroke:rgba(255,255,255,.32);stroke-width:3}",
       "#mouseStage .ms-spoke{stroke:rgba(255,255,255,.45);stroke-width:1.5}",
@@ -2732,6 +2745,9 @@ const ORDER = ["root", "VISp", "LGd", "SCs", "LP", "SSp-bfd", "VPM", "PSV", "SPV
       SIM.active = true;
       SIM.cue = 1;
       setRunPressed(true);
+      // one-time onboarding cue: stop drawing attention once it has done its job
+      const cta = document.getElementById("mouseStart");
+      if (cta) cta.classList.remove("ms-pulse");
     }
     function stopInput() {
       SIM.cue = 0;
@@ -2787,8 +2803,11 @@ const ORDER = ["root", "VISp", "LGd", "SCs", "LP", "SSp-bfd", "VPM", "PSV", "SPV
     stage.id = "mouseStage";
     stage.innerHTML = [
       '<div class="ms-title" data-conn-en="Virtual mouse on wheel" data-conn-zh="虛擬小鼠跑滾輪"></div>',
+      '<div class="ms-cta" data-conn-en="Press Start to see the brain drive a running mouse." ' +
+        'data-conn-zh="按下開始，看大腦活動驅動小鼠跑步。"></div>',
       '<div class="ms-btns">',
-      '<button type="button" id="mouseStart" aria-pressed="false" data-conn-en="Run wheel" data-conn-zh="跑動滾輪"></button>',
+      '<button type="button" id="mouseStart" class="ms-pulse" aria-pressed="false" ' +
+        'data-conn-en="▶ Start running" data-conn-zh="▶ 開始跑步"></button>',
       '<button type="button" id="mouseStop" data-conn-en="Stop" data-conn-zh="停止"></button>',
       "</div>",
       '<svg viewBox="0 0 200 152" aria-hidden="true">',

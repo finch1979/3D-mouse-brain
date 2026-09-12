@@ -70,6 +70,18 @@ PATHWAYS = [
                  "zh": "約千個受器基因,嗅球約占全腦五十分之一"},
         "source": "Allen CCFv3",
     },
+    {
+        "slug": "connectivity",
+        "src": MOUSE_OUT / "P56/pathway_meshes/connectivity/mouse_connectivity_3d.html",
+        "accent": "#84dcc5", "group": "network", "hotspot": None,
+        "name": {"en": "Connectivity Explorer", "zh": "連結探索器"},
+        "short": {"en": "Network", "zh": "網路"},
+        "route": {"en": "17 regions → 136 measured Allen projection edges → network propagation",
+                  "zh": "17 個腦區 → 136 條 Allen 實測投射連線 → 網路傳播"},
+        "fact": {"en": "Real Allen tracer data across 17 regions — the SC→LP thalamic relay the visual page had to leave out",
+                 "zh": "橫跨 17 腦區的真實 Allen 追蹤數據——視覺頁必須略過的 SC→LP 丘腦中繼"},
+        "source": "Allen CCFv3 + Allen Mouse Brain Connectivity Atlas",
+    },
 ]
 
 # --- legacy standalone viewers: copied verbatim, structure preserved -------
@@ -151,6 +163,8 @@ GROUPS = [
      {"en": "the classic viewers, P56 / P15 / P14", "zh": "經典檢視器,P56 / P15 / P14"}),
     ('output', {'en':'Brain & body', 'zh':'身體連結'},
      {'en':'selected pain and visceral regulation circuits', 'zh':'疼痛與內臟調節的代表性連結'}),
+    ("network", {"en": "Network", "zh": "神經連結"},
+     {"en": "click a region, watch activity propagate", "zh": "點選腦區,觀察活動如何傳播"}),
 ]
 
 

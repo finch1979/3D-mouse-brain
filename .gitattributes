@@ -1,3 +1,9 @@
-# Preserve downloaded Allen OBJ bytes (including source whitespace) so SHA256
-# provenance remains valid on Windows checkouts with core.autocrlf enabled.
-mouse/outputs/P56/mesh/*.obj -text -whitespace
+# Preserve OBJ mesh bytes (including source whitespace) so SHA256
+# provenance stays valid on Windows checkouts with core.autocrlf enabled -
+# without this, a fresh checkout silently rewrites line endings and every
+# checksum in a manifest.json stops matching. Applies repo-wide (mouse/
+# and human/ outputs both export per-region .obj copies under several
+# different subpaths) rather than one narrow path: a previous version of
+# this rule only covered mouse/outputs/P56/mesh/ and missed the same
+# corruption recurring under mouse/outputs/P56/pathway_meshes/.
+*.obj -text -whitespace

@@ -31,6 +31,7 @@ PROMPTS = {
     "sleep": ("找到睡眠與覺醒相關的神經結構。", "Find the neural structures involved in sleep and arousal."),
     "autonomic": ("觀察大腦與內臟之間的神經連結。", "See the neural connections between the brain and organs."),
     "whisker": ("從一根鬍鬚開始，探索體感路徑。", "Start with a whisker and explore the sensory pathway."),
+    "connectivity": ("點一個腦區，看看它跟誰互相連結？", "Pick a region — what does it talk to?"),
 }
 
 

@@ -1,0 +1,92 @@
+{
+  "root": {
+    "name": "Whole-brain outline (CCFv3)",
+    "color": "CCCCCC",
+    "vertex_count": 49321
+  },
+  "VISp": {
+    "name": "Primary visual area",
+    "color": "5A8FE0",
+    "vertex_count": 3532
+  },
+  "LGd": {
+    "name": "Dorsal part of the lateral geniculate complex",
+    "color": "7FB2F0",
+    "vertex_count": 770
+  },
+  "SCs": {
+    "name": "Superior colliculus, sensory related",
+    "color": "5AC0C0",
+    "vertex_count": 1928
+  },
+  "LP": {
+    "name": "Lateral posterior nucleus of the thalamus",
+    "color": "89A7E8",
+    "vertex_count": 1245
+  },
+  "SSp-bfd": {
+    "name": "Primary somatosensory area, barrel field",
+    "color": "B08FD9",
+    "vertex_count": 3160
+  },
+  "VPM": {
+    "name": "Ventral posteromedial nucleus of the thalamus",
+    "color": "C9A6E6",
+    "vertex_count": 1290
+  },
+  "PSV": {
+    "name": "Principal sensory nucleus of the trigeminal",
+    "color": "9B7BC4",
+    "vertex_count": 1021
+  },
+  "SPVC": {
+    "name": "Spinal nucleus of the trigeminal, caudal part",
+    "color": "8468B0",
+    "vertex_count": 1276
+  },
+  "MOB": {
+    "name": "Main olfactory bulb",
+    "color": "8FBF7F",
+    "vertex_count": 5853
+  },
+  "AON": {
+    "name": "Anterior olfactory nucleus",
+    "color": "A9D19A",
+    "vertex_count": 3206
+  },
+  "PIR": {
+    "name": "Piriform area",
+    "color": "6FA05F",
+    "vertex_count": 6900
+  },
+  "MOp": {
+    "name": "Primary motor area",
+    "color": "E8C46A",
+    "vertex_count": 5483
+  },
+  "MOs": {
+    "name": "Secondary motor area",
+    "color": "D9A94E",
+    "vertex_count": 6330
+  },
+  "RSP": {
+    "name": "Retrosplenial area",
+    "color": "1AA698",
+    "vertex_count": 5331
+  },
+  "CA1": {
+    "name": "Field CA1",
+    "color": "E88B6A",
+    "vertex_count": 6314
+  },
+  "CA3": {
+    "name": "Field CA3",
+    "color": "D96F4E",
+    "vertex_count": 4906
+  },
+  "DG": {
+    "name": "Dentate gyrus",
+    "color": "F0A98C",
+    "vertex_count": 5380
+  }
+}

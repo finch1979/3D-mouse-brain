@@ -1,0 +1,8 @@
+/* Long bilingual names must fit inside their own navigation link. */
+body[data-species="mouse"] .map-route-name {
+  min-width:0; overflow-wrap:anywhere; flex:1;
+}
+body[data-species="mouse"] .map-route-arrow { flex:none; }
+@media(max-width:380px) {
+  body[data-species="mouse"] .map-routes { grid-template-columns:1fr; }
+}

@@ -1,0 +1,136 @@
+{
+  "slug": "somatosensory",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "CU": {
+      "id": 711,
+      "name": "Cuneate nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/711.obj",
+      "sha256": "7499285d52b6b981913c4c6d7cd4ad2c2d0fda741992d09c1934aef3d1fef599",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "GR": {
+      "id": 1039,
+      "name": "Gracile nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/1039.obj",
+      "sha256": "c91eb534c4f8df767e7d06aafabb2f388d51bb62c89907110a1d8691cb552840",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "VPL": {
+      "id": 718,
+      "name": "Ventral posterolateral nucleus of the thalamus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/718.obj",
+      "sha256": "ac44d1b509f7ace6eea16295380a2b59980adddd5f7c25274ad3a3b622d63990",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "SSp-ul": {
+      "id": 369,
+      "name": "Primary somatosensory area, upper limb",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/369.obj",
+      "sha256": "d99456920d9f4af8a311480d3e23a56fac3d20cdefb727189c0e87534c018393",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "SSp-ll": {
+      "id": 337,
+      "name": "Primary somatosensory area, lower limb",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/337.obj",
+      "sha256": "189343fb25189dbd961967ab9c6c16864f70be7e7baa95ae636be005c3bba1aa",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "MOp": {
+      "id": 985,
+      "name": "Primary motor area",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/985.obj",
+      "sha256": "724f67831c89172922dd287ef44578029df4d616fc187e84e8928cb05deef1b0",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "CU_L": {
+      "region": "CU",
+      "side": "L",
+      "kind": "atlas-region",
+      "position": [
+        -753.8644999999997,
+        -6100.7648500000005,
+        -1437.5249999999996
+      ]
+    },
+    "VPL_R": {
+      "region": "VPL",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        2059.9155,
+        -216.7148500000003,
+        -440.2349999999997
+      ]
+    },
+    "SSp-ul_R": {
+      "region": "SSp-ul",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        2689.8355,
+        858.6251499999998,
+        2008.635
+      ]
+    },
+    "MOp_R": {
+      "region": "MOp",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        2338.2355,
+        1821.0751499999997,
+        1535.045
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "ascending",
+      "name": {
+        "zh": "楔狀核交叉上行 → 前肢皮質",
+        "en": "Crossed cuneate input → forelimb cortex"
+      },
+      "nodes": [
+        "CU_L",
+        "VPL_R",
+        "SSp-ul_R"
+      ],
+      "refs": [
+        "T1"
+      ]
+    },
+    {
+      "id": "cortical",
+      "name": {
+        "zh": "體感 → 運動皮質",
+        "en": "Somatosensory → motor cortex"
+      },
+      "nodes": [
+        "SSp-ul_R",
+        "MOp_R"
+      ],
+      "refs": [
+        "T1"
+      ]
+    }
+  ],
+  "sources": {
+    "T1": {
+      "title": "Circuit organization of the excitatory sensorimotor loop through hand/forelimb S1 and M1",
+      "url": "https://elifesciences.org/articles/66836"
+    }
+  },
+  "signal_timing": false
+}

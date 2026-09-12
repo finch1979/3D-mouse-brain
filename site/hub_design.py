@@ -50,7 +50,8 @@ def render_hub(species: str, systems: list, groups: list, planned: list,
             plate = "plate" in slug
             age = next((a for a in ("P14", "P15", "P56") if a in src), "P56")
             kind = "2D" if plate else "3D"
-            question = PROMPTS.get(slug, (unescape(system["route"]["zh"]), unescape(system["route"]["en"])))
+            question = ((system['question']['zh'], system['question']['en']) if 'question' in system else
+                        PROMPTS.get(slug, (unescape(system["route"]["zh"]), unescape(system["route"]["en"]))))
             search = " ".join(unescape(str(v)) for d in (system["name"], system["route"], system["short"]) for v in d.values()) + " " + system["source"] + (" " + age if mouse else "")
             rows.append(f'''<a class="atlas-card" href="{escape(href)}" data-card="{slug}" data-search="{escape(search, quote=True)}" style="--card-accent:{system['accent']}">
                 <div class="card-top"><span class="card-index">{index + 1:02d} <i></i></span><span class="card-format">{age + ' · ' if mouse else ''}{kind} <span aria-hidden="true">↗</span></span></div>

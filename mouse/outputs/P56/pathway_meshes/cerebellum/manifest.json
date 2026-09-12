@@ -1,0 +1,176 @@
+{
+  "slug": "cerebellum",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "CBX": {
+      "id": 528,
+      "name": "Cerebellar cortex",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/528.obj",
+      "sha256": "c02edff0582affc1c9adaa563cbc53d9e6c63d735f4554269874b7c01849fe10",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "IP": {
+      "id": 91,
+      "name": "Interposed nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/91.obj",
+      "sha256": "6be1242d6a41bea1de86c6ddd79901a5869bc74a1c55fca8ef089031c4506e82",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "DN": {
+      "id": 846,
+      "name": "Dentate nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/846.obj",
+      "sha256": "09ea0d96da3d6107cbc651c38bf53d32ff886d755fa76344794885f041a25728",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "FN": {
+      "id": 989,
+      "name": "Fastigial nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/989.obj",
+      "sha256": "d8561c78debf141053a9c6adb74dbfc064076d130120e0abee39c3c30acba514",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "VAL": {
+      "id": 629,
+      "name": "Ventral anterior-lateral complex of the thalamus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/629.obj",
+      "sha256": "c82018d0895127b595a8fb80de39040922d7db8865fe6fd4fcd9071ff34fad17",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "RN": {
+      "id": 214,
+      "name": "Red nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/214.obj",
+      "sha256": "e1df4ab70a1e9f9adbde980ff4e9cf873e103d41fe74b6d447ad2cd10f913cc7",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "IO": {
+      "id": 83,
+      "name": "Inferior olivary complex",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/83.obj",
+      "sha256": "0d12b79d07f0e08bfcf3faba4eb00367c7624399ec1eed8f895711ed8e4be379",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "IO_L": {
+      "region": "IO",
+      "side": "L",
+      "kind": "atlas-region",
+      "position": [
+        -438.3845000000001,
+        -5474.364850000001,
+        -3384.1049999999996
+      ]
+    },
+    "CBX_R": {
+      "region": "CBX",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        2379.1955,
+        -5159.964849999999,
+        -53.95499999999993
+      ]
+    },
+    "IP_R": {
+      "region": "IP",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        1710.8455000000004,
+        -4806.464849999999,
+        -220.10500000000002
+      ]
+    },
+    "RN_L": {
+      "region": "RN",
+      "side": "L",
+      "kind": "atlas-region",
+      "position": [
+        -851.9544999999998,
+        -2324.9348500000006,
+        -724.0950000000003
+      ]
+    },
+    "VAL_L": {
+      "region": "VAL",
+      "side": "L",
+      "kind": "atlas-region",
+      "position": [
+        -1364.7945,
+        -14.674850000000333,
+        -533.7049999999999
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "input",
+      "name": {
+        "zh": "下橄欖 → 對側小腦皮質",
+        "en": "Inferior olive → contralateral cerebellar cortex"
+      },
+      "nodes": [
+        "IO_L",
+        "CBX_R"
+      ],
+      "refs": [
+        "C2"
+      ]
+    },
+    {
+      "id": "red",
+      "name": {
+        "zh": "中間核 → 對側紅核",
+        "en": "Interposed → contralateral red nucleus"
+      },
+      "nodes": [
+        "IP_R",
+        "RN_L"
+      ],
+      "refs": [
+        "C1",
+        "C3"
+      ]
+    },
+    {
+      "id": "thalamic",
+      "name": {
+        "zh": "中間核 → 對側運動丘腦",
+        "en": "Interposed → contralateral motor thalamus"
+      },
+      "nodes": [
+        "IP_R",
+        "VAL_L"
+      ],
+      "refs": [
+        "C1",
+        "C3"
+      ]
+    }
+  ],
+  "sources": {
+    "C2": {
+      "title": "Input and output organization of the mesodiencephalic junction",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9300004/"
+    },
+    "C1": {
+      "title": "Cerebellar nuclei evolved by repeatedly duplicating a conserved cell-type set",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8510508/"
+    },
+    "C3": {
+      "title": "Diverse inhibitory projections from the cerebellar interposed nucleus",
+      "url": "https://elifesciences.org/articles/66231"
+    }
+  },
+  "signal_timing": false
+}

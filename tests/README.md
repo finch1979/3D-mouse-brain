@@ -15,3 +15,16 @@ The regression also loads all 25 generated pages at 320×568, 390×700,
 740×360 and 1440×900, checking page errors, image loading, horizontal
 overflow and mobile annotation defaults. This is Chromium viewport and touch
 simulation, not a physical-device certification.
+For the nine-system extension:
+
+```powershell
+rtk proxy py -3.13 tests/test_mouse_systems.py
+rtk proxy py -3.13 tests/check_mouse_systems_ui.py --site site/dist
+rtk proxy py -3.13 tests/check_mobile_annotations.py --site site/dist
+```
+
+The first compares decoded output vertices/faces against original Allen OBJ data,
+including hemisphere checks and explicit population-vs-region distinctions.
+The second exercises every new page's nodes, layer visibility, rotation, zoom,
+reset, guide citations, bilingual disclaimer and hub search/numbering. The general
+regression discovers all built pages dynamically (now 34 pages / 28 3D viewers).

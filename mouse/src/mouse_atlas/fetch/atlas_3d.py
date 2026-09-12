@@ -18,13 +18,14 @@ for spatial context, unless --no-root is passed.
 import argparse
 import json
 import os
+import hashlib
 
 import requests
 
 from mouse_atlas.fetch.atlas_plate import DEFAULT_ACRONYMS, lookup_structure, OUT_DIR
 
 MESH_BASE = (
-    "http://download.alleninstitute.org/informatics-archive/current-release/"
+    "https://download.alleninstitute.org/informatics-archive/current-release/"
     "mouse_ccf/annotation/ccf_2017/structure_meshes/{}.obj"
 )
 MESH_DIR = os.path.join(OUT_DIR, "mesh")
@@ -48,22 +49,47 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--acronyms", nargs="+", default=DEFAULT_ACRONYMS)
     parser.add_argument("--no-root", action="store_true", help="Skip the whole-brain context mesh")
+    parser.add_argument("--systems", action="store_true", help="Fetch the nine adult-system registries")
     args = parser.parse_args()
 
-    structures = {a: lookup_structure(a) for a in args.acronyms}
+    acronyms = args.acronyms
+    if args.systems:
+        from mouse_atlas.build.systems import SYSTEMS
+        acronyms = sorted({a for system in SYSTEMS.values() for a in system['regions']})
+    response = requests.get('https://api.brain-map.org/api/v2/structure_graph_download/1.json', timeout=60)
+    response.raise_for_status()
+    ontology = {}
+    def visit(node):
+        ontology[node['acronym']] = node
+        for child in node['children']:
+            visit(child)
+    visit(response.json()['msg'][0])
+    structures = {}
+    for acronym in acronyms:
+        row = ontology[acronym]
+        structures[acronym] = {'id': row['id'], 'name': row['name'],
+                               'acronym': acronym, 'color': row['color_hex_triplet']}
     if not args.no_root:
         structures["root"] = ROOT_STRUCTURE
 
+    manifest_path = os.path.join(MESH_DIR, "manifest.json")
     manifest = {}
+    if os.path.exists(manifest_path):
+        with open(manifest_path, encoding='utf-8') as existing:
+            manifest = json.load(existing)
     for acronym, s in structures.items():
         path = download_mesh(s["id"])
         size_kb = os.path.getsize(path) / 1024
         print(f"{acronym}: id={s['id']} name={s['name']!r} -> {path} ({size_kb:.0f} KB)")
-        manifest[acronym] = {**s, "mesh_path": os.path.relpath(path, OUT_DIR)}
+        with open(path, 'rb') as mesh:
+            checksum = hashlib.sha256(mesh.read()).hexdigest()
+        manifest[acronym] = {**s, "mesh_path": os.path.relpath(path, OUT_DIR),
+                             'source_url': MESH_BASE.format(s['id']), 'sha256': checksum,
+                             'atlas': 'Allen CCFv3 2017', 'structure_graph_id': 1}
 
-    manifest_path = os.path.join(MESH_DIR, "manifest.json")
-    with open(manifest_path, "w", encoding="utf-8") as f:
+    with open(manifest_path + '.tmp', "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2, ensure_ascii=False)
+    os.replace(manifest_path + '.tmp', manifest_path)
     print(f"Wrote {manifest_path}")
 
 

@@ -1,0 +1,122 @@
+{
+  "slug": "vestibular",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "MV": {
+      "id": 202,
+      "name": "Medial vestibular nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/202.obj",
+      "sha256": "bbba10111a3593dd79c6465441cf21892d1cbe610d0ea70a5a9e51b1e2def8c9",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "SUV": {
+      "id": 217,
+      "name": "Superior vestibular nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/217.obj",
+      "sha256": "36f5028cb6f05fd5c8bbd9c787a16713e01ac3c43f461965f2f986f6d5132a02",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "III": {
+      "id": 35,
+      "name": "Oculomotor nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/35.obj",
+      "sha256": "d02d75992a879c25e133c10624b575ee8f5db2f223616fada8229cebb1302f56",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "VI": {
+      "id": 653,
+      "name": "Abducens nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/653.obj",
+      "sha256": "97341a1733339e21bf723490b04b2f895e5603a3d0de375b075982a99c9a31ff",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "FL": {
+      "id": 1049,
+      "name": "Flocculus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/1049.obj",
+      "sha256": "f533d1af97f7f168cd92a5e3b896a714f437d73541d0c0c85208b0f5a76ff14d",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "FL_R": {
+      "region": "FL",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        3028.6354999999994,
+        -4051.9648499999994,
+        -1425.4250000000002
+      ]
+    },
+    "MV_R": {
+      "region": "MV",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        1124.0254999999997,
+        -4791.364850000001,
+        -971.1750000000002
+      ]
+    },
+    "III_L": {
+      "region": "III",
+      "side": "L",
+      "kind": "atlas-region",
+      "position": [
+        -211.98449999999957,
+        -2506.0148500000005,
+        3.4149999999999636
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "cerebellar",
+      "name": {
+        "zh": "絨球 → 內側前庭核（抑制）",
+        "en": "Flocculus → medial vestibular nucleus (inhibitory)"
+      },
+      "nodes": [
+        "FL_R",
+        "MV_R"
+      ],
+      "refs": [
+        "V1"
+      ]
+    },
+    {
+      "id": "ocular",
+      "name": {
+        "zh": "前庭核 → 對側動眼核",
+        "en": "Vestibular → contralateral oculomotor nucleus"
+      },
+      "nodes": [
+        "MV_R",
+        "III_L"
+      ],
+      "refs": [
+        "V2"
+      ]
+    }
+  ],
+  "sources": {
+    "V1": {
+      "title": "Multiple types of cerebellar target neurons and their circuitry in the vestibulo-ocular reflex",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3227528/"
+    },
+    "V2": {
+      "title": "Mouse medial vestibular nucleus neurons projecting to the oculomotor nucleus",
+      "url": "https://journals.physiology.org/doi/full/10.1152/jn.00796.2005"
+    }
+  },
+  "signal_timing": false
+}

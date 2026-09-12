@@ -1,0 +1,126 @@
+{
+  "slug": "autonomic",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "PVH": {
+      "id": 38,
+      "name": "Paraventricular hypothalamic nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/38.obj",
+      "sha256": "63324470a64129aca6b5c39193ede32471a8834cb56a5c6a7430a4f0269ea654",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "NTS": {
+      "id": 651,
+      "name": "Nucleus of the solitary tract",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/651.obj",
+      "sha256": "d67c5345269262074df65944110b72429f00f481a9f7db353550ec7c0a01547b",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "DMX": {
+      "id": 839,
+      "name": "Dorsal motor nucleus of the vagus nerve",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/839.obj",
+      "sha256": "4220421527381ed123aa4a0634caf4d736872d7de2c239b46fb7a829afb44e8e",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "PVH_R": {
+      "region": "PVH",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        305.83550000000014,
+        527.6851500000002,
+        -1842.9650000000001
+      ]
+    },
+    "NTS_R": {
+      "region": "NTS",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        634.2255000000005,
+        -5662.2648500000005,
+        -1530.3249999999998
+      ]
+    },
+    "DVC": {
+      "region": "DMX",
+      "side": "R",
+      "kind": "approximate-population",
+      "position": [
+        379.6154999999999,
+        -5966.7648500000005,
+        -1587.5249999999996
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "down",
+      "name": {
+        "zh": "PVH → 孤束核",
+        "en": "PVH → solitary nucleus"
+      },
+      "nodes": [
+        "PVH_R",
+        "NTS_R"
+      ],
+      "refs": [
+        "U1"
+      ]
+    },
+    {
+      "id": "up",
+      "name": {
+        "zh": "孤束核 → PVH",
+        "en": "Solitary nucleus → PVH"
+      },
+      "nodes": [
+        "NTS_R",
+        "PVH_R"
+      ],
+      "refs": [
+        "U2"
+      ]
+    },
+    {
+      "id": "vagal",
+      "name": {
+        "zh": "PVH → 背側迷走鄰域",
+        "en": "PVH → dorsal vagal neighborhood"
+      },
+      "nodes": [
+        "PVH_R",
+        "DVC"
+      ],
+      "refs": [
+        "U3"
+      ]
+    }
+  ],
+  "sources": {
+    "U1": {
+      "title": "Central afferents to the NTS in rats and mice",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7942812/"
+    },
+    "U2": {
+      "title": "NTS A2 neurons control feeding via projections to PVH",
+      "url": "https://www.nature.com/articles/s41386-022-01448-5"
+    },
+    "U3": {
+      "title": "Cyto- and chemoarchitecture of PVH in C57BL/6J male mouse",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4104804/"
+    }
+  },
+  "signal_timing": false
+}

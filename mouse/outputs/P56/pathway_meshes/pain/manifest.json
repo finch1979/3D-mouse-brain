@@ -1,0 +1,125 @@
+{
+  "slug": "pain",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "PB": {
+      "id": 867,
+      "name": "Parabrachial nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/867.obj",
+      "sha256": "fda54467b54c7965e26c61959eec0489e2a7d025662e5ac80929b8a24801157c",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "CEA": {
+      "id": 536,
+      "name": "Central amygdalar nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/536.obj",
+      "sha256": "a9e3220c9ee269a385ac00a8db463808fb135a04479f278d569e6eb6821a33f9",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "PAG": {
+      "id": 795,
+      "name": "Periaqueductal gray",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/795.obj",
+      "sha256": "e819c2b07bcde880ec68962802365bce9ba437e43d9538347af643b3527ba8a3",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "RM": {
+      "id": 206,
+      "name": "Nucleus raphe magnus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/206.obj",
+      "sha256": "c6c9058743cb8d42429b3cb944f0a25485aff38140d415b7d36ffedfd276542f",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "PB_R": {
+      "region": "PB",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        1476.7555000000002,
+        -3892.9648499999994,
+        -470.4449999999997
+      ]
+    },
+    "CEA_R": {
+      "region": "CEA",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        2441.2754999999997,
+        -187.43485000000055,
+        -1799.1049999999996
+      ]
+    },
+    "PAG_R": {
+      "region": "PAG",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        605.1055000000006,
+        -2550.8048499999995,
+        364.1750000000002
+      ]
+    },
+    "RVM": {
+      "region": "RM",
+      "side": "R",
+      "kind": "approximate-population",
+      "position": [
+        71.35550000000057,
+        -3965.0648499999998,
+        -2719.745
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "ascending",
+      "name": {
+        "zh": "橋臂核 → 中央杏仁核",
+        "en": "Parabrachial → central amygdala"
+      },
+      "nodes": [
+        "PB_R",
+        "CEA_R"
+      ],
+      "refs": [
+        "P1"
+      ]
+    },
+    {
+      "id": "descending",
+      "name": {
+        "zh": "PAG → RVM 鄰域",
+        "en": "PAG → RVM neighborhood"
+      },
+      "nodes": [
+        "PAG_R",
+        "RVM"
+      ],
+      "refs": [
+        "P2"
+      ]
+    }
+  ],
+  "sources": {
+    "P1": {
+      "title": "Elucidating an affective pain circuit that creates a threat memory",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4512641/"
+    },
+    "P2": {
+      "title": "Yin-and-yang bifurcation of opioidergic circuits for descending analgesia",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6205495/"
+    }
+  },
+  "signal_timing": false
+}

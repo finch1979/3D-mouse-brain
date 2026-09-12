@@ -1,0 +1,126 @@
+{
+  "slug": "gustatory",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "NTS": {
+      "id": 651,
+      "name": "Nucleus of the solitary tract",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/651.obj",
+      "sha256": "d67c5345269262074df65944110b72429f00f481a9f7db353550ec7c0a01547b",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "PB": {
+      "id": 867,
+      "name": "Parabrachial nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/867.obj",
+      "sha256": "fda54467b54c7965e26c61959eec0489e2a7d025662e5ac80929b8a24801157c",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "VPMpc": {
+      "id": 741,
+      "name": "Ventral posteromedial nucleus of the thalamus, parvicellular part",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/741.obj",
+      "sha256": "5ea2b55fc7882706e06549a8d848cc09312a62674b65f4ac060fd8698e1ad3e5",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "GU": {
+      "id": 1057,
+      "name": "Gustatory areas",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/1057.obj",
+      "sha256": "f2239ae7f2a322c0037f7d604e04a4e3334724111982944be9ddfdd007aa4b39",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "NTS_R": {
+      "region": "NTS",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        634.2255000000005,
+        -5662.2648500000005,
+        -1530.3249999999998
+      ]
+    },
+    "PB_R": {
+      "region": "PB",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        1476.7555000000002,
+        -3892.9648499999994,
+        -470.4449999999997
+      ]
+    },
+    "VPMpc_R": {
+      "region": "VPMpc",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        626.2555000000002,
+        -706.1648500000001,
+        -698.0749999999998
+      ]
+    },
+    "GU_R": {
+      "region": "GU",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        3865.2154999999993,
+        1828.1251499999998,
+        -428.9949999999999
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "brainstem",
+      "name": {
+        "zh": "孤束核 → 橋臂核",
+        "en": "Solitary nucleus → parabrachial nucleus"
+      },
+      "nodes": [
+        "NTS_R",
+        "PB_R"
+      ],
+      "refs": [
+        "G1"
+      ]
+    },
+    {
+      "id": "cortical",
+      "name": {
+        "zh": "橋臂核 → 味覺丘腦 → 皮質",
+        "en": "Parabrachial → gustatory thalamus → cortex"
+      },
+      "nodes": [
+        "PB_R",
+        "VPMpc_R",
+        "GU_R"
+      ],
+      "refs": [
+        "G2"
+      ]
+    }
+  ],
+  "sources": {
+    "G1": {
+      "title": "Afferent connections of the parabrachial nucleus in C57BL/6J mice",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2705209/"
+    },
+    "G2": {
+      "title": "Satb2 neurons in the parabrachial nucleus mediate taste perception",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7801645/"
+    }
+  },
+  "signal_timing": false
+}

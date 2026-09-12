@@ -1,0 +1,106 @@
+{
+  "slug": "limbic",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "CA1": {
+      "id": 382,
+      "name": "Field CA1",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/382.obj",
+      "sha256": "1f01c4b74e0c70e52dac6782cde6030459863703e66a0ffcd950a3f2bb319f0e",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "CA3": {
+      "id": 463,
+      "name": "Field CA3",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/463.obj",
+      "sha256": "c19c95ca2557d8b38b457fdf1e9c99beb72a68ca652f8b79cc3d92988e942a53",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "DG": {
+      "id": 726,
+      "name": "Dentate gyrus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/726.obj",
+      "sha256": "e23673ce7b9428e40ce05e3570ca6ef0d6f70930e2b9bb0341c4d3aa7ef2f3b9",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "SUB": {
+      "id": 502,
+      "name": "Subiculum",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/502.obj",
+      "sha256": "2e9fb32dd8475e8217e91a76f1544cba2f9f8083b3e70954b6c0ac211e87a97f",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "BLA": {
+      "id": 295,
+      "name": "Basolateral amygdalar nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/295.obj",
+      "sha256": "489ec8c8258a3845588e00952b3cb8106a332d5d63dd97abc73e9c6b0ae899e0",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "ENTl": {
+      "id": 918,
+      "name": "Entorhinal area, lateral part",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/918.obj",
+      "sha256": "0465c62a044ebfe70f3fc8ab6c3c8d2d94a45d5004a37ac0a25daf15e2484890",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "BLA_R": {
+      "region": "BLA",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        3243.285500000001,
+        -724.99485,
+        -2278.505
+      ]
+    },
+    "vCA1": {
+      "region": "CA1",
+      "side": "R",
+      "kind": "approximate-population",
+      "position": [
+        2870.9855,
+        -1649.0848500000002,
+        -1427.1350000000002
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "affective",
+      "name": {
+        "zh": "杏仁核 → 腹側海馬鄰域",
+        "en": "Amygdala → ventral hippocampal neighborhood"
+      },
+      "nodes": [
+        "BLA_R",
+        "vCA1"
+      ],
+      "refs": [
+        "L1",
+        "L2"
+      ]
+    }
+  ],
+  "sources": {
+    "L1": {
+      "title": "BLA to vHPC inputs modulate anxiety-related behaviors",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/23972595/"
+    },
+    "L2": {
+      "title": "Posterior BLA to ventral hippocampal CA1 drives approach behaviour",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6954243/"
+    }
+  },
+  "signal_timing": false
+}

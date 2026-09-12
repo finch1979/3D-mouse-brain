@@ -20,6 +20,7 @@ Run AFTER build_hub.py (it writes into site/dist/). Deploy together:
 from __future__ import annotations
 
 import sys
+import json
 from pathlib import Path
 
 from hub_design import render_hub
@@ -138,26 +139,23 @@ LEGACY = [
      "source": "Allen developing mouse"},
 ]
 
-PLANNED = [
-    {"hotspot": "ear", "name": {"en": "Auditory system", "zh": "聽覺系統"},
-     "short": {"en": "Hearing", "zh": "聽覺"},
-     "note": {"en": "cochlea → inferior colliculus → MGB → auditory cortex",
-              "zh": "耳蝸 → 下丘 → 內側膝狀體 → 聽皮質"}},
-    {"hotspot": "cerebellum", "name": {"en": "Cerebellum", "zh": "小腦"},
-     "short": {"en": "Cerebellum", "zh": "小腦"},
-     "note": {"en": "coordination loops, mouse style", "zh": "協調迴路,小鼠版"}},
-]
+NEW_SYSTEMS = json.loads((MOUSE_OUT / 'P56/pathway_meshes/systems.json').read_text(encoding='utf-8'))
+for system in NEW_SYSTEMS:
+    system['src'] = MOUSE_OUT / system['src']
+PLANNED = []
 
 GROUPS = [
     ("pathways", {"en": "Pathways", "zh": "感覺路徑"},
      {"en": "one route at a time, CCFv3 adult space", "zh": "一次一條路,CCFv3 成鼠空間"}),
     ("structures", {"en": "Structures &amp; plates", "zh": "結構與切片"},
      {"en": "the classic viewers, P56 / P15 / P14", "zh": "經典檢視器,P56 / P15 / P14"}),
+    ('output', {'en':'Brain & body', 'zh':'身體連結'},
+     {'en':'selected pain and visceral regulation circuits', 'zh':'疼痛與內臟調節的代表性連結'}),
 ]
 
 
 def build_map() -> str:
-    return render_navigation_map("mouse", PATHWAYS + LEGACY, REPO)
+    return render_navigation_map("mouse", PATHWAYS + LEGACY + NEW_SYSTEMS, REPO)
 
 
 
@@ -195,7 +193,7 @@ def assemble() -> None:
     DIST.mkdir(parents=True, exist_ok=True)
 
     # new pathway viewers: fragment + injected nav, one folder each
-    for s in PATHWAYS:
+    for s in PATHWAYS + NEW_SYSTEMS:
         html = s["src"].read_text(encoding="utf-8")
         if not html.rstrip().endswith("</script>"):
             sys.exit(f"ERROR: {s['src']} does not end with </script>")
@@ -232,7 +230,10 @@ def assemble() -> None:
         dest.write_text(out, encoding="utf-8")
         print(f"  {s['slug']:12s} {dest.stat().st_size / 1e6:6.2f} MB  (legacy copy)")
 
-    hub = render_hub("mouse", PATHWAYS + LEGACY, GROUPS, PLANNED, build_map(), REPO)
+    hub = render_hub("mouse", PATHWAYS + LEGACY + NEW_SYSTEMS, GROUPS, PLANNED, build_map(), REPO)
+    # Mouse-only adjustment; preserve the human homepage byte-for-byte.
+    css = (SITE_DIR / 'templates' / 'mouse.css').read_text(encoding='utf-8')
+    hub = hub.replace('</style>', css + '\n</style>', 1)
     (DIST / "index.html").write_text(hub, encoding="utf-8")
     print(f"  {'hub':12s} {(DIST / 'index.html').stat().st_size / 1024:6.1f} KB")
 

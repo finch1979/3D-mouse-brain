@@ -1,0 +1,125 @@
+{
+  "slug": "sleep",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "LC": {
+      "id": 147,
+      "name": "Locus ceruleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/147.obj",
+      "sha256": "563387a898acfd93bdcd2c19106979d6489052cb0818ef2c78452d299a5df98b",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "LHA": {
+      "id": 194,
+      "name": "Lateral hypothalamic area",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/194.obj",
+      "sha256": "8ad9180435968426343807bce2c09372370cbd710764e8fc759380f6c26494bc",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "VLPO": {
+      "id": 689,
+      "name": "Ventrolateral preoptic nucleus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/689.obj",
+      "sha256": "a7060e09ff78961b93a7c31235749aa1644bef95e8db3cdbaa2414cd14501094",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "TMv": {
+      "id": 1,
+      "name": "Tuberomammillary nucleus, ventral part",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/1.obj",
+      "sha256": "814430724988561a653e5de88b7d827148832c6379873f0379cb4a53d34f3160",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "Orexin": {
+      "region": "LHA",
+      "side": "R",
+      "kind": "approximate-population",
+      "position": [
+        1062.4355000000005,
+        -112.68485000000055,
+        -2246.1850000000004
+      ]
+    },
+    "LC_R": {
+      "region": "LC",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        965.5355,
+        -4111.7648500000005,
+        -392.7550000000001
+      ]
+    },
+    "POA": {
+      "region": "VLPO",
+      "side": "R",
+      "kind": "approximate-population",
+      "position": [
+        853.8455000000004,
+        1336.6951499999996,
+        -2982.7650000000003
+      ]
+    },
+    "TMv_R": {
+      "region": "TMv",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        896.0455000000002,
+        -873.8448500000004,
+        -2786.5950000000003
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "wake",
+      "name": {
+        "zh": "食慾素鄰域 → 藍斑",
+        "en": "Orexin neighborhood → locus coeruleus"
+      },
+      "nodes": [
+        "Orexin",
+        "LC_R"
+      ],
+      "refs": [
+        "S1"
+      ]
+    },
+    {
+      "id": "sleep",
+      "name": {
+        "zh": "視前區 → 結節乳頭核（抑制）",
+        "en": "Preoptic → tuberomammillary (inhibitory)"
+      },
+      "nodes": [
+        "POA",
+        "TMv_R"
+      ],
+      "refs": [
+        "S2"
+      ]
+    }
+  ],
+  "sources": {
+    "S1": {
+      "title": "Mechanism for hypocretin-mediated sleep-to-wake transitions",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3465396/"
+    },
+    "S2": {
+      "title": "Identification of preoptic sleep neurons using retrograde labelling and gene profiling",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5554302/"
+    }
+  },
+  "signal_timing": false
+}

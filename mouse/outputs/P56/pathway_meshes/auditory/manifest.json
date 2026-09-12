@@ -1,0 +1,110 @@
+{
+  "slug": "auditory",
+  "atlas": "Allen CCFv3 2017",
+  "species": "Mus musculus",
+  "regions": {
+    "root": {
+      "id": 997,
+      "name": "Whole brain outline",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/997.obj",
+      "sha256": "400100fd2e162f864b928a01fbcfbdcf34aa1a47bdde11f042be2442c77951eb",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "CN": {
+      "id": 607,
+      "name": "Cochlear nuclei",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/607.obj",
+      "sha256": "0c60782b309ba294e19163bdce190f71723511964578e417456676baeff61b49",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "SOC": {
+      "id": 398,
+      "name": "Superior olivary complex",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/398.obj",
+      "sha256": "ca695a2c0946d55a99f5d6aace0e52e39bebdf025096e024091a8b4264251f51",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "IC": {
+      "id": 4,
+      "name": "Inferior colliculus",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/4.obj",
+      "sha256": "13efc2460023db0df7a8c4993cdde89b360c84971be5d0c2dcd97f14ef3e7962",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "MGv": {
+      "id": 1079,
+      "name": "Medial geniculate complex, ventral part",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/1079.obj",
+      "sha256": "1526add5b1bc7d435da059479624f6af722f321ad25aa11c8250aac18d143abf",
+      "atlas": "Allen CCFv3 2017"
+    },
+    "AUDp": {
+      "id": 1002,
+      "name": "Primary auditory area",
+      "source_url": "https://download.alleninstitute.org/informatics-archive/current-release/mouse_ccf/annotation/ccf_2017/structure_meshes/1002.obj",
+      "sha256": "42fba174cf7d6a987a2f3ac6c7e99382ce6fc2fb876722f17884290a3873abb8",
+      "atlas": "Allen CCFv3 2017"
+    }
+  },
+  "nodes": {
+    "IC_R": {
+      "region": "IC",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        1217.3154999999997,
+        -3403.0648499999998,
+        1564.9450000000002
+      ]
+    },
+    "MGv_R": {
+      "region": "MGv",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        2221.6555,
+        -1894.0548499999995,
+        28.184999999999945
+      ]
+    },
+    "AUDp_R": {
+      "region": "AUDp",
+      "side": "R",
+      "kind": "atlas-region",
+      "position": [
+        4251.5755,
+        -1084.9148500000001,
+        1316.335
+      ]
+    }
+  },
+  "branches": [
+    {
+      "id": "ascending",
+      "name": {
+        "zh": "下丘 → 聽覺丘腦 → 皮質",
+        "en": "Colliculus → auditory thalamus → cortex"
+      },
+      "nodes": [
+        "IC_R",
+        "MGv_R",
+        "AUDp_R"
+      ],
+      "refs": [
+        "A1",
+        "A2"
+      ]
+    }
+  ],
+  "sources": {
+    "A1": {
+      "title": "Inhibitory projections in the mouse auditory tectothalamic system",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6025108/"
+    },
+    "A2": {
+      "title": "Auditory thalamocortical synaptic transmission in vitro",
+      "url": "https://journals.physiology.org/doi/full/10.1152/jn.00549.2001"
+    }
+  },
+  "signal_timing": false
+}

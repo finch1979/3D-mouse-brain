@@ -43,6 +43,28 @@ Previous production deployments remain available in Cloudflare Pages for rollbac
 
 ## Architecture
 
+The adult mouse extension adds nine systems: auditory, somatosensory, gustatory,
+vestibular, cerebellum, limbic, pain, sleep and autonomic. The assembled site now
+has 34 HTML pages, including 28 shared 3D viewers. Existing numbered mouse entries
+keep their numbers; new entries follow them. `P56/pathway_meshes/systems.json`
+provides the new hub entries without importing atlas packages into site assembly.
+
+Before site assembly, new viewers can be reproduced from this checkout with:
+
+```powershell
+rtk proxy py -3.13 scripts/mouse_systems.py fetch
+rtk proxy py -3.13 scripts/mouse_systems.py build
+```
+
+Fetch and build are separate; the build is offline. The launcher deliberately
+selects this checkout's package even when another C: copy is installed. Individual
+systems accept `build auditory`, etc., and have their own `mouse_atlas.build.mouse_*`
+module entrypoints. Scientific scope, connection evidence and data terms are in
+`docs/architecture/mouse-systems-evidence.md`; source checksums, atlas IDs,
+hemisphere-aware anchors and citation IDs accompany each output in its manifest.
+Approximate cell-population markers are not segmented anatomy. No conduction
+timing animation is enabled. Raw meshes retain Allen Institute data rights.
+
 - `build_hub.py` owns the human registry, anatomical index, 404 page, and copies
   of the 12 human viewers.
 - `build_mouse.py` owns the mouse registry and map, copies three pathway viewers,

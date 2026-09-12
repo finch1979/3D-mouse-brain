@@ -1,0 +1,254 @@
+[
+  {
+    "slug": "auditory",
+    "src": "P56/pathway_meshes/auditory/mouse_auditory_pathway_3d.html",
+    "accent": "#d5ad65",
+    "group": "pathways",
+    "hotspot": "auditory",
+    "name": {
+      "zh": "聽覺系統",
+      "en": "Auditory system"
+    },
+    "short": {
+      "zh": "聽覺",
+      "en": "Hearing"
+    },
+    "question": {
+      "zh": "從中腦到聽皮質，觀察聲音訊息的主要中繼。",
+      "en": "Follow a regional auditory relay from midbrain to cortex."
+    },
+    "route": {
+      "zh": "下丘 → 聽覺丘腦 → 皮質",
+      "en": "Colliculus → auditory thalamus → cortex"
+    },
+    "fact": {
+      "zh": "耳蝸核與上橄欖複合體作為腦幹背景；未畫出全部雙側分支與耳蝸。",
+      "en": "Cochlear nuclei and superior olive provide brainstem context; cochlea and the full bilateral network are omitted."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  },
+  {
+    "slug": "somatosensory",
+    "src": "P56/pathway_meshes/somatosensory/mouse_somatosensory_pathway_3d.html",
+    "accent": "#b28ad2",
+    "group": "pathways",
+    "hotspot": "somatosensory",
+    "name": {
+      "zh": "一般體感系統",
+      "en": "Somatosensory system"
+    },
+    "short": {
+      "zh": "體感",
+      "en": "Touch"
+    },
+    "question": {
+      "zh": "以前肢觸覺為例，從楔狀核連到丘腦與感覺運動皮質。",
+      "en": "Explore a forelimb touch example through cuneate, thalamic and sensorimotor regions."
+    },
+    "route": {
+      "zh": "楔狀核交叉上行 → 前肢皮質 / 體感 → 運動皮質",
+      "en": "Crossed cuneate input → forelimb cortex / Somatosensory → motor cortex"
+    },
+    "fact": {
+      "zh": "薄束核與下肢皮質僅供位置對照；未重建周邊神經、脊髓或所有體感路徑。",
+      "en": "Gracile nucleus and hindlimb cortex are context only; peripheral nerves, spinal cord and other modalities are not reconstructed."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  },
+  {
+    "slug": "gustatory",
+    "src": "P56/pathway_meshes/gustatory/mouse_gustatory_pathway_3d.html",
+    "accent": "#d88d69",
+    "group": "pathways",
+    "hotspot": "gustatory",
+    "name": {
+      "zh": "味覺系統",
+      "en": "Gustatory system"
+    },
+    "short": {
+      "zh": "味覺",
+      "en": "Taste"
+    },
+    "question": {
+      "zh": "保留小鼠的橋臂核中繼，探索味覺通往丘腦與皮質的代表性路線。",
+      "en": "Explore the mouse taste route with its parabrachial relay."
+    },
+    "route": {
+      "zh": "孤束核 → 橋臂核 / 橋臂核 → 味覺丘腦 → 皮質",
+      "en": "Solitary nucleus → parabrachial nucleus / Parabrachial → gustatory thalamus → cortex"
+    },
+    "fact": {
+      "zh": "完整核群不等於其中的味覺細胞群；舌部與顱神經未建模。",
+      "en": "Whole nuclei do not delineate taste-specific populations; tongue and cranial nerves are not modeled."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  },
+  {
+    "slug": "vestibular",
+    "src": "P56/pathway_meshes/vestibular/mouse_vestibular_pathway_3d.html",
+    "accent": "#62bab7",
+    "group": "pathways",
+    "hotspot": "vestibular",
+    "name": {
+      "zh": "前庭與平衡系統",
+      "en": "Vestibular system"
+    },
+    "short": {
+      "zh": "平衡",
+      "en": "Balance"
+    },
+    "question": {
+      "zh": "以小腦絨球、前庭核與動眼中繼，觀察穩定視線的部分迴路。",
+      "en": "Explore selected cerebellar, vestibular and oculomotor connections for gaze stabilization."
+    },
+    "route": {
+      "zh": "絨球 → 內側前庭核（抑制） / 前庭核 → 對側動眼核",
+      "en": "Flocculus → medial vestibular nucleus (inhibitory) / Vestibular → contralateral oculomotor nucleus"
+    },
+    "fact": {
+      "zh": "絨球到前庭核代表抑制性 Purkinje 細胞投射；未細分眼肌、半規管或完整前庭脊髓路。",
+      "en": "Floccular output represents inhibitory Purkinje projections; eye muscles, semicircular canals and vestibulospinal routes are omitted."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  },
+  {
+    "slug": "cerebellum",
+    "src": "P56/pathway_meshes/cerebellum/mouse_cerebellum_pathway_3d.html",
+    "accent": "#7dbd92",
+    "group": "structures",
+    "hotspot": "cerebellum",
+    "name": {
+      "zh": "小腦系統",
+      "en": "Cerebellar system"
+    },
+    "short": {
+      "zh": "小腦",
+      "en": "Cerebellum"
+    },
+    "question": {
+      "zh": "比較小腦皮質與深部核，觀察橄欖輸入和中間核輸出的代表性連結。",
+      "en": "Compare cerebellar cortex and deep nuclei with selected olivary input and interposed output."
+    },
+    "route": {
+      "zh": "下橄欖 → 對側小腦皮質 / 中間核 → 對側紅核 / 中間核 → 對側運動丘腦",
+      "en": "Inferior olive → contralateral cerebellar cortex / Interposed → contralateral red nucleus / Interposed → contralateral motor thalamus"
+    },
+    "fact": {
+      "zh": "圖示連到區域，不代表全部微區或 Purkinje 細胞；其他深部核的輸出未完整展開。",
+      "en": "Regional links do not resolve microzones or Purkinje populations; other deep-nucleus outputs are not exhaustively shown."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  },
+  {
+    "slug": "limbic",
+    "src": "P56/pathway_meshes/limbic/mouse_limbic_pathway_3d.html",
+    "accent": "#cd9c7c",
+    "group": "structures",
+    "hotspot": "limbic",
+    "name": {
+      "zh": "邊緣系統",
+      "en": "Limbic system"
+    },
+    "short": {
+      "zh": "邊緣",
+      "en": "Limbic"
+    },
+    "question": {
+      "zh": "在海馬與杏仁核之間，探索一條與情緒相關的代表性連結。",
+      "en": "Explore a selected amygdala–hippocampal connection in its anatomical context."
+    },
+    "route": {
+      "zh": "杏仁核 → 腹側海馬鄰域",
+      "en": "Amygdala → ventral hippocampal neighborhood"
+    },
+    "fact": {
+      "zh": "vCA1 是腹側 CA1 的近似標記；全 CA1 網格不是腹側亞區分割。不同細胞群可能產生不同情緒效應。",
+      "en": "vCA1 is an approximate ventral CA1 marker, not a segmented subregion. Different cell populations can have different behavioral effects."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  },
+  {
+    "slug": "pain",
+    "src": "P56/pathway_meshes/pain/mouse_pain_pathway_3d.html",
+    "accent": "#d47c76",
+    "group": "output",
+    "hotspot": "pain",
+    "name": {
+      "zh": "疼痛與調節系統",
+      "en": "Pain and modulation"
+    },
+    "short": {
+      "zh": "疼痛",
+      "en": "Pain"
+    },
+    "question": {
+      "zh": "分開看上行情緒成分與下行調節，不把疼痛縮成單一路線。",
+      "en": "Separate an ascending affective component from descending modulation."
+    },
+    "route": {
+      "zh": "橋臂核 → 中央杏仁核 / PAG → RVM 鄰域",
+      "en": "Parabrachial → central amygdala / PAG → RVM neighborhood"
+    },
+    "fact": {
+      "zh": "RVM 以中縫大核附近的示意標記呈現，兩者不等同；脊髓與周邊傳入未繪製。下行調節不一定是抑制。",
+      "en": "RVM is approximated near raphe magnus and is not identical to it. Spinal/peripheral stages are omitted; descending modulation is not uniformly inhibitory."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  },
+  {
+    "slug": "sleep",
+    "src": "P56/pathway_meshes/sleep/mouse_sleep_pathway_3d.html",
+    "accent": "#8f9fd2",
+    "group": "structures",
+    "hotspot": "sleep",
+    "name": {
+      "zh": "睡眠與覺醒系統",
+      "en": "Sleep and wakefulness"
+    },
+    "short": {
+      "zh": "睡眠",
+      "en": "Sleep"
+    },
+    "question": {
+      "zh": "比較兩組研究支持的調節連結：食慾素與藍斑，以及視前區與結節乳頭核。",
+      "en": "Compare two studied links: orexin–locus coeruleus and preoptic–tuberomammillary signaling."
+    },
+    "route": {
+      "zh": "食慾素鄰域 → 藍斑 / 視前區 → 結節乳頭核（抑制）",
+      "en": "Orexin neighborhood → locus coeruleus / Preoptic → tuberomammillary (inhibitory)"
+    },
+    "fact": {
+      "zh": "POA 與食慾素細胞群只作近似定位；整個 VLPO 或外側下視丘不等於這些細胞群。未涵蓋全部 REM／NREM 控制。",
+      "en": "POA and orexin populations are approximate markers, not entire VLPO or LHA regions. This is not the complete REM/NREM control network."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  },
+  {
+    "slug": "autonomic",
+    "src": "P56/pathway_meshes/autonomic/mouse_autonomic_pathway_3d.html",
+    "accent": "#c6ab68",
+    "group": "output",
+    "hotspot": "autonomic",
+    "name": {
+      "zh": "自律神經系統",
+      "en": "Autonomic system"
+    },
+    "short": {
+      "zh": "自律",
+      "en": "Autonomic"
+    },
+    "question": {
+      "zh": "觀察下視丘與背側延髓之間，和內臟調節相關的代表性連結。",
+      "en": "Explore selected hypothalamic and dorsal medullary connections related to visceral regulation."
+    },
+    "route": {
+      "zh": "PVH → 孤束核 / 孤束核 → PVH / PVH → 背側迷走鄰域",
+      "en": "PVH → solitary nucleus / Solitary nucleus → PVH / PVH → dorsal vagal neighborhood"
+    },
+    "fact": {
+      "zh": "背側迷走複合體以鄰域標記呈現；不宣稱所有投射單獨終止在 DMX。周邊器官、交感鏈與反射細節未建模。",
+      "en": "The dorsal vagal complex is a neighborhood marker, not proof of isolated DMX targeting. Peripheral organs, sympathetic chain and reflex details are not modeled."
+    },
+    "source": "Allen CCFv3 · mouse studies"
+  }
+]

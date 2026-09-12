@@ -12,6 +12,15 @@ is the per-task detail. Check both.
 
 ## Current task
 
+Idle. All merges below are complete and pushed. One item is not yet
+actioned: DeepSeek's audit of the nine system pages
+(`.agents/dp_result_nine_systems_audit.md`) found real issues, most
+notably human-specific "head shell" wording live on the mouse pages —
+see `.agents/current_task.md` for the prioritized list. Nobody has
+picked this up yet.
+
+## Previous task
+
 Reconciling two independently-developed lines of mouse-atlas work
 (connectivity/stimulation explorer + nine new adult systems) that had
 diverged across two separate local clones. See handoff log below for the
@@ -144,3 +153,67 @@ project's git-safety rules), then decide whether to merge that branch to
 `main` or open a PR. This `AI_STATE.md` file itself, plus `CLAUDE.md` and
 the `AGENTS.md` addition below, are being added specifically so this
 divergence incident cannot repeat silently.
+
+---
+
+### 2026-09-12 (later same day) - Claude Code
+
+Working directory: all three known clones/worktrees (see the list above).
+
+Role: Implementation / Reconciliation
+
+Plan: on explicit request, commit and push the connectivity-explorer
+work; add hover tooltips on 3D connection tubes and an always-visible
+Start CTA for the running-wheel behavior (user-requested UX fixes);
+prepare the repo for open-sourcing (LICENSE, a second
+`core.autocrlf`-corruption site this incident's own `.gitattributes`
+fix had missed, extracting `mouse_connectivity.py`'s ~1,400-line
+embedded JS to its own file for readability).
+
+Files changed: see commits `da369cc`, `48d2f54`, `c95c62c` on `main`.
+
+**A second near-miss, same root cause as the incident above:** pushing
+this work surfaced that the second clone
+(`K:\my-code-project\notebooklm\mouse brain`) had *more* uncommitted
+work nobody else's session knew about — a completed, never-integrated
+DeepSeek read-only audit of the nine system pages
+(`.agents/dp_result.md` + an edited `.agents/current_task.md`). A
+naive `git push`/force-merge from another clone would have silently
+destroyed it. It also collided at the filename level: an unrelated,
+already-committed Phase 3 result already lived at the generic path
+`.agents/dp_result.md`, so the incoming merge and the audit's local
+file were two *different* documents fighting over one path (an add/add
+conflict, not a false alarm). Resolved by committing the audit first
+(commit `dc2bf9a`), then a real (non-fast-forward) merge splitting the
+two documents into `.agents/dp_result.md` (kept as the Phase 3 record)
+and `.agents/dp_result_nine_systems_audit.md` (the audit, new), and
+hand-writing a merged `.agents/current_task.md` (merge commit
+`d16f13d`) — see that file for what the audit actually found.
+
+Commands run: `git commit`/`fetch`/`merge --ff-only`/`push` across all
+three clones; a real `git merge origin/main` (not `--ff-only`) in the
+clone with local changes, conflict resolution by hand for
+`.agents/current_task.md` and `.agents/dp_result.md`; `pytest tests/`
+in each clone after copying the gitignored
+`mouse/data/cache/P56/connectivity/` fetch cache into whichever clone
+was missing it (68 passed + 9 subtests, every clone); a Playwright pass
+against a locally-served rebuild (CTA, hover tooltips, propagation,
+language toggle) and against live production after deploying.
+
+Result: all three clones converged on `main` @ `d16f13d`, pushed,
+deployed. Nothing lost.
+
+What was verified: full test suite in every clone; live production
+HTTP checks (200 on real paths, 404 on junk paths, no relative-link
+self-nesting); a full Playwright pass on both the local rebuild and
+production.
+
+Remaining issues: the nine-systems audit's findings (see "Current
+task" above) are not yet fixed. `project_tree.txt` keeps reappearing
+untracked at the repo root in every clone (now gitignored going
+forward, but something keeps regenerating it — never identified what).
+
+Recommended next step: action the audit's F3 finding (human-specific
+"head shell" wording on mouse pages) first — it's user-visible, in
+both languages, on nine live pages, and the fix is scoped to
+`site/templates/scene.js`'s explanation text needing a species branch.

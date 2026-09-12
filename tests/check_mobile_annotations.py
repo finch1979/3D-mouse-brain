@@ -90,7 +90,13 @@ async def check(base, routes, screenshots, all_routes):
         await wide.set_viewport_size({'width':1440,'height':900})
         await expect(wide.locator('.na-callout:visible').first).to_be_visible()
         print('PASS desktop labels and responsive default restoration', flush=True)
+        await mobile.close()
+        await desktop.close()
         for width, height in [(320,568), (390,700), (740,360), (1440,900)]:
+            await browser.close()
+            browser = await playwright.chromium.launch(args=[
+                '--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
+            ])
             context = await browser.new_context(viewport={'width':width,'height':height},
                                                 has_touch=width<=760, is_mobile=width<=760)
             audit = await context.new_page()

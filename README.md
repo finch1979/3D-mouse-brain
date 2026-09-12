@@ -71,7 +71,11 @@ resulting `.html` file directly in a browser.
 
 This repository's source code (the `fetch`/`build`/`render` pipelines, the
 `site/` assembler, and every test and script) is licensed under the
-[GNU General Public License v3.0](LICENSE).
+[GNU Affero General Public License v3.0](LICENSE) (`AGPL-3.0-only`).
+
+If you modify this code and make the modified version available to users over
+a computer network, AGPL-3.0 requires those users to be offered access to the
+Corresponding Source of that modified version.
 
 That covers the code, not everything the code produces or embeds:
 
@@ -82,5 +86,5 @@ That covers the code, not everything the code produces or embeds:
   when reusing a generated viewer's content.
 - **Vendored third-party code** under `web/lib/` (three.js, OrbitControls)
   and `external/brainglobe-atlasapi/` keeps its own upstream license
-  (MIT and BSD-3-Clause respectively); this repo's GPL-3.0 does not
+  (MIT and BSD-3-Clause respectively); this repo's AGPL-3.0 license does not
   relicense them.

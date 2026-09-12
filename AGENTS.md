@@ -40,3 +40,32 @@ Conventions for anyone (human or agent) adding to this repo.
   candidates (cochlear nucleus, medial geniculate via FreeSurfer, inferior
   colliculus/superior olivary complex via the Bianciardi lab atlas) were
   already investigated and ruled out as impractical in this environment.
+
+## Multi-agent coordination (Two Brains protocol)
+
+This repo is worked on by more than one AI agent (Claude Code, Codex,
+others), sometimes from **more than one independent local clone at once**
+— not just git worktrees of one clone, but genuinely separate `.git`
+checkouts. On 2026-09-12 this caused a real incident: a "nine evidence-
+backed adult systems" feature was built and committed on `main` in a
+second clone that nobody else's session knew about, and its commits sat
+unpushed for an unknown time while a different agent, in a different
+clone, branched off the older `main` for unrelated work. Production ended
+up running content neither clone's checkout matched. Full account in
+`AI_STATE.md`'s handoff log.
+
+Rules, binding on every agent:
+
+1. **Read `AI_STATE.md` before any work.** It lists every known clone of
+   this repo and the current task/owner/locked files.
+2. Before creating a new branch or worktree, confirm your clone is not
+   behind `origin/main` (`git fetch && git log origin/main..main` and
+   `..origin/main`), and check `AI_STATE.md`'s clone list for anything you
+   don't recognize.
+3. Write a plan entry to `AI_STATE.md` (or the active `.agents/current_task.md`)
+   before editing, and a result entry after — see `AI_STATE.md` for the
+   exact template.
+4. Don't let finished work sit unpushed in a local-only clone indefinitely
+   — that is precisely the failure mode above. Push (with the human's
+   go-ahead) once work is stable.
+5. Full protocol, role split, and risk levels: see `CLAUDE.md`.

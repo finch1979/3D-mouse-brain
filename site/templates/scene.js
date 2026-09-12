@@ -4,7 +4,9 @@
   // Presentation only: never edit atlas buffers, coordinates or object scales.
   const container = renderer.domElement.parentElement;
   const svgNS = 'http://www.w3.org/2000/svg';
-  const state = {shell:32, labels:'smart', selected:null, preset:'overview'};
+  const mobileView = window.matchMedia('(max-width:760px)');
+  const state = {shell:32, labels:mobileView.matches ? 'off' : 'smart', selected:null, preset:'overview'};
+  let labelsChosen = false;
   const originalSprites = [];
   const root = meshes.root;
   const skull = meshes.skull;
@@ -107,6 +109,15 @@
   make('div','na-stage-kicker',caption).textContent='ANATOMICAL VIEW / 01';
   const stageTitle = make('div','na-stage-title',caption);
   const stageSub = make('div','na-stage-sub',caption);
+  const mobileAnnotations = make('button','na-mobile-annotations',caption);
+  mobileAnnotations.type='button';
+  mobileAnnotations.setAttribute('aria-controls','naSceneOverlay');
+  mobileAnnotations.addEventListener('click',()=>{
+    labelsChosen=true;
+    state.labels=state.labels==='off' ? 'smart' : 'off';
+    if(state.labels==='off')select(null);
+    syncControls();update(true);
+  });
   const orientation = make('div',null,overlay); orientation.id='naOrientation';
   const compass = svg('svg',orientation,{viewBox:'0 0 80 70','aria-hidden':'true'});
   const axisDirections = axes.length ? axes.filter(axis=>axis.key !== 'posterior').map(axis=>({
@@ -226,7 +237,7 @@
   const labelButtons={};
   ['smart','all','off'].forEach(mode=>{
     const button=make('button',null,labelModes);button.type='button';labelButtons[mode]=button;
-    button.addEventListener('click',()=>{state.labels=mode;syncControls();update(true);});
+    button.addEventListener('click',()=>{labelsChosen=true;state.labels=mode;if(mode==='off')select(null);syncControls();update(true);});
   });
   const explanation=make('p','na-layer-explanation',display);
   const nodeList=make('div','na-node-list');
@@ -243,12 +254,15 @@
     Object.entries(presetButtons).forEach(([key,button])=>{button.classList.toggle('active',key===state.preset);button.setAttribute('aria-pressed',String(key===state.preset));});
     Object.entries(labelButtons).forEach(([key,button])=>{button.classList.toggle('active',key===state.labels);button.setAttribute('aria-pressed',String(key===state.labels));});
     setShell(state.shell);
+    mobileAnnotations.textContent=state.labels==='off' ? text('顯示節點','Show nodes') : text('收起節點','Hide nodes');
+    mobileAnnotations.setAttribute('aria-pressed',String(state.labels!=='off'));
   }
   let previousLanguage;
   function translate() {
     previousLanguage=chinese();
     stageTitle.textContent=text('結構與訊號的空間關係','Structure, space & signal');
-    stageSub.textContent=text('拖曳旋轉 · 點選標註查看節點','Drag to rotate · Select an annotation');
+    stageSub.textContent=mobileView.matches ? text('拖曳旋轉 · 雙指縮放','Drag to rotate · Pinch to zoom')
+      : text('拖曳旋轉 · 點選標註查看節點','Drag to rotate · Select an annotation');
     orientationCaption.textContent=text('解剖方向','ORIENTATION');
     orientation.title=text('A 前方 · S 上方 · R 右側（有標示時）','A anterior · S superior · R right (when shown)');
     displayHeading.textContent=text('圖層呈現','Anatomical display');
@@ -265,11 +279,14 @@
     detailClose.setAttribute('aria-label',text('清除節點選取','Clear node selection'));
     entries.forEach(entry=>{
       entry.name.textContent=label(entry);entry.meta.textContent=kind(entry);
+      entry.button.setAttribute('aria-label',entry.number+' · '+label(entry));
       entry.button.title=label(entry)+' · '+kind(entry);entry.listName.textContent=label(entry);
     });
     if (state.selected) select(state.selected);
+    syncControls();
   }
-  function mount() {
+    function mount() {
+      document.getElementById('naPane-guide')?.appendChild(stageNote);
     const pane=document.getElementById('naPane-layers');
     if (pane && display.parentElement!==pane) {pane.prepend(display);pane.appendChild(nodeList);}
   }
@@ -403,7 +420,7 @@
     lastUpdate=now;mount();
     if (previousLanguage!==chinese()) translate();
     const width=container.clientWidth,height=container.clientHeight;
-    const mobile=width<600;
+    const mobile=mobileView.matches;
     scene.updateMatrixWorld(true);camera.updateMatrixWorld(true);
     surfacePicker.refresh(width,height);
     softLight.position.copy(camera.position).addScaledVector(camera.up,extent*.7);
@@ -461,14 +478,15 @@
       });
     }
     if (mobile) {
-      // Mobile labels occupy a bottom annotation strip, leaving the model open.
-      chosen.sort((a,b)=>a.index-b.index).forEach((entry,index)=>{
-        const x=16,y=height-92-(chosen.length-index)*50;
-        entry.button.hidden=false;entry.button.style.left=x+'px';entry.button.style.top=y+'px';entry.button.style.width=(width-32)+'px';
-        entry.line.style.display='';entry.dot.style.display='';
-        const endX=Math.max(x+12,Math.min(width-x-12,entry.x));
-        entry.line.setAttribute('d',`M${entry.x.toFixed(1)} ${entry.y.toFixed(1)} L${endX.toFixed(1)} ${y}`);
-        entry.dot.setAttribute('cx',entry.x);entry.dot.setAttribute('cy',entry.y);
+      // Opt-in, compact numbered targets centered on the actual projected point.
+      // Never put full-width cards across the model or shift anatomical anchors.
+      const placed=[];
+      chosen.sort((a,b)=>(b===state.selected)-(a===state.selected)||a.index-b.index).forEach(entry=>{
+        const x=entry.x-22,y=entry.y-22;
+        if(x<4 || x+44>width-4 || y<90 || y+44>height-48)return;
+        if(placed.some(other=>Math.abs(other.x-x)<48 && Math.abs(other.y-y)<48))return;
+        placed.push({x,y});
+        entry.button.hidden=false;entry.button.style.left=x+'px';entry.button.style.top=y+'px';entry.button.style.width='44px';
       });
     } else {place(left,true);place(right,false);}
     inverse.copy(camera.quaternion).invert();
@@ -494,6 +512,10 @@
   document.addEventListener('keydown',event=>{if(event.key==='Escape' && state.selected)select(null);});
   document.addEventListener('change',()=>update(true));
   window.addEventListener('resize',()=>update(true));
+  mobileView.addEventListener('change',()=>{
+    if(!labelsChosen)state.labels=mobileView.matches ? 'off' : 'smart';
+    translate();update(true);
+  });
   document.getElementById('langToggle')?.addEventListener('click',()=>{translate();update(true);});
   const scaleToggle=document.getElementById('scaleToggle');
   if(scaleToggle)scaleToggle.checked=true;

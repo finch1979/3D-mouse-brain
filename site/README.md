@@ -137,6 +137,24 @@ with perspective zoom; it is not a universal ruler for every depth in the scene.
 The pain viewer now starts in its existing true-scale mode. Its optional native
 compressed teaching mode remains available, with a visible note and no mm bar.
 
+On phones (up to 760 CSS pixels wide), annotations start hidden so the model
+is unobstructed. "Show nodes" reveals compact numbered markers with 44-pixel
+touch targets; tapping one opens a dismissible detail card. Full names remain
+available in the layer panel's node index. Markers stay at their projected
+anatomical points, and colliding markers are omitted. Desktop callouts keep
+their existing layout. An explicit annotation choice survives resizing;
+otherwise the default follows the viewport.
+
+The schematic-node notice and proportions note live in the reading guide,
+instead of overlaying the brain. Their bilingual explanations remain available
+when the guide is opened.
+
+Run the mobile regression against an assembled site with:
+
+```powershell
+rtk proxy py -3.13 tests/check_mobile_annotations.py --site site/dist
+```
+
 All 101 atlas regions across 19 3D viewers retain byte-identical position, normal,
 and triangle-index payloads. No atlas vertices or anatomical transforms are
 changed by the styling layer. Browser checks cover all 19 renderers, annotation

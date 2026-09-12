@@ -378,7 +378,7 @@ def viewer_upgrade() -> str:
   const note = document.getElementById('txtLegendNote');
   let evidence = null;
   if (note && /schematic|示意/.test(note.textContent)) {
-    evidence = element('div','naEvidence'); document.body.appendChild(evidence);
+    evidence = element('div','naEvidence'); panes.guide.appendChild(evidence);
   }
   const canvas = scene.querySelector('canvas');
   function zoom(delta) {

@@ -1,0 +1,3 @@
+# Preserve downloaded Allen OBJ bytes (including source whitespace) so SHA256
+# provenance remains valid on Windows checkouts with core.autocrlf enabled.
+mouse/outputs/P56/mesh/*.obj -text -whitespace

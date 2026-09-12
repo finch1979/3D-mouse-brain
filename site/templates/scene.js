@@ -507,7 +507,16 @@
     const compressed=document.getElementById('scaleToggle')?.checked===false;
     scale.hidden=compressed;
     scaleText.textContent=Number(mm.toPrecision(3))+' mm · '+text('焦平面參考尺','at focus plane');
-    stageNote.textContent=compressed ? text('目前為壓縮示意模式','COMPRESSED TEACHING VIEW') : text('原始網格比例 · 連線為示意','ATLAS PROPORTIONS · SCHEMATIC CONNECTIONS');
+    // The pathway pages draw schematic tubes, so their stage note says so. A
+    // page whose connections are measured (the connectivity explorer) can set
+    // window.NEURO_CONNECTIONS_LABEL to override it, as a string or a
+    // bilingual function (isChinese) => label. Absent the override the text
+    // below is unchanged, so every existing viewer keeps its exact copy.
+    const connLabel=typeof window.NEURO_CONNECTIONS_LABEL==='function'
+      ? window.NEURO_CONNECTIONS_LABEL(chinese())
+      : window.NEURO_CONNECTIONS_LABEL;
+    stageNote.textContent=compressed ? text('目前為壓縮示意模式','COMPRESSED TEACHING VIEW')
+      : (connLabel || text('原始網格比例 · 連線為示意','ATLAS PROPORTIONS · SCHEMATIC CONNECTIONS'));
   }
   document.addEventListener('keydown',event=>{if(event.key==='Escape' && state.selected)select(null);});
   document.addEventListener('change',()=>update(true));

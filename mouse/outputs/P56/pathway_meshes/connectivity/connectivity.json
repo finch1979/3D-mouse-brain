@@ -1,0 +1,1765 @@
+{
+  "schema_version": "1.0.0",
+  "provenance": {
+    "dataset": "Allen Mouse Brain Connectivity Atlas - region projection graph",
+    "version": "product-5-ccfv3",
+    "source": "http://api.brain-map.org/api/v2/data/query.json (model::ProjectionStructureUnionize, products[id$eq5])",
+    "download_date": "2026-09-12",
+    "generated_utc": "2026-09-12T06:58:00Z",
+    "atlas_space": "Allen Mouse CCFv3 (2017)",
+    "age": "P56 adult",
+    "normalization": "log1p(raw)/log1p(max_raw), clipped [0,1]; raw = mean normalized projection volume, hemisphere=both, edges below 0.002 dropped, top 8 targets per source",
+    "build_version": "mouse_connectivity/0.1.0",
+    "license": "Allen Institute - free educational use with citation"
+  },
+  "nodes": [
+    {
+      "acronym": "VISp",
+      "structure_id": 385,
+      "name_en": "Primary visual area",
+      "name_zh": "初級視覺區",
+      "color": "5A8FE0",
+      "pos_um": [
+        2500.180919026051,
+        -2525.4602067383917,
+        2598.8990594563993
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "visual"
+    },
+    {
+      "acronym": "LGd",
+      "structure_id": 170,
+      "name_en": "Dorsal part of the lateral geniculate complex",
+      "name_zh": "背側外側膝狀體",
+      "color": "7FB2F0",
+      "pos_um": [
+        2296.0632044854874,
+        -937.944005672824,
+        625.190356200528
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "visual"
+    },
+    {
+      "acronym": "SCs",
+      "structure_id": 302,
+      "name_en": "Superior colliculus, sensory related",
+      "name_zh": "上丘感覺相關層",
+      "color": "5AC0C0",
+      "pos_um": [
+        777.9339536082483,
+        -2620.1373242268037,
+        2169.9358556701022
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "visual"
+    },
+    {
+      "acronym": "LP",
+      "structure_id": 218,
+      "name_en": "Lateral posterior nucleus of the thalamus",
+      "name_zh": "丘腦後外側核",
+      "color": "89A7E8",
+      "pos_um": [
+        1585.2310411954763,
+        -908.5124752019383,
+        686.9118174474966
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "visual"
+    },
+    {
+      "acronym": "SSp-bfd",
+      "structure_id": 329,
+      "name_en": "Primary somatosensory area, barrel field",
+      "name_zh": "初級體感區桶狀區",
+      "color": "B08FD9",
+      "pos_um": [
+        3359.0815443038027,
+        -186.87797025316453,
+        2065.855128481008
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "somatosensory"
+    },
+    {
+      "acronym": "VPM",
+      "structure_id": 733,
+      "name_en": "Ventral posteromedial nucleus of the thalamus",
+      "name_zh": "丘腦腹後內側核",
+      "color": "C9A6E6",
+      "pos_um": [
+        1756.289298449613,
+        -498.39066395348846,
+        -306.25405426356645
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "somatosensory"
+    },
+    {
+      "acronym": "PSV",
+      "structure_id": 7,
+      "name_en": "Principal sensory nucleus of the trigeminal",
+      "name_zh": "三叉神經主感覺核",
+      "color": "9B7BC4",
+      "pos_um": [
+        2063.6473379446657,
+        -3589.722419169962,
+        -1775.036541501975
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "somatosensory"
+    },
+    {
+      "acronym": "SPVC",
+      "structure_id": 429,
+      "name_en": "Spinal nucleus of the trigeminal, caudal part",
+      "name_zh": "三叉神經脊髓核尾側部",
+      "color": "8468B0",
+      "pos_um": [
+        1656.0418003095979,
+        -6238.640236996915,
+        -2037.928699690401
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "somatosensory"
+    },
+    {
+      "acronym": "MOB",
+      "structure_id": 507,
+      "name_en": "Main olfactory bulb",
+      "name_zh": "主嗅球",
+      "color": "8FBF7F",
+      "pos_um": [
+        923.008731978136,
+        5053.046062196791,
+        -551.1202886914934
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "olfactory"
+    },
+    {
+      "acronym": "AON",
+      "structure_id": 159,
+      "name_en": "Anterior olfactory nucleus",
+      "name_zh": "前嗅核",
+      "color": "A9D19A",
+      "pos_um": [
+        1002.0693888888882,
+        3724.0778528714136,
+        -1333.6136267166062
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "olfactory"
+    },
+    {
+      "acronym": "PIR",
+      "structure_id": 961,
+      "name_en": "Piriform area",
+      "name_zh": "梨狀皮質",
+      "color": "6FA05F",
+      "pos_um": [
+        3139.5697895362696,
+        1253.071829548159,
+        -2046.0606747919153
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "olfactory"
+    },
+    {
+      "acronym": "MOp",
+      "structure_id": 985,
+      "name_en": "Primary motor area",
+      "name_zh": "初級運動區",
+      "color": "E8C46A",
+      "pos_um": [
+        2083.9587201533413,
+        2151.415511445787,
+        1543.113956918586
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "motor"
+    },
+    {
+      "acronym": "MOs",
+      "structure_id": 993,
+      "name_en": "Secondary motor area",
+      "name_zh": "次級運動區",
+      "color": "D9A94E",
+      "pos_um": [
+        1298.0224425142158,
+        2754.7804690145335,
+        1703.2133126974088
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "motor"
+    },
+    {
+      "acronym": "RSP",
+      "structure_id": 254,
+      "name_en": "Retrosplenial area",
+      "name_zh": "壓後皮質區",
+      "color": "1AA698",
+      "pos_um": [
+        1106.550016981133,
+        -1651.9411216981146,
+        2609.6751943396275
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "association"
+    },
+    {
+      "acronym": "CA1",
+      "structure_id": 382,
+      "name_en": "Field CA1",
+      "name_zh": "海馬 CA1 區",
+      "color": "E88B6A",
+      "pos_um": [
+        2562.873135499211,
+        -1391.3609862915969,
+        616.6428478605372
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "hippocampal"
+    },
+    {
+      "acronym": "CA3",
+      "structure_id": 463,
+      "name_en": "Field CA3",
+      "name_zh": "海馬 CA3 區",
+      "color": "D96F4E",
+      "pos_um": [
+        2303.275871125614,
+        -998.6176517944525,
+        138.2404608482875
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "hippocampal"
+    },
+    {
+      "acronym": "DG",
+      "structure_id": 726,
+      "name_en": "Dentate gyrus",
+      "name_zh": "齒狀回",
+      "color": "F0A98C",
+      "pos_um": [
+        2059.0308437383915,
+        -1390.4460502972868,
+        193.41226867335607
+      ],
+      "evidence_class": "ATLAS-DERIVED",
+      "system": "hippocampal"
+    }
+  ],
+  "edges": [
+    {
+      "source": "CA3",
+      "target": "CA1",
+      "raw_weight": 12.555570557029485,
+      "normalized_weight": 1.0,
+      "units": "mean normalized projection volume",
+      "n_experiments": 31,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 31 injection experiment(s).",
+      "note_zh": "31 次注射實驗的平均值。"
+    },
+    {
+      "source": "LGd",
+      "target": "VISp",
+      "raw_weight": 4.078273615295698,
+      "normalized_weight": 0.6233592437293547,
+      "units": "mean normalized projection volume",
+      "n_experiments": 19,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 19 injection experiment(s).",
+      "note_zh": "19 次注射實驗的平均值。"
+    },
+    {
+      "source": "AON",
+      "target": "MOB",
+      "raw_weight": 3.4816635534805513,
+      "normalized_weight": 0.5754164885406269,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOp",
+      "target": "MOs",
+      "raw_weight": 1.8965266784569021,
+      "normalized_weight": 0.4079765658362285,
+      "units": "mean normalized projection volume",
+      "n_experiments": 32,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 32 injection experiment(s).",
+      "note_zh": "32 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOs",
+      "target": "MOp",
+      "raw_weight": 1.8143891428211694,
+      "normalized_weight": 0.396941153991096,
+      "units": "mean normalized projection volume",
+      "n_experiments": 107,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 107 injection experiment(s).",
+      "note_zh": "107 次注射實驗的平均值。"
+    },
+    {
+      "source": "LP",
+      "target": "VISp",
+      "raw_weight": 1.6693840802731088,
+      "normalized_weight": 0.37664902485131446,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "DG",
+      "target": "CA3",
+      "raw_weight": 1.6020526812988096,
+      "normalized_weight": 0.36684882472819763,
+      "units": "mean normalized projection volume",
+      "n_experiments": 44,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 44 injection experiment(s).",
+      "note_zh": "44 次注射實驗的平均值。"
+    },
+    {
+      "source": "AON",
+      "target": "PIR",
+      "raw_weight": 1.5589908108859836,
+      "normalized_weight": 0.3604472305866532,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA3",
+      "target": "DG",
+      "raw_weight": 1.343706476467967,
+      "normalized_weight": 0.32673562726869115,
+      "units": "mean normalized projection volume",
+      "n_experiments": 31,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 31 injection experiment(s).",
+      "note_zh": "31 次注射實驗的平均值。"
+    },
+    {
+      "source": "DG",
+      "target": "CA1",
+      "raw_weight": 1.27887127650536,
+      "normalized_weight": 0.3159740036655812,
+      "units": "mean normalized projection volume",
+      "n_experiments": 44,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 44 injection experiment(s).",
+      "note_zh": "44 次注射實驗的平均值。"
+    },
+    {
+      "source": "PIR",
+      "target": "AON",
+      "raw_weight": 1.1604994376836164,
+      "normalized_weight": 0.2955117895548288,
+      "units": "mean normalized projection volume",
+      "n_experiments": 24,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 24 injection experiment(s).",
+      "note_zh": "24 次注射實驗的平均值。"
+    },
+    {
+      "source": "PIR",
+      "target": "MOB",
+      "raw_weight": 0.866613274012595,
+      "normalized_weight": 0.23942239001078797,
+      "units": "mean normalized projection volume",
+      "n_experiments": 24,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 24 injection experiment(s).",
+      "note_zh": "24 次注射實驗的平均值。"
+    },
+    {
+      "source": "VPM",
+      "target": "SSp-bfd",
+      "raw_weight": 0.8514703697815463,
+      "normalized_weight": 0.2362976412184184,
+      "units": "mean normalized projection volume",
+      "n_experiments": 9,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 9 injection experiment(s).",
+      "note_zh": "9 次注射實驗的平均值。"
+    },
+    {
+      "source": "LP",
+      "target": "RSP",
+      "raw_weight": 0.7849169107596082,
+      "normalized_weight": 0.22225425990834052,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "SSp-bfd",
+      "target": "MOs",
+      "raw_weight": 0.7526830022869281,
+      "normalized_weight": 0.21526326540162002,
+      "units": "mean normalized projection volume",
+      "n_experiments": 51,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 51 injection experiment(s).",
+      "note_zh": "51 次注射實驗的平均值。"
+    },
+    {
+      "source": "LP",
+      "target": "MOs",
+      "raw_weight": 0.5892355058737226,
+      "normalized_weight": 0.17770965083653,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "RSP",
+      "target": "VISp",
+      "raw_weight": 0.5604956852888991,
+      "normalized_weight": 0.17070888902091383,
+      "units": "mean normalized projection volume",
+      "n_experiments": 53,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 53 injection experiment(s).",
+      "note_zh": "53 次注射實驗的平均值。"
+    },
+    {
+      "source": "RSP",
+      "target": "MOs",
+      "raw_weight": 0.5320966699925614,
+      "normalized_weight": 0.16366332932407007,
+      "units": "mean normalized projection volume",
+      "n_experiments": 53,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 53 injection experiment(s).",
+      "note_zh": "53 次注射實驗的平均值。"
+    },
+    {
+      "source": "SSp-bfd",
+      "target": "MOp",
+      "raw_weight": 0.5281441510717318,
+      "normalized_weight": 0.1626724031894763,
+      "units": "mean normalized projection volume",
+      "n_experiments": 51,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 51 injection experiment(s).",
+      "note_zh": "51 次注射實驗的平均值。"
+    },
+    {
+      "source": "VISp",
+      "target": "RSP",
+      "raw_weight": 0.5234423786027885,
+      "normalized_weight": 0.16149029030583664,
+      "units": "mean normalized projection volume",
+      "n_experiments": 139,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 139 injection experiment(s).",
+      "note_zh": "139 次注射實驗的平均值。"
+    },
+    {
+      "source": "SPVC",
+      "target": "PSV",
+      "raw_weight": 0.4932189828035254,
+      "normalized_weight": 0.15380334276839025,
+      "units": "mean normalized projection volume",
+      "n_experiments": 10,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 10 injection experiment(s).",
+      "note_zh": "10 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA1",
+      "target": "CA3",
+      "raw_weight": 0.4414624743595095,
+      "normalized_weight": 0.1402710394701229,
+      "units": "mean normalized projection volume",
+      "n_experiments": 33,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 33 injection experiment(s).",
+      "note_zh": "33 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOB",
+      "target": "PIR",
+      "raw_weight": 0.43619873396625763,
+      "normalized_weight": 0.13886765078318472,
+      "units": "mean normalized projection volume",
+      "n_experiments": 13,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 13 injection experiment(s).",
+      "note_zh": "13 次注射實驗的平均值。"
+    },
+    {
+      "source": "LGd",
+      "target": "RSP",
+      "raw_weight": 0.36862510914196717,
+      "normalized_weight": 0.12038014346779773,
+      "units": "mean normalized projection volume",
+      "n_experiments": 19,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 19 injection experiment(s).",
+      "note_zh": "19 次注射實驗的平均值。"
+    },
+    {
+      "source": "LP",
+      "target": "DG",
+      "raw_weight": 0.35790026787801693,
+      "normalized_weight": 0.11736223366187516,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOB",
+      "target": "AON",
+      "raw_weight": 0.3460643734199667,
+      "normalized_weight": 0.11400388689805598,
+      "units": "mean normalized projection volume",
+      "n_experiments": 13,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 13 injection experiment(s).",
+      "note_zh": "13 次注射實驗的平均值。"
+    },
+    {
+      "source": "LP",
+      "target": "CA1",
+      "raw_weight": 0.3228465905482068,
+      "normalized_weight": 0.10732936283484672,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "LP",
+      "target": "SSp-bfd",
+      "raw_weight": 0.296849959008795,
+      "normalized_weight": 0.09971553530691023,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "PSV",
+      "target": "VPM",
+      "raw_weight": 0.2718509216528002,
+      "normalized_weight": 0.09224853532306515,
+      "units": "mean normalized projection volume",
+      "n_experiments": 4,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 4 injection experiment(s).",
+      "note_zh": "4 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOs",
+      "target": "SSp-bfd",
+      "raw_weight": 0.256528510470479,
+      "normalized_weight": 0.08759896449289199,
+      "units": "mean normalized projection volume",
+      "n_experiments": 107,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 107 injection experiment(s).",
+      "note_zh": "107 次注射實驗的平均值。"
+    },
+    {
+      "source": "SCs",
+      "target": "LP",
+      "raw_weight": 0.2519691106843212,
+      "normalized_weight": 0.08620446889781347,
+      "units": "mean normalized projection volume",
+      "n_experiments": 8,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 8 injection experiment(s).",
+      "note_zh": "8 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA1",
+      "target": "AON",
+      "raw_weight": 0.24084831856343816,
+      "normalized_weight": 0.08278175326271488,
+      "units": "mean normalized projection volume",
+      "n_experiments": 33,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 33 injection experiment(s).",
+      "note_zh": "33 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOp",
+      "target": "VPM",
+      "raw_weight": 0.2383298817546066,
+      "normalized_weight": 0.08200237883719479,
+      "units": "mean normalized projection volume",
+      "n_experiments": 32,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 32 injection experiment(s).",
+      "note_zh": "32 次注射實驗的平均值。"
+    },
+    {
+      "source": "SSp-bfd",
+      "target": "VPM",
+      "raw_weight": 0.23700026687531156,
+      "normalized_weight": 0.08159026664385415,
+      "units": "mean normalized projection volume",
+      "n_experiments": 51,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 51 injection experiment(s).",
+      "note_zh": "51 次注射實驗的平均值。"
+    },
+    {
+      "source": "VPM",
+      "target": "MOp",
+      "raw_weight": 0.23127890647796112,
+      "normalized_weight": 0.079811870565324,
+      "units": "mean normalized projection volume",
+      "n_experiments": 9,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 9 injection experiment(s).",
+      "note_zh": "9 次注射實驗的平均值。"
+    },
+    {
+      "source": "VISp",
+      "target": "LGd",
+      "raw_weight": 0.22460417126157575,
+      "normalized_weight": 0.077726659060786,
+      "units": "mean normalized projection volume",
+      "n_experiments": 139,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 139 injection experiment(s).",
+      "note_zh": "139 次注射實驗的平均值。"
+    },
+    {
+      "source": "LGd",
+      "target": "SSp-bfd",
+      "raw_weight": 0.22096677544474388,
+      "normalized_weight": 0.07658553383922569,
+      "units": "mean normalized projection volume",
+      "n_experiments": 19,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 19 injection experiment(s).",
+      "note_zh": "19 次注射實驗的平均值。"
+    },
+    {
+      "source": "SPVC",
+      "target": "SSp-bfd",
+      "raw_weight": 0.21567940840616706,
+      "normalized_weight": 0.07492070206145272,
+      "units": "mean normalized projection volume",
+      "n_experiments": 10,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 10 injection experiment(s).",
+      "note_zh": "10 次注射實驗的平均值。"
+    },
+    {
+      "source": "LP",
+      "target": "MOp",
+      "raw_weight": 0.21310332370769114,
+      "normalized_weight": 0.07410694584019444,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "VISp",
+      "target": "MOp",
+      "raw_weight": 0.20327087572497712,
+      "normalized_weight": 0.0709850202183484,
+      "units": "mean normalized projection volume",
+      "n_experiments": 139,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 139 injection experiment(s).",
+      "note_zh": "139 次注射實驗的平均值。"
+    },
+    {
+      "source": "VISp",
+      "target": "LP",
+      "raw_weight": 0.18782423074631405,
+      "normalized_weight": 0.06602862369888776,
+      "units": "mean normalized projection volume",
+      "n_experiments": 139,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 139 injection experiment(s).",
+      "note_zh": "139 次注射實驗的平均值。"
+    },
+    {
+      "source": "LGd",
+      "target": "LP",
+      "raw_weight": 0.1758634062659319,
+      "normalized_weight": 0.06214624917863755,
+      "units": "mean normalized projection volume",
+      "n_experiments": 19,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 19 injection experiment(s).",
+      "note_zh": "19 次注射實驗的平均值。"
+    },
+    {
+      "source": "SPVC",
+      "target": "MOB",
+      "raw_weight": 0.17473934301204402,
+      "normalized_weight": 0.06177936056673738,
+      "units": "mean normalized projection volume",
+      "n_experiments": 10,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 10 injection experiment(s).",
+      "note_zh": "10 次注射實驗的平均值。"
+    },
+    {
+      "source": "LP",
+      "target": "CA3",
+      "raw_weight": 0.17259408037775445,
+      "normalized_weight": 0.06107818222315104,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOp",
+      "target": "SSp-bfd",
+      "raw_weight": 0.1611506256534259,
+      "normalized_weight": 0.05731608531686861,
+      "units": "mean normalized projection volume",
+      "n_experiments": 32,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 32 injection experiment(s).",
+      "note_zh": "32 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA1",
+      "target": "DG",
+      "raw_weight": 0.15621005128704812,
+      "normalized_weight": 0.05568037213690996,
+      "units": "mean normalized projection volume",
+      "n_experiments": 33,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 33 injection experiment(s).",
+      "note_zh": "33 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA1",
+      "target": "RSP",
+      "raw_weight": 0.1531940377052723,
+      "normalized_weight": 0.05467839849535861,
+      "units": "mean normalized projection volume",
+      "n_experiments": 33,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 33 injection experiment(s).",
+      "note_zh": "33 次注射實驗的平均值。"
+    },
+    {
+      "source": "VISp",
+      "target": "SCs",
+      "raw_weight": 0.1525507920677874,
+      "normalized_weight": 0.054464361766605594,
+      "units": "mean normalized projection volume",
+      "n_experiments": 139,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 139 injection experiment(s).",
+      "note_zh": "139 次注射實驗的平均值。"
+    },
+    {
+      "source": "SPVC",
+      "target": "PIR",
+      "raw_weight": 0.15244730031510373,
+      "normalized_weight": 0.05442991425465384,
+      "units": "mean normalized projection volume",
+      "n_experiments": 10,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 10 injection experiment(s).",
+      "note_zh": "10 次注射實驗的平均值。"
+    },
+    {
+      "source": "RSP",
+      "target": "DG",
+      "raw_weight": 0.15187672016807682,
+      "normalized_weight": 0.054239939537760073,
+      "units": "mean normalized projection volume",
+      "n_experiments": 53,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 53 injection experiment(s).",
+      "note_zh": "53 次注射實驗的平均值。"
+    },
+    {
+      "source": "RSP",
+      "target": "MOp",
+      "raw_weight": 0.14909999788011408,
+      "normalized_weight": 0.05331408423095847,
+      "units": "mean normalized projection volume",
+      "n_experiments": 53,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 53 injection experiment(s).",
+      "note_zh": "53 次注射實驗的平均值。"
+    },
+    {
+      "source": "RSP",
+      "target": "SSp-bfd",
+      "raw_weight": 0.14676465583108156,
+      "normalized_weight": 0.052533666631924505,
+      "units": "mean normalized projection volume",
+      "n_experiments": 53,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 53 injection experiment(s).",
+      "note_zh": "53 次注射實驗的平均值。"
+    },
+    {
+      "source": "RSP",
+      "target": "LP",
+      "raw_weight": 0.13715972214710118,
+      "normalized_weight": 0.04930712035479254,
+      "units": "mean normalized projection volume",
+      "n_experiments": 53,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 53 injection experiment(s).",
+      "note_zh": "53 次注射實驗的平均值。"
+    },
+    {
+      "source": "VISp",
+      "target": "SSp-bfd",
+      "raw_weight": 0.13696185725887408,
+      "normalized_weight": 0.04924036628578057,
+      "units": "mean normalized projection volume",
+      "n_experiments": 139,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 139 injection experiment(s).",
+      "note_zh": "139 次注射實驗的平均值。"
+    },
+    {
+      "source": "VISp",
+      "target": "CA1",
+      "raw_weight": 0.13629132053857307,
+      "normalized_weight": 0.049014059561107076,
+      "units": "mean normalized projection volume",
+      "n_experiments": 139,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 139 injection experiment(s).",
+      "note_zh": "139 次注射實驗的平均值。"
+    },
+    {
+      "source": "VISp",
+      "target": "MOs",
+      "raw_weight": 0.13238278224009897,
+      "normalized_weight": 0.04769226069352521,
+      "units": "mean normalized projection volume",
+      "n_experiments": 139,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 139 injection experiment(s).",
+      "note_zh": "139 次注射實驗的平均值。"
+    },
+    {
+      "source": "RSP",
+      "target": "MOB",
+      "raw_weight": 0.12727177127211212,
+      "normalized_weight": 0.04595690625893045,
+      "units": "mean normalized projection volume",
+      "n_experiments": 53,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 53 injection experiment(s).",
+      "note_zh": "53 次注射實驗的平均值。"
+    },
+    {
+      "source": "RSP",
+      "target": "LGd",
+      "raw_weight": 0.11796075399304896,
+      "normalized_weight": 0.04277519338797544,
+      "units": "mean normalized projection volume",
+      "n_experiments": 53,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 53 injection experiment(s).",
+      "note_zh": "53 次注射實驗的平均值。"
+    },
+    {
+      "source": "LGd",
+      "target": "CA3",
+      "raw_weight": 0.11449466529087467,
+      "normalized_weight": 0.041584006472903876,
+      "units": "mean normalized projection volume",
+      "n_experiments": 19,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 19 injection experiment(s).",
+      "note_zh": "19 次注射實驗的平均值。"
+    },
+    {
+      "source": "DG",
+      "target": "RSP",
+      "raw_weight": 0.11065922596679845,
+      "normalized_weight": 0.04026155975773634,
+      "units": "mean normalized projection volume",
+      "n_experiments": 44,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 44 injection experiment(s).",
+      "note_zh": "44 次注射實驗的平均值。"
+    },
+    {
+      "source": "PIR",
+      "target": "MOs",
+      "raw_weight": 0.10842078949304541,
+      "normalized_weight": 0.03948764229494974,
+      "units": "mean normalized projection volume",
+      "n_experiments": 24,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 24 injection experiment(s).",
+      "note_zh": "24 次注射實驗的平均值。"
+    },
+    {
+      "source": "LGd",
+      "target": "CA1",
+      "raw_weight": 0.10669204379154709,
+      "normalized_weight": 0.03888887504844718,
+      "units": "mean normalized projection volume",
+      "n_experiments": 19,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 19 injection experiment(s).",
+      "note_zh": "19 次注射實驗的平均值。"
+    },
+    {
+      "source": "LGd",
+      "target": "DG",
+      "raw_weight": 0.10611586328974887,
+      "normalized_weight": 0.03868910170406243,
+      "units": "mean normalized projection volume",
+      "n_experiments": 19,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 19 injection experiment(s).",
+      "note_zh": "19 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOs",
+      "target": "VPM",
+      "raw_weight": 0.10375626613027669,
+      "normalized_weight": 0.03786989485888374,
+      "units": "mean normalized projection volume",
+      "n_experiments": 107,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 107 injection experiment(s).",
+      "note_zh": "107 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA1",
+      "target": "PIR",
+      "raw_weight": 0.10370467034480055,
+      "normalized_weight": 0.037851962232967,
+      "units": "mean normalized projection volume",
+      "n_experiments": 33,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 33 injection experiment(s).",
+      "note_zh": "33 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOs",
+      "target": "RSP",
+      "raw_weight": 0.1032889756363772,
+      "normalized_weight": 0.03770745283024878,
+      "units": "mean normalized projection volume",
+      "n_experiments": 107,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 107 injection experiment(s).",
+      "note_zh": "107 次注射實驗的平均值。"
+    },
+    {
+      "source": "SPVC",
+      "target": "MOp",
+      "raw_weight": 0.09414054992291583,
+      "normalized_weight": 0.03451329326998232,
+      "units": "mean normalized projection volume",
+      "n_experiments": 10,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 10 injection experiment(s).",
+      "note_zh": "10 次注射實驗的平均值。"
+    },
+    {
+      "source": "SPVC",
+      "target": "MOs",
+      "raw_weight": 0.08706396976458416,
+      "normalized_weight": 0.03202414221477665,
+      "units": "mean normalized projection volume",
+      "n_experiments": 10,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 10 injection experiment(s).",
+      "note_zh": "10 次注射實驗的平均值。"
+    },
+    {
+      "source": "VPM",
+      "target": "MOs",
+      "raw_weight": 0.08527943733685998,
+      "normalized_weight": 0.03139388366017755,
+      "units": "mean normalized projection volume",
+      "n_experiments": 9,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 9 injection experiment(s).",
+      "note_zh": "9 次注射實驗的平均值。"
+    },
+    {
+      "source": "PIR",
+      "target": "DG",
+      "raw_weight": 0.08524171029387007,
+      "normalized_weight": 0.03138054809479832,
+      "units": "mean normalized projection volume",
+      "n_experiments": 24,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 24 injection experiment(s).",
+      "note_zh": "24 次注射實驗的平均值。"
+    },
+    {
+      "source": "VPM",
+      "target": "RSP",
+      "raw_weight": 0.0834646225902767,
+      "normalized_weight": 0.030751866278981292,
+      "units": "mean normalized projection volume",
+      "n_experiments": 9,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 9 injection experiment(s).",
+      "note_zh": "9 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOs",
+      "target": "PIR",
+      "raw_weight": 0.0799949242722628,
+      "normalized_weight": 0.029521410539464298,
+      "units": "mean normalized projection volume",
+      "n_experiments": 107,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 107 injection experiment(s).",
+      "note_zh": "107 次注射實驗的平均值。"
+    },
+    {
+      "source": "LGd",
+      "target": "MOs",
+      "raw_weight": 0.07879515150175447,
+      "normalized_weight": 0.02909501630815005,
+      "units": "mean normalized projection volume",
+      "n_experiments": 19,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 19 injection experiment(s).",
+      "note_zh": "19 次注射實驗的平均值。"
+    },
+    {
+      "source": "SPVC",
+      "target": "DG",
+      "raw_weight": 0.07698810566129163,
+      "normalized_weight": 0.028451903936463813,
+      "units": "mean normalized projection volume",
+      "n_experiments": 10,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 10 injection experiment(s).",
+      "note_zh": "10 次注射實驗的平均值。"
+    },
+    {
+      "source": "VPM",
+      "target": "VISp",
+      "raw_weight": 0.07637912503851874,
+      "normalized_weight": 0.02823492974770676,
+      "units": "mean normalized projection volume",
+      "n_experiments": 9,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 9 injection experiment(s).",
+      "note_zh": "9 次注射實驗的平均值。"
+    },
+    {
+      "source": "PIR",
+      "target": "CA1",
+      "raw_weight": 0.07573964655679212,
+      "normalized_weight": 0.028006957280235424,
+      "units": "mean normalized projection volume",
+      "n_experiments": 24,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 24 injection experiment(s).",
+      "note_zh": "24 次注射實驗的平均值。"
+    },
+    {
+      "source": "PIR",
+      "target": "SSp-bfd",
+      "raw_weight": 0.07555657412307225,
+      "normalized_weight": 0.027941667466552456,
+      "units": "mean normalized projection volume",
+      "n_experiments": 24,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 24 injection experiment(s).",
+      "note_zh": "24 次注射實驗的平均值。"
+    },
+    {
+      "source": "PIR",
+      "target": "MOp",
+      "raw_weight": 0.0732875812217289,
+      "normalized_weight": 0.027131544271973035,
+      "units": "mean normalized projection volume",
+      "n_experiments": 24,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 24 injection experiment(s).",
+      "note_zh": "24 次注射實驗的平均值。"
+    },
+    {
+      "source": "SCs",
+      "target": "LGd",
+      "raw_weight": 0.07263465152048569,
+      "normalized_weight": 0.026898104340863323,
+      "units": "mean normalized projection volume",
+      "n_experiments": 8,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 8 injection experiment(s).",
+      "note_zh": "8 次注射實驗的平均值。"
+    },
+    {
+      "source": "SPVC",
+      "target": "VISp",
+      "raw_weight": 0.07258269622686941,
+      "normalized_weight": 0.02687952282284706,
+      "units": "mean normalized projection volume",
+      "n_experiments": 10,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 10 injection experiment(s).",
+      "note_zh": "10 次注射實驗的平均值。"
+    },
+    {
+      "source": "SSp-bfd",
+      "target": "RSP",
+      "raw_weight": 0.07013578588812673,
+      "normalized_weight": 0.02600337816637319,
+      "units": "mean normalized projection volume",
+      "n_experiments": 51,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 51 injection experiment(s).",
+      "note_zh": "51 次注射實驗的平均值。"
+    },
+    {
+      "source": "DG",
+      "target": "VISp",
+      "raw_weight": 0.06593708520085684,
+      "normalized_weight": 0.024495306089697078,
+      "units": "mean normalized projection volume",
+      "n_experiments": 44,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 44 injection experiment(s).",
+      "note_zh": "44 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA1",
+      "target": "MOs",
+      "raw_weight": 0.06543345741986459,
+      "normalized_weight": 0.024314016270863343,
+      "units": "mean normalized projection volume",
+      "n_experiments": 33,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 33 injection experiment(s).",
+      "note_zh": "33 次注射實驗的平均值。"
+    },
+    {
+      "source": "PSV",
+      "target": "PIR",
+      "raw_weight": 0.06391202122169395,
+      "normalized_weight": 0.023765827195566722,
+      "units": "mean normalized projection volume",
+      "n_experiments": 4,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 4 injection experiment(s).",
+      "note_zh": "4 次注射實驗的平均值。"
+    },
+    {
+      "source": "SSp-bfd",
+      "target": "VISp",
+      "raw_weight": 0.05790575972715733,
+      "normalized_weight": 0.021594026343658732,
+      "units": "mean normalized projection volume",
+      "n_experiments": 51,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 51 injection experiment(s).",
+      "note_zh": "51 次注射實驗的平均值。"
+    },
+    {
+      "source": "PIR",
+      "target": "VISp",
+      "raw_weight": 0.05509764290752641,
+      "normalized_weight": 0.020574407348671817,
+      "units": "mean normalized projection volume",
+      "n_experiments": 24,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 24 injection experiment(s).",
+      "note_zh": "24 次注射實驗的平均值。"
+    },
+    {
+      "source": "DG",
+      "target": "LP",
+      "raw_weight": 0.05445155102783262,
+      "normalized_weight": 0.02033942928193117,
+      "units": "mean normalized projection volume",
+      "n_experiments": 44,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 44 injection experiment(s).",
+      "note_zh": "44 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA3",
+      "target": "PIR",
+      "raw_weight": 0.054226718285111226,
+      "normalized_weight": 0.020257625774483774,
+      "units": "mean normalized projection volume",
+      "n_experiments": 31,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 31 injection experiment(s).",
+      "note_zh": "31 次注射實驗的平均值。"
+    },
+    {
+      "source": "VPM",
+      "target": "DG",
+      "raw_weight": 0.04883627183100863,
+      "normalized_weight": 0.01829111606878754,
+      "units": "mean normalized projection volume",
+      "n_experiments": 9,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 9 injection experiment(s).",
+      "note_zh": "9 次注射實驗的平均值。"
+    },
+    {
+      "source": "DG",
+      "target": "PIR",
+      "raw_weight": 0.04808138594049927,
+      "normalized_weight": 0.018014916728107306,
+      "units": "mean normalized projection volume",
+      "n_experiments": 44,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 44 injection experiment(s).",
+      "note_zh": "44 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA1",
+      "target": "MOB",
+      "raw_weight": 0.0470293680530873,
+      "normalized_weight": 0.017629670085893355,
+      "units": "mean normalized projection volume",
+      "n_experiments": 33,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 33 injection experiment(s).",
+      "note_zh": "33 次注射實驗的平均值。"
+    },
+    {
+      "source": "PSV",
+      "target": "SPVC",
+      "raw_weight": 0.043638283053346695,
+      "normalized_weight": 0.016385222112742518,
+      "units": "mean normalized projection volume",
+      "n_experiments": 4,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 4 injection experiment(s).",
+      "note_zh": "4 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA1",
+      "target": "VISp",
+      "raw_weight": 0.043326572778809296,
+      "normalized_weight": 0.0162706289587875,
+      "units": "mean normalized projection volume",
+      "n_experiments": 33,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 33 injection experiment(s).",
+      "note_zh": "33 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOp",
+      "target": "RSP",
+      "raw_weight": 0.04188490356641602,
+      "normalized_weight": 0.01574018650648581,
+      "units": "mean normalized projection volume",
+      "n_experiments": 32,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 32 injection experiment(s).",
+      "note_zh": "32 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA3",
+      "target": "MOB",
+      "raw_weight": 0.04017828851765762,
+      "normalized_weight": 0.0151113113344697,
+      "units": "mean normalized projection volume",
+      "n_experiments": 31,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 31 injection experiment(s).",
+      "note_zh": "31 次注射實驗的平均值。"
+    },
+    {
+      "source": "SCs",
+      "target": "RSP",
+      "raw_weight": 0.03972642291516507,
+      "normalized_weight": 0.014944629397632008,
+      "units": "mean normalized projection volume",
+      "n_experiments": 8,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 8 injection experiment(s).",
+      "note_zh": "8 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOB",
+      "target": "DG",
+      "raw_weight": 0.03968290272727358,
+      "normalized_weight": 0.014928572062858496,
+      "units": "mean normalized projection volume",
+      "n_experiments": 13,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 13 injection experiment(s).",
+      "note_zh": "13 次注射實驗的平均值。"
+    },
+    {
+      "source": "SSp-bfd",
+      "target": "SPVC",
+      "raw_weight": 0.03935150690282271,
+      "normalized_weight": 0.014806277247427273,
+      "units": "mean normalized projection volume",
+      "n_experiments": 51,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 51 injection experiment(s).",
+      "note_zh": "51 次注射實驗的平均值。"
+    },
+    {
+      "source": "SSp-bfd",
+      "target": "LP",
+      "raw_weight": 0.038625914956063954,
+      "normalized_weight": 0.0145383762474871,
+      "units": "mean normalized projection volume",
+      "n_experiments": 51,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 51 injection experiment(s).",
+      "note_zh": "51 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOs",
+      "target": "DG",
+      "raw_weight": 0.03776018792861974,
+      "normalized_weight": 0.014218489995628572,
+      "units": "mean normalized projection volume",
+      "n_experiments": 107,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 107 injection experiment(s).",
+      "note_zh": "107 次注射實驗的平均值。"
+    },
+    {
+      "source": "SSp-bfd",
+      "target": "PIR",
+      "raw_weight": 0.037479243405940325,
+      "normalized_weight": 0.01411462360290799,
+      "units": "mean normalized projection volume",
+      "n_experiments": 51,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 51 injection experiment(s).",
+      "note_zh": "51 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOs",
+      "target": "VISp",
+      "raw_weight": 0.036394721406164385,
+      "normalized_weight": 0.013713407150302151,
+      "units": "mean normalized projection volume",
+      "n_experiments": 107,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 107 injection experiment(s).",
+      "note_zh": "107 次注射實驗的平均值。"
+    },
+    {
+      "source": "DG",
+      "target": "MOB",
+      "raw_weight": 0.03558901694961312,
+      "normalized_weight": 0.013415066705672404,
+      "units": "mean normalized projection volume",
+      "n_experiments": 44,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 44 injection experiment(s).",
+      "note_zh": "44 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA3",
+      "target": "SSp-bfd",
+      "raw_weight": 0.03434434948534158,
+      "normalized_weight": 0.01295372819230349,
+      "units": "mean normalized projection volume",
+      "n_experiments": 31,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 31 injection experiment(s).",
+      "note_zh": "31 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOs",
+      "target": "LP",
+      "raw_weight": 0.032801969997632345,
+      "normalized_weight": 0.01238127129755641,
+      "units": "mean normalized projection volume",
+      "n_experiments": 107,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 107 injection experiment(s).",
+      "note_zh": "107 次注射實驗的平均值。"
+    },
+    {
+      "source": "VPM",
+      "target": "CA1",
+      "raw_weight": 0.031017446634024535,
+      "normalized_weight": 0.011717874546930239,
+      "units": "mean normalized projection volume",
+      "n_experiments": 9,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 9 injection experiment(s).",
+      "note_zh": "9 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA3",
+      "target": "VISp",
+      "raw_weight": 0.029567258405115763,
+      "normalized_weight": 0.011177920671031278,
+      "units": "mean normalized projection volume",
+      "n_experiments": 31,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 31 injection experiment(s).",
+      "note_zh": "31 次注射實驗的平均值。"
+    },
+    {
+      "source": "DG",
+      "target": "MOs",
+      "raw_weight": 0.028999966456835138,
+      "normalized_weight": 0.010966491812991993,
+      "units": "mean normalized projection volume",
+      "n_experiments": 44,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 44 injection experiment(s).",
+      "note_zh": "44 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOB",
+      "target": "RSP",
+      "raw_weight": 0.02882776098000959,
+      "normalized_weight": 0.010902288027733392,
+      "units": "mean normalized projection volume",
+      "n_experiments": 13,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 13 injection experiment(s).",
+      "note_zh": "13 次注射實驗的平均值。"
+    },
+    {
+      "source": "SCs",
+      "target": "DG",
+      "raw_weight": 0.027714627292486717,
+      "normalized_weight": 0.010487016275049636,
+      "units": "mean normalized projection volume",
+      "n_experiments": 8,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 8 injection experiment(s).",
+      "note_zh": "8 次注射實驗的平均值。"
+    },
+    {
+      "source": "VPM",
+      "target": "LP",
+      "raw_weight": 0.026455833942254026,
+      "normalized_weight": 0.010016861661561073,
+      "units": "mean normalized projection volume",
+      "n_experiments": 9,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 9 injection experiment(s).",
+      "note_zh": "9 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA3",
+      "target": "LGd",
+      "raw_weight": 0.023875909024325,
+      "normalized_weight": 0.009051464876080812,
+      "units": "mean normalized projection volume",
+      "n_experiments": 31,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 31 injection experiment(s).",
+      "note_zh": "31 次注射實驗的平均值。"
+    },
+    {
+      "source": "CA3",
+      "target": "RSP",
+      "raw_weight": 0.023499510014175596,
+      "normalized_weight": 0.00891041468454126,
+      "units": "mean normalized projection volume",
+      "n_experiments": 31,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 31 injection experiment(s).",
+      "note_zh": "31 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOp",
+      "target": "PIR",
+      "raw_weight": 0.02283465634511547,
+      "normalized_weight": 0.00866114341984143,
+      "units": "mean normalized projection volume",
+      "n_experiments": 32,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 32 injection experiment(s).",
+      "note_zh": "32 次注射實驗的平均值。"
+    },
+    {
+      "source": "PSV",
+      "target": "DG",
+      "raw_weight": 0.02151472622334919,
+      "normalized_weight": 0.008165786118912959,
+      "units": "mean normalized projection volume",
+      "n_experiments": 4,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 4 injection experiment(s).",
+      "note_zh": "4 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOB",
+      "target": "SSp-bfd",
+      "raw_weight": 0.019257563176503366,
+      "normalized_weight": 0.007317209136044406,
+      "units": "mean normalized projection volume",
+      "n_experiments": 13,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 13 injection experiment(s).",
+      "note_zh": "13 次注射實驗的平均值。"
+    },
+    {
+      "source": "AON",
+      "target": "MOp",
+      "raw_weight": 0.018247342966264724,
+      "normalized_weight": 0.006936809482614517,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOB",
+      "target": "MOs",
+      "raw_weight": 0.017734710839818067,
+      "normalized_weight": 0.0067436328591089735,
+      "units": "mean normalized projection volume",
+      "n_experiments": 13,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 13 injection experiment(s).",
+      "note_zh": "13 次注射實驗的平均值。"
+    },
+    {
+      "source": "PSV",
+      "target": "RSP",
+      "raw_weight": 0.017629246450900693,
+      "normalized_weight": 0.006703878345083921,
+      "units": "mean normalized projection volume",
+      "n_experiments": 4,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 4 injection experiment(s).",
+      "note_zh": "4 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOp",
+      "target": "SPVC",
+      "raw_weight": 0.01592563075569462,
+      "normalized_weight": 0.006061133614396085,
+      "units": "mean normalized projection volume",
+      "n_experiments": 32,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 32 injection experiment(s).",
+      "note_zh": "32 次注射實驗的平均值。"
+    },
+    {
+      "source": "SCs",
+      "target": "MOB",
+      "raw_weight": 0.015487206158535336,
+      "normalized_weight": 0.00589554921645181,
+      "units": "mean normalized projection volume",
+      "n_experiments": 8,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 8 injection experiment(s).",
+      "note_zh": "8 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOB",
+      "target": "SCs",
+      "raw_weight": 0.014314123281804664,
+      "normalized_weight": 0.005452146960130364,
+      "units": "mean normalized projection volume",
+      "n_experiments": 13,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 13 injection experiment(s).",
+      "note_zh": "13 次注射實驗的平均值。"
+    },
+    {
+      "source": "AON",
+      "target": "CA1",
+      "raw_weight": 0.013971326191990034,
+      "normalized_weight": 0.0053224795780254,
+      "units": "mean normalized projection volume",
+      "n_experiments": 11,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 11 injection experiment(s).",
+      "note_zh": "11 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOB",
+      "target": "MOp",
+      "raw_weight": 0.013389391927656159,
+      "normalized_weight": 0.005102255093932411,
+      "units": "mean normalized projection volume",
+      "n_experiments": 13,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 13 injection experiment(s).",
+      "note_zh": "13 次注射實驗的平均值。"
+    },
+    {
+      "source": "SCs",
+      "target": "PIR",
+      "raw_weight": 0.011817934798028631,
+      "normalized_weight": 0.004506927761107773,
+      "units": "mean normalized projection volume",
+      "n_experiments": 8,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 8 injection experiment(s).",
+      "note_zh": "8 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOp",
+      "target": "DG",
+      "raw_weight": 0.011769636494834552,
+      "normalized_weight": 0.004488615896960526,
+      "units": "mean normalized projection volume",
+      "n_experiments": 32,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 32 injection experiment(s).",
+      "note_zh": "32 次注射實驗的平均值。"
+    },
+    {
+      "source": "MOp",
+      "target": "PSV",
+      "raw_weight": 0.010478318245479422,
+      "normalized_weight": 0.003998699888855434,
+      "units": "mean normalized projection volume",
+      "n_experiments": 32,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 32 injection experiment(s).",
+      "note_zh": "32 次注射實驗的平均值。"
+    },
+    {
+      "source": "AON",
+      "target": "MOs",
+      "raw_weight": 0.010062026857269342,
+      "normalized_weight": 0.003840628745810341,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "PSV",
+      "target": "SSp-bfd",
+      "raw_weight": 0.010043528570595426,
+      "normalized_weight": 0.003833603199027159,
+      "units": "mean normalized projection volume",
+      "n_experiments": 4,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 4 injection experiment(s).",
+      "note_zh": "4 次注射實驗的平均值。"
+    },
+    {
+      "source": "PSV",
+      "target": "MOB",
+      "raw_weight": 0.009575960036218143,
+      "normalized_weight": 0.0036559805186092754,
+      "units": "mean normalized projection volume",
+      "n_experiments": 4,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 4 injection experiment(s).",
+      "note_zh": "4 次注射實驗的平均值。"
+    },
+    {
+      "source": "SCs",
+      "target": "MOs",
+      "raw_weight": 0.009566044993498552,
+      "normalized_weight": 0.003652213043310653,
+      "units": "mean normalized projection volume",
+      "n_experiments": 8,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 8 injection experiment(s).",
+      "note_zh": "8 次注射實驗的平均值。"
+    },
+    {
+      "source": "PSV",
+      "target": "SCs",
+      "raw_weight": 0.008922366169650304,
+      "normalized_weight": 0.00340755152666646,
+      "units": "mean normalized projection volume",
+      "n_experiments": 4,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 4 injection experiment(s).",
+      "note_zh": "4 次注射實驗的平均值。"
+    },
+    {
+      "source": "AON",
+      "target": "DG",
+      "raw_weight": 0.008548628357104128,
+      "normalized_weight": 0.00326542261440131,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "SCs",
+      "target": "VISp",
+      "raw_weight": 0.0062649272557239065,
+      "normalized_weight": 0.002395807116976165,
+      "units": "mean normalized projection volume",
+      "n_experiments": 8,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 8 injection experiment(s).",
+      "note_zh": "8 次注射實驗的平均值。"
+    },
+    {
+      "source": "AON",
+      "target": "RSP",
+      "raw_weight": 0.005708215706073776,
+      "normalized_weight": 0.0021835165236955396,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    },
+    {
+      "source": "AON",
+      "target": "VISp",
+      "raw_weight": 0.0023774090719483076,
+      "normalized_weight": 0.0009109213272843022,
+      "units": "mean normalized projection volume",
+      "n_experiments": 12,
+      "evidence_class": "EXPERIMENTAL",
+      "note_en": "Mean over 12 injection experiment(s).",
+      "note_zh": "12 次注射實驗的平均值。"
+    }
+  ],
+  "propagation": {
+    "decay": 0.35,
+    "gain": 0.65,
+    "steps": 8,
+    "clip": [
+      0.0,
+      1.0
+    ],
+    "seed_mode": "impulse",
+    "model": "next = decay*current + gain*(W^T @ current), clipped to [0,1]",
+    "evidence_class": "COMPUTATIONAL"
+  }
+}
